@@ -1,0 +1,1 @@
+ALTER TABLE treinos ADD COLUMN IF NOT EXISTS data_revogacao TIMESTAMP;

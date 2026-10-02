@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evolução física | TreinoFlow</title>
+<style>
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f3f6fb;margin:0;color:#172554}.bar{background:#172554;color:#fff;padding:16px 5%;display:flex;justify-content:space-between;align-items:center}.bar a{color:#fff;text-decoration:none;background:#1e3a8a;padding:10px 14px;border-radius:8px}.wrap{max-width:1100px;margin:28px auto;padding:0 18px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.btn{display:inline-block;border-radius:8px;padding:10px 14px;text-decoration:none;font-weight:bold;background:#2563eb;color:#fff}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;margin-top:20px}.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 8px 25px #17255410;min-width:0}.card h2{font-size:18px;margin:0 0 12px}.chart{height:270px;position:relative}.empty{padding:24px;text-align:center;color:#64748b;background:#fff;border-radius:12px;margin-top:20px}.hint{color:#64748b;font-size:14px}
+</style>
+</head><body>
+<header class="bar"><strong>TreinoFlow</strong><a th:href="@{/alunos/{id}/avaliacoes(id=${aluno.id})}">Voltar às avaliações</a></header>
+<main class="wrap">
+<div class="head"><div><h1 th:text="|Evolução — ${aluno.nome}|">Evolução do aluno</h1><p class="hint">Histórico cronológico das avaliações registradas.</p></div><span th:text="|${totalAvaliacoes} avaliação(ões)|"></span></div>
+<div class="empty" th:if="${totalAvaliacoes == 0}">Ainda não há avaliações para gerar gráficos. Cadastre a primeira avaliação física.</div>
+<div class="grid" th:if="${totalAvaliacoes > 0}">
+<section class="card"><h2>Peso corporal (kg)</h2><div class="chart"><canvas id="pesoChart"></canvas></div></section>
+<section class="card"><h2>Cintura e quadril (cm)</h2><div class="chart"><canvas id="medidasChart"></canvas></div></section>
+<section class="card"><h2>Percentual de gordura (%)</h2><div class="chart"><canvas id="gorduraChart"></canvas></div></section>
+</div>
+<p class="hint" th:if="${totalAvaliacoes > 0}">Os gráficos exibem somente os valores registrados. Campos não preenchidos aparecem como lacunas; não representam estimativas ou diagnósticos.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript" th:if="${totalAvaliacoes > 0}">
+const labels = /*[[${datas}]]*/ [];
+const pesos = /*[[${pesos}]]*/ [];
+const cinturas = /*[[${cinturas}]]*/ [];
+const quadris = /*[[${quadris}]]*/ [];
+const gorduras = /*[[${gorduras}]]*/ [];
+const common = {responsive:true, maintainAspectRatio:false, spanGaps:false, plugins:{legend:{position:'bottom'}}};
+new Chart(document.getElementById('pesoChart'),{type:'line',data:{labels,datasets:[{label:'Peso (kg)',data:pesos,borderColor:'#2563eb',backgroundColor:'#2563eb22',tension:.25,spanGaps:false}]},options:{...common,scales:{y:{beginAtZero:false}}}});
+new Chart(document.getElementById('medidasChart'),{type:'line',data:{labels,datasets:[{label:'Cintura (cm)',data:cinturas,borderColor:'#0f766e',tension:.25},{label:'Quadril (cm)',data:quadris,borderColor:'#9333ea',tension:.25}]},options:{...common,scales:{y:{beginAtZero:false}}}});
+new Chart(document.getElementById('gorduraChart'),{type:'line',data:{labels,datasets:[{label:'Gordura (%)',data:gorduras,borderColor:'#ea580c',tension:.25}]},options:{...common,scales:{y:{beginAtZero:false}}}});
+</script>
+</body></html>

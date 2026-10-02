@@ -1,0 +1,101 @@
+/* Paginação reutilizável — TreinoFlow */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    border-top: 1px solid #e5eaf2;
+    background: #fff;
+    border-radius: 0 0 14px 14px;
+}
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #64748b;
+    font-size: 13px;
+}
+.pagination-page {
+    padding-left: 12px;
+    border-left: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+}
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.pagination-size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 13px;
+}
+.pagination-size select {
+    min-height: 36px;
+    padding: 6px 28px 6px 10px;
+    border: 1px solid #dbe4f0;
+    border-radius: 9px;
+    background: #fff;
+    color: #1e293b;
+    font: inherit;
+}
+.pagination-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #dbe4f0;
+    border-radius: 9px;
+    background: #fff;
+    color: #1e40af;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background .15s, border-color .15s;
+}
+.page-link:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+.page-link.disabled {
+    color: #a0aec0;
+    background: #f8fafc;
+    cursor: not-allowed;
+}
+.page-link:focus-visible,
+.pagination-size select:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+}
+@media (max-width: 640px) {
+    .pagination {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px;
+    }
+    .pagination-controls {
+        justify-content: space-between;
+        width: 100%;
+    }
+    .pagination-actions {
+        flex: 1;
+    }
+    .page-link {
+        flex: 1;
+    }
+}

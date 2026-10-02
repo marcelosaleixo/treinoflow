@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Treinos | TreinoFlow</title>
+    <link rel="stylesheet" th:href="@{/css/treinoflow.css}">
+    <link rel="stylesheet" th:href="@{/css/paginacao.css}">
+</head>
+<body>
+<header class="bar">
+    <strong>TreinoFlow</strong>
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/alunos}">Alunos</a>
+    </nav>
+</header>
+
+<main class="wrap">
+    <div class="head">
+        <div>
+            <div class="eyebrow">Programas de treinamento</div>
+            <h1>Treinos de <span th:text="${aluno.nome}">Aluno</span></h1>
+            <p class="muted">Crie e organize os programas de treinamento deste aluno.</p>
+        </div>
+        <a class="btn" th:href="@{/alunos/{id}/treinos/novo(id=${aluno.id})}">
+            ＋ Novo treino
+        </a>
+    </div>
+
+    <div th:if="${sucesso}" class="msg success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="msg error" th:text="${erro}"></div>
+
+    <section class="panel">
+        <div class="panel-top">
+            <span th:text="|${pagina.totalElements} treinos cadastrados|">Treinos cadastrados</span>
+        </div>
+
+        <form method="get" class="search-form" th:action="@{/alunos/{id}/treinos(id=${aluno.id})}">
+            <input type="search" name="q" placeholder="Buscar treino pelo nome..." th:value="${q}" aria-label="Buscar treino pelo nome">
+            <input type="hidden" name="size" th:value="${pagina.size}">
+            <label for="statusTreino">Status</label>
+            <select id="statusTreino" name="status">
+                <option value="" th:selected="${status == ''}">Todos</option>
+                <option value="RASCUNHO" th:selected="${status == 'RASCUNHO'}">Rascunho</option>
+                <option value="LIBERADO" th:selected="${status == 'LIBERADO'}">Liberado</option>
+                <option value="REVOGADO" th:selected="${status == 'REVOGADO'}">Revogado</option>
+            </select>
+            <button class="btn" type="submit">Buscar</button>
+            <a class="btn soft" th:if="${!#strings.isEmpty(q) or !#strings.isEmpty(status)}" th:href="@{/alunos/{id}/treinos(id=${aluno.id})}">Limpar</a>
+        </form>
+
+        <div th:if="${pagina.isEmpty()}" class="empty">
+            <h2 th:text="${(!#strings.isEmpty(q) or !#strings.isEmpty(status)) ? 'Nenhum treino encontrado' : 'Nenhum treino cadastrado'}">Nenhum treino cadastrado</h2>
+            <p th:text="${(!#strings.isEmpty(q) or !#strings.isEmpty(status)) ? 'Altere a busca ou selecione Todos no filtro de status.' : 'Cadastre o primeiro treino para este aluno.'}">Cadastre o primeiro treino para este aluno.</p>
+        </div>
+
+        <div class="row" th:each="treino : ${pagina.content}">
+            <div class="row-info">
+                <strong th:text="${treino.nome}">Nome do treino</strong>
+                <div class="muted"
+                     th:text="${treino.status + ' • Criado em ' + #temporals.format(treino.dataCriacao, 'dd/MM/yyyy HH:mm')}">
+                    RASCUNHO • Criado em
+                </div>
+            </div>
+
+            <div class="row-actions">
+                <a class="btn" th:href="@{/treinos/{id}/editar(id=${treino.id})}">
+                    Abrir editor
+                </a>
+
+                <form method="post"
+                      th:action="@{/treinos/{id}/duplicar(id=${treino.id})}"
+                      onsubmit="return confirm('Duplicar este treino? A cópia será criada como rascunho.');">
+                    <button class="btn soft" type="submit">
+                        Duplicar
+                    </button>
+                </form>
+
+                <form method="post"
+                      th:action="@{/treinos/{id}/excluir(id=${treino.id})}"
+                      onsubmit="return confirm('Excluir este treino?');">
+                    <button class="btn danger" type="submit">
+                        Excluir
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/paginacao :: paginacao(pagina=${pagina}, caminho=${'/alunos/' + aluno.id + '/treinos'}, q=${q}, status=${status})}"></div>
+    </section>
+</main>
+</body>
+</html>
