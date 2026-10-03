@@ -1,4 +1,121 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Exercícios | TreinoFlow</title><link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/paginacao.css}"></head><body><header class="bar"><strong>TreinoFlow</strong><a th:href="@{/alunos}">← Alunos</a></header><main class="wrap"><div class="head"><div><div class="eyebrow">Biblioteca</div><h1>Exercícios</h1><p>Exercícios próprios e globais disponíveis para montar seus treinos.</p></div><a class="btn" th:href="@{/exercicios/novo}">＋ Novo exercício</a></div><form class="list-search" method="get" th:action="@{/exercicios}">
-<label for="exercicioBusca">Buscar exercício</label>
-<div class="list-search-controls"><input id="exercicioBusca" type="search" name="q" th:value="${q}" placeholder="Nome do exercício"><input type="hidden" name="size" th:value="${pagina.size}"><button class="btn primary" type="submit">Buscar</button><a class="btn soft" th:href="@{/exercicios}">Limpar</a></div>
-</form><section class="panel"><div class="panel-top" th:text="|${pagina.totalElements} exercícios disponíveis|">Biblioteca</div><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Grupo muscular</th><th>Vídeo</th><th>Ações</th></tr></thead><tbody><tr th:each="e : ${pagina.content}"><td><strong th:text="${e.nome}"></strong></td><td th:text="${e.grupoMuscular ?: '-'}"></td><td><a class="btn soft" th:if="${e.urlVideo}" th:href="${e.urlVideo}" target="_blank" rel="noopener">Abrir vídeo</a><span th:unless="${e.urlVideo}">—</span></td><td><a class="btn soft" th:if="${e.personal != null}" th:href="@{/exercicios/{id}/editar(id=${e.id})}">Editar</a></td></tr></tbody></table></div><div th:replace="~{fragments/paginacao :: paginacao(pagina=${pagina}, caminho='/exercicios', q=${q}, status='')}"></div></section></main></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exercícios | TreinoFlow</title>
+    <link rel="stylesheet" th:href="@{/css/treinoflow.css}">
+    <style>
+        .exercise-filters{display:grid;grid-template-columns:minmax(0,1fr) 230px auto auto;gap:10px;align-items:end}
+        .exercise-filter label{display:block;margin-bottom:7px;color:#243b63;font-size:.88rem;font-weight:650}
+        .exercise-filter input,.exercise-filter select{width:100%;height:42px;padding:0 12px;border:1px solid #cbd7e6;border-radius:9px;background:#fff;color:#172b4d;font:inherit}
+        .exercise-filter input:focus,.exercise-filter select:focus{outline:3px solid rgba(37,99,235,.14);border-color:#2563eb}
+        .scope-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:750}
+        .scope-badge.personal{background:#f0fdf4;color:#166534}
+        .exercise-name{display:grid;gap:3px}.exercise-name strong{color:#172554}.exercise-name small{color:#64748b}
+        @media(max-width:760px){.exercise-filters{grid-template-columns:1fr}.exercise-filters .btn{width:100%}}
+    </style>
+</head>
+<body>
+<header class="bar">
+    <strong>TreinoFlow</strong>
+    <a th:href="@{/alunos}">← Alunos</a>
+</header>
+<main class="wrap">
+    <div class="head">
+        <div>
+            <div class="eyebrow">Biblioteca</div>
+            <h1>Exercícios</h1>
+            <p>Encontre rapidamente exercícios globais e os exercícios criados por você.</p>
+        </div>
+        <a class="btn" th:href="@{/exercicios/novo}">＋ Novo exercício</a>
+    </div>
+
+    <form class="list-search" method="get" th:action="@{/exercicios}">
+        <div class="exercise-filters">
+            <div class="exercise-filter">
+                <label for="exercicioBusca">Buscar por nome</label>
+                <input id="exercicioBusca" type="search" name="q" th:value="${q}" placeholder="Ex.: supino, agachamento, remada">
+            </div>
+            <div class="exercise-filter">
+                <label for="grupo">Grupo muscular</label>
+                <select id="grupo" name="grupo">
+                    <option value="">Todos os grupos</option>
+                    <option th:each="g : ${gruposMusculares}"
+                            th:value="${g.name()}"
+                            th:text="${g.rotulo}"
+                            th:selected="${grupo == g}"></option>
+                </select>
+            </div>
+            <input type="hidden" name="size" th:value="${pagina.size}">
+            <button class="btn primary" type="submit">Buscar</button>
+            <a class="btn soft" th:href="@{/exercicios}">Limpar</a>
+        </div>
+    </form>
+
+    <section class="panel">
+        <div class="panel-top">
+            <span th:text="|${pagina.totalElements} exercícios disponíveis|">Biblioteca</span>
+            <span class="muted" th:if="${grupo != null}" th:text="'Filtro: ' + ${grupo.rotulo}">Filtro</span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Exercício</th><th>Grupo muscular</th><th>Origem</th><th>Vídeo</th><th>Ações</th></tr></thead>
+                <tbody>
+                <tr th:each="e : ${pagina.content}">
+                    <td>
+                        <div class="exercise-name">
+                            <strong th:text="${e.nome}">Exercício</strong>
+                            <small th:if="${e.descricao != null and !e.descricao.isBlank()}" th:text="${e.descricao}">Descrição</small>
+                        </div>
+                    </td>
+                    <td th:text="${e.grupoMuscular != null ? e.grupoMuscular.rotulo : '-'}">-</td>
+                    <td>
+                        <span class="scope-badge" th:classappend="${e.personal != null} ? ' personal' : ''"
+                              th:text="${e.personal != null ? 'Meu exercício' : 'Biblioteca TreinoFlow'}">Biblioteca TreinoFlow</span>
+                    </td>
+                    <td>
+                        <a class="btn soft" th:if="${e.urlVideo != null and !e.urlVideo.isBlank()}" th:href="${e.urlVideo}" target="_blank" rel="noopener">Abrir</a>
+                        <span th:unless="${e.urlVideo != null and !e.urlVideo.isBlank()}">—</span>
+                    </td>
+                    <td>
+                        <a class="btn soft" th:if="${e.personal != null}" th:href="@{/exercicios/{id}/editar(id=${e.id})}">Editar</a>
+                    </td>
+                </tr>
+                <tr th:if="${pagina.empty}"><td colspan="5" class="empty">Nenhum exercício encontrado com os filtros informados.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav class="pagination" aria-label="Paginação de exercícios">
+            <div class="pagination-info">
+                <span th:if="${pagina.totalElements > 0}" th:text="|Mostrando ${pagina.number * pagina.size + 1}–${pagina.number * pagina.size + pagina.numberOfElements} de ${pagina.totalElements} registros|">Mostrando registros</span>
+                <span th:unless="${pagina.totalElements > 0}">Nenhum registro</span>
+                <span th:text="|Página ${pagina.number + 1} de ${pagina.totalPages == 0 ? 1 : pagina.totalPages}|">Página 1 de 1</span>
+            </div>
+            <div class="pagination-controls">
+                <form class="pagination-size" method="get" th:action="@{/exercicios}">
+                    <input type="hidden" name="page" value="0">
+                    <input type="hidden" name="q" th:value="${q}">
+                    <input type="hidden" name="grupo" th:value="${grupo != null ? grupo.name() : ''}">
+                    <label for="paginationSize">Por página</label>
+                    <select id="paginationSize" name="size" onchange="this.form.submit()">
+                        <option value="5" th:selected="${pagina.size == 5}">5</option><option value="10" th:selected="${pagina.size == 10}">10</option><option value="20" th:selected="${pagina.size == 20}">20</option><option value="50" th:selected="${pagina.size == 50}">50</option>
+                    </select>
+                </form>
+                <div class="pagination-actions">
+                    <a class="page-link" th:if="${pagina.hasPrevious()}" th:href="@{/exercicios(page=0,size=${pagina.size},q=${q},grupo=${grupo != null ? grupo.name() : ''})}">«</a>
+                    <span class="page-link disabled" th:unless="${pagina.hasPrevious()}">«</span>
+                    <a class="page-link" th:if="${pagina.hasPrevious()}" th:href="@{/exercicios(page=${pagina.number - 1},size=${pagina.size},q=${q},grupo=${grupo != null ? grupo.name() : ''})}">Anterior</a>
+                    <span class="page-link disabled" th:unless="${pagina.hasPrevious()}">Anterior</span>
+                    <a class="page-link" th:if="${pagina.hasNext()}" th:href="@{/exercicios(page=${pagina.number + 1},size=${pagina.size},q=${q},grupo=${grupo != null ? grupo.name() : ''})}">Próxima</a>
+                    <span class="page-link disabled" th:unless="${pagina.hasNext()}">Próxima</span>
+                    <a class="page-link" th:if="${pagina.hasNext()}" th:href="@{/exercicios(page=${pagina.totalPages - 1},size=${pagina.size},q=${q},grupo=${grupo != null ? grupo.name() : ''})}">»</a>
+                    <span class="page-link disabled" th:unless="${pagina.hasNext()}">»</span>
+                </div>
+            </div>
+        </nav>
+    </section>
+</main>
+</body>
+</html>

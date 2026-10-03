@@ -28,6 +28,8 @@ public interface UsuarioPersonalRepository extends JpaRepository<UsuarioPersonal
 
     long countByPerfil(String perfil);
 
+    java.util.List<UsuarioPersonal> findByPerfilAndPlanoIsNull(String perfil);
+
     /**
      * Carrega o plano na mesma consulta para telas administrativas. Necessário
      * porque spring.jpa.open-in-view=false.
@@ -35,4 +37,8 @@ public interface UsuarioPersonalRepository extends JpaRepository<UsuarioPersonal
     @EntityGraph(attributePaths = "plano")
     @Query("select p from UsuarioPersonal p")
     List<UsuarioPersonal> findAllComPlano();
+
+    @EntityGraph(attributePaths = "plano")
+    @Query("select p from UsuarioPersonal p where p.id = :id")
+    Optional<UsuarioPersonal> findByIdComPlano(@org.springframework.data.repository.query.Param("id") Long id);
 }

@@ -1,6 +1,7 @@
 package com.marceloaleixo.treinoflow.controller;
 
 import com.marceloaleixo.treinoflow.entity.Exercicio;
+import com.marceloaleixo.treinoflow.enums.GrupoMuscular;
 import com.marceloaleixo.treinoflow.entity.UsuarioPersonal;
 import com.marceloaleixo.treinoflow.service.ExercicioService;
 import com.marceloaleixo.treinoflow.service.UsuarioPersonalService;
@@ -21,11 +22,15 @@ public class ExercicioController {
     public String listar(Authentication auth, Model model,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "5") int size,
-                         @RequestParam(required = false) String q) {
+                         @RequestParam(required = false) String q,
+                         @RequestParam(required = false) GrupoMuscular grupo) {
         int paginaAtual = Math.max(0, page);
         int tamanhoPagina = Math.min(50, Math.max(5, size));
-        model.addAttribute("pagina", exercicioService.listarPaginado(personal(auth).getId(), q, PageRequest.of(paginaAtual, tamanhoPagina)));
+        Long personalId = personal(auth).getId();
+        model.addAttribute("pagina", exercicioService.listarPaginado(personalId, q, grupo, PageRequest.of(paginaAtual, tamanhoPagina)));
         model.addAttribute("q", q == null ? "" : q.trim());
+        model.addAttribute("grupo", grupo);
+        model.addAttribute("gruposMusculares", exercicioService.listarGruposMusculares(personalId));
         return "exercicio/lista";
     }
     @GetMapping("/exercicios/novo")

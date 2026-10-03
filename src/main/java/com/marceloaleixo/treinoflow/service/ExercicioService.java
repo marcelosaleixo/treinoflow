@@ -40,11 +40,16 @@ public class ExercicioService {
 
     @Transactional(readOnly = true)
     public Page<Exercicio> listarPaginado(Long personalId, String termo, Pageable pageable) {
+        return listarPaginado(personalId, termo, null, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Exercicio> listarPaginado(Long personalId, String termo, GrupoMuscular grupo, Pageable pageable) {
         if (personalId == null || personalId <= 0) {
             throw new IllegalArgumentException("Personal inválido.");
         }
         String filtro = termo == null || termo.isBlank() ? null : termo.trim();
-        return exercicios.buscarDisponiveisPorTermo(personalId, filtro, pageable);
+        return exercicios.buscarDisponiveisPorFiltro(personalId, filtro, grupo, pageable);
     }
 
     public Exercicio salvar(Long personalId, Exercicio e) {

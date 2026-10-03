@@ -19,6 +19,8 @@ public class Plano {
     private Integer limiteAlunos = 10;
     @Column(nullable=false)
     private boolean ativo = true;
+    @Column
+    private Boolean padrao = false;
     @Column(name="data_criacao", nullable=false, updatable=false)
     private LocalDateTime dataCriacao;
     @PrePersist void criarData(){ if(dataCriacao==null) dataCriacao=LocalDateTime.now(); }
@@ -28,5 +30,6 @@ public class Plano {
     public BigDecimal getValorMensal(){return valorMensal;} public void setValorMensal(BigDecimal valorMensal){this.valorMensal=valorMensal;}
     public Integer getLimiteAlunos(){return limiteAlunos;} public void setLimiteAlunos(Integer limiteAlunos){this.limiteAlunos=limiteAlunos;}
     public boolean isAtivo(){return ativo;} public void setAtivo(boolean ativo){this.ativo=ativo;}
+    public boolean isPadrao(){return Boolean.TRUE.equals(padrao);} public void setPadrao(boolean padrao){this.padrao=padrao;}
     public LocalDateTime getDataCriacao(){return dataCriacao;}
 }
