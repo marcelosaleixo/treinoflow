@@ -4,6 +4,7 @@ import com.marceloaleixo.treinoflow.entity.Aluno;
 import com.marceloaleixo.treinoflow.entity.UsuarioPersonal;
 import com.marceloaleixo.treinoflow.enums.ObjetivoAluno;
 import com.marceloaleixo.treinoflow.service.AlunoService;
+import com.marceloaleixo.treinoflow.service.PortalAlunoService;
 import com.marceloaleixo.treinoflow.service.UsuarioPersonalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,9 @@ public class AlunoController {
 
     @Autowired
     private UsuarioPersonalService usuarioPersonalService;
+
+    @Autowired
+    private PortalAlunoService portalAlunoService;
 
     @GetMapping("/alunos")
     public String listar(Authentication authentication, Model model,
@@ -55,6 +59,13 @@ public class AlunoController {
         model.addAttribute("titulo", "Editar aluno");
         adicionarObjetivos(model);
         return "aluno/form";
+    }
+
+    @GetMapping("/alunos/{id}/portal")
+    public String abrirPortal(@PathVariable Long id, Authentication authentication) {
+        UsuarioPersonal personal = personalAutenticado(authentication);
+        String token = portalAlunoService.obterOuCriarToken(id, personal.getId());
+        return "redirect:/portal/" + token;
     }
 
     @PostMapping("/alunos/salvar")

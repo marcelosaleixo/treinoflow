@@ -22,6 +22,8 @@ public class Aluno {
     private String telefone;
     @Column(length = 100)
     private String objetivo;
+    @Column(name = "token_portal", unique = true, length = 100)
+    private String tokenPortal;
     @Column(columnDefinition = "text")
     private String observacoes;
     @Column(nullable = false, length = 20)
@@ -38,6 +40,7 @@ public class Aluno {
     public String getEmail(){return email;} public void setEmail(String email){this.email=email;}
     public String getTelefone(){return telefone;} public void setTelefone(String telefone){this.telefone=telefone;}
     public String getObjetivo(){return objetivo;} public void setObjetivo(String objetivo){this.objetivo=objetivo;}
+    public String getTokenPortal(){return tokenPortal;} public void setTokenPortal(String tokenPortal){this.tokenPortal=tokenPortal;}
     public String getObservacoes(){return observacoes;} public void setObservacoes(String observacoes){this.observacoes=observacoes;}
     public String getStatus(){return status;} public void setStatus(String status){this.status=status;}
     public LocalDate getDataInicio(){return dataInicio;} public void setDataInicio(LocalDate dataInicio){this.dataInicio=dataInicio;}

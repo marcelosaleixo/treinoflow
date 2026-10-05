@@ -24,6 +24,8 @@ public interface ExercicioRepository extends JpaRepository<Exercicio, Long> {
                                                 @Param("grupo") GrupoMuscular grupo,
                                                 Pageable pageable);
     Optional<Exercicio> findByIdAndPersonalId(Long id, Long personalId);
+    @Query("SELECT e FROM Exercicio e WHERE e.id = :id AND (e.personal.id = :personalId OR e.personal IS NULL)")
+    Optional<Exercicio> findDisponivelParaPersonal(@Param("id") Long id, @Param("personalId") Long personalId);
 
     @Query("SELECT COUNT(e) FROM Exercicio e WHERE e.personal.id = :personalId OR e.personal IS NULL")
     long contarDisponiveisParaPersonal(@Param("personalId") Long personalId);

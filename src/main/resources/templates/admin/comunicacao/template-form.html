@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Template | TreinoFlow</title>
+<style>body{margin:0;background:#f1f5f9;color:#172554;font:14px Arial}.wrap{max-width:900px;margin:28px auto;padding:0 16px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}label{display:block;font-weight:700;margin:15px 0 6px}input,textarea,select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:14px Arial}textarea{min-height:220px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.check{display:flex;gap:8px;align-items:center;margin:15px 0}.check input{width:auto}.btn{border:0;background:#2563eb;color:#fff;padding:10px 15px;border-radius:7px;cursor:pointer;text-decoration:none}.muted{color:#64748b}.vars{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:8px;line-height:1.8}@media(max-width:650px){.row{grid-template-columns:1fr}.wrap{margin:18px auto}}
+</style></head>
+<body>
+<div th:replace="~{admin/base-fragment :: topo('Editar template')}"></div>
+<main class="wrap"><section class="panel"><h1>Editar template</h1><p class="muted">O template é global e será aplicado às notificações do evento selecionado.</p>
+<form th:action="@{/admin/comunicacao/templates/salvar}" th:object="${form}" method="post">
+<div class="row"><div><label>Evento</label><select th:field="*{tipo}"><option th:each="t:${tipos}" th:value="${t}" th:text="${t.descricao}"></option></select></div><div><label>Canal</label><select th:field="*{canal}"><option th:each="c:${canais}" th:value="${c}" th:text="${c.descricao}"></option></select></div></div>
+<label>Título / assunto</label><input type="text" maxlength="140" th:field="*{titulo}" required>
+<label>Mensagem</label><textarea maxlength="4000" th:field="*{mensagem}" required></textarea>
+<div class="vars"><strong>Variáveis disponíveis</strong><br>{{nome}} · {{plano}} · {{valor}} · {{vencimento}} · {{link_pagamento}}<br><span class="muted">Se uma variável não fizer sentido para o evento, deixe-a fora do texto.</span></div>
+<label class="check"><input type="checkbox" th:field="*{ativo}"> Template ativo</label>
+<button class="btn" type="submit">Salvar template</button> <a class="btn" style="background:#64748b" th:href="@{/admin/comunicacao}">Voltar</a>
+</form></section></main></body></html>

@@ -17,7 +17,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/cadastro", "/a/**", "/error", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/cadastro", "/a/**", "/portal/**", "/error", "/css/**", "/js/**", "/images/**", "/webhooks/mercadopago/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("MASTER")
                 .anyRequest().hasAnyRole("PERSONAL", "MASTER"))
             .formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login")

@@ -77,6 +77,10 @@
                     </button>
                 </form>
 
+                <a class="btn soft" th:href="@{/treinos/{id}/duplicar-para-aluno(id=${treino.id})}">
+                    Para outro aluno
+                </a>
+
                 <form method="post"
                       th:action="@{/treinos/{id}/excluir(id=${treino.id})}"
                       onsubmit="return confirm('Excluir este treino?');">

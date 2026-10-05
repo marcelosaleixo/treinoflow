@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Duplicar treino | TreinoFlow</title>
+    <link rel="stylesheet" th:href="@{/css/treinoflow.css}">
+    <style>
+        body{margin:0;background:#f3f6fb;color:#172554;font-family:Inter,Arial,sans-serif}.topbar{background:#172554;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}.topbar a{color:#fff;text-decoration:none;border:1px solid #ffffff33;padding:8px 12px;border-radius:8px}.wrap{max-width:760px;margin:40px auto;padding:0 20px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:15px;padding:26px;box-shadow:0 8px 26px #17255408}h1{margin:0 0 8px;font-size:28px}.muted{color:#64748b}.source{margin:22px 0;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px}.source strong{display:block;margin-bottom:5px}label{display:block;font-weight:650;margin:18px 0 7px}select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;font:inherit}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;background:#2563eb;color:#fff;border-radius:9px;padding:11px 16px;font-weight:650;cursor:pointer}.btn.secondary{background:#eff6ff;color:#1d4ed8}.msg{padding:12px 14px;border-radius:9px;margin-bottom:16px}.msg.error{background:#fef2f2;color:#991b1b}.hint{font-size:13px;color:#64748b;margin-top:8px}@media(max-width:600px){.wrap{margin:24px auto}.panel{padding:20px}.actions .btn{width:100%}}
+    </style>
+</head>
+<body>
+<header class="topbar"><strong>TreinoFlow</strong><a th:href="@{/alunos/{id}/treinos(id=${treino.aluno.id})}">← Voltar aos treinos</a></header>
+<main class="wrap">
+    <div th:if="${erro}" class="msg error" th:text="${erro}"></div>
+    <section class="panel">
+        <h1>Duplicar treino para outro aluno</h1>
+        <p class="muted">Copie toda a prescrição para outro aluno do seu espaço. A cópia será criada como rascunho e não reutilizará o link público.</p>
+        <div class="source"><strong th:text="${treino.nome}">Treino A</strong><span th:text="'Aluno atual: ' + ${treino.aluno.nome}">Aluno atual</span></div>
+        <form method="post" th:action="@{/treinos/{id}/duplicar-para-aluno(id=${treino.id})}">
+            <label for="alunoDestinoId">Aluno de destino</label>
+            <select id="alunoDestinoId" name="alunoDestinoId" required>
+                <option value="" selected disabled>Selecione um aluno</option>
+                <option th:each="aluno : ${alunos}" th:value="${aluno.id}" th:text="${aluno.nome}">Aluno</option>
+            </select>
+            <div class="hint">Somente alunos ativos do seu espaço aparecem nesta lista.</div>
+            <div class="actions">
+                <button class="btn" type="submit">Duplicar treino</button>
+                <a class="btn secondary" th:href="@{/alunos/{id}/treinos(id=${treino.aluno.id})}">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

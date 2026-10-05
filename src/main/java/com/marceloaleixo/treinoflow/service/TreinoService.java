@@ -106,9 +106,22 @@ public class TreinoService {
     /** Duplica um treino do mesmo aluno, sempre como rascunho sem link público. */
     public Treino duplicar(Long treinoId, Long personalId) {
         Treino origem = buscarPorIdComAluno(treinoId, personalId);
+        return duplicarParaAluno(origem, origem.getAluno(), personalId);
+    }
 
+    /** Duplica um treino para outro aluno do mesmo personal, sempre como rascunho sem link público. */
+    public Treino duplicarParaAluno(Long treinoId, Long alunoDestinoId, Long personalId) {
+        Treino origem = buscarPorIdComAluno(treinoId, personalId);
+        Aluno destino = validarAluno(alunoDestinoId, personalId);
+        if (origem.getAluno().getId().equals(destino.getId())) {
+            throw new IllegalArgumentException("O aluno de destino deve ser diferente do aluno de origem. Use Duplicar para copiar no mesmo aluno.");
+        }
+        return duplicarParaAluno(origem, destino, personalId);
+    }
+
+    private Treino duplicarParaAluno(Treino origem, Aluno destino, Long personalId) {
         Treino copia = new Treino();
-        copia.setAluno(origem.getAluno());
+        copia.setAluno(destino);
         String nomeCopia = "Cópia - " + origem.getNome();
         copia.setNome(nomeCopia.length() > 80 ? nomeCopia.substring(0, 80) : nomeCopia);
         copia.setDescricao(origem.getDescricao());
@@ -118,6 +131,7 @@ public class TreinoService {
         copia.setAcessoExpiraEm(null);
         copia.setTotalVisualizacoes(0);
         copia.setDataUltimaVisualizacao(null);
+        copia.setDataRevogacao(null);
         copia = treinos.save(copia);
 
         List<TreinoExercicio> originais = itensTreino.findByTreinoIdOrderByOrdemAsc(origem.getId());

@@ -174,6 +174,27 @@ public class TreinoController {
         return "redirect:/treinos/" + treinoId + "/editar";
     }
 
+    @GetMapping("/treinos/{treinoId}/duplicar-para-aluno")
+    public String formularioDuplicarParaAluno(@PathVariable Long treinoId, Authentication auth, Model model) {
+        UsuarioPersonal personal = personal(auth);
+        Treino origem = treinoService.buscarPorIdComAluno(treinoId, personal.getId());
+        model.addAttribute("treino", origem);
+        model.addAttribute("alunos", alunoService.listarAtivosPorPersonal(personal.getId()));
+        return "treino/duplicar";
+    }
+
+    @PostMapping("/treinos/{treinoId}/duplicar-para-aluno")
+    public String duplicarParaAluno(@PathVariable Long treinoId, @RequestParam Long alunoDestinoId, Authentication auth, RedirectAttributes flash) {
+        try {
+            Treino copia = treinoService.duplicarParaAluno(treinoId, alunoDestinoId, personal(auth).getId());
+            flash.addFlashAttribute("sucesso", "Treino duplicado para o aluno de destino como rascunho.");
+            return "redirect:/treinos/" + copia.getId() + "/editar";
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            flash.addFlashAttribute("erro", ex.getMessage());
+            return "redirect:/treinos/" + treinoId + "/duplicar-para-aluno";
+        }
+    }
+
     @PostMapping("/treinos/{treinoId}/duplicar")
     public String duplicar(@PathVariable Long treinoId, Authentication auth, RedirectAttributes flash) {
         try {

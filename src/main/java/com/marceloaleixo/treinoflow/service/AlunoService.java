@@ -20,6 +20,7 @@ public class AlunoService {
     @Autowired
     private UsuarioPersonalRepository personais;
     @Transactional(readOnly=true) public List<Aluno> listarPorPersonal(Long personalId) { validarPersonalId(personalId); return alunos.findByPersonalIdOrderByNomeAsc(personalId); }
+    @Transactional(readOnly=true) public List<Aluno> listarAtivosPorPersonal(Long personalId) { validarPersonalId(personalId); return alunos.findByPersonalIdAndStatusOrderByNomeAsc(personalId, "ATIVO"); }
     @Transactional(readOnly=true)
     public Page<Aluno> listarPaginado(Long personalId, Pageable pageable) {
         return listarPaginado(personalId, null, pageable);

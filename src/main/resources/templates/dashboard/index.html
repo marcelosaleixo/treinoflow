@@ -19,7 +19,7 @@
 <body>
 <header class="topbar">
   <div><div class="brand">TreinoFlow</div><div class="hello" th:text="'Olá, ' + ${personal.nome}">Olá, Personal</div></div>
-  <nav class="nav"><a th:href="@{/alunos}">Alunos</a><a th:href="@{/exercicios}">Exercícios</a><form class="logout" th:action="@{/logout}" method="post"><button type="submit">Sair</button></form></nav>
+  <nav class="nav"><a th:href="@{/alunos}">Alunos</a><a th:href="@{/performance}">Performance</a><a th:href="@{/crm}">CRM</a><a th:href="@{/exercicios}">Exercícios</a><a th:href="@{/assinatura/cobrancas}">Cobranças</a><a th:href="@{/notificacoes}">Notificações <span th:if="${notificacoesNaoLidas > 0}" th:text="${'(' + notificacoesNaoLidas + ')'}">(0)</span></a><form class="logout" th:action="@{/logout}" method="post"><button type="submit">Sair</button></form></nav>
 </header>
 <main>
   <div class="eyebrow">Visão geral</div><h1>Seu painel</h1><p class="intro">Acompanhe seus alunos, programas e exercícios em um só lugar.</p>
@@ -29,11 +29,21 @@
     <article class="stat"><div class="stat-head"><span>Treinos liberados</span><span class="icon">✓</span></div><div class="value" th:text="${treinosLiberados}">0</div><div class="hint">Disponíveis pelo link do aluno</div></article>
     <article class="stat"><div class="stat-head"><span>Exercícios disponíveis</span><span class="icon">E</span></div><div class="value" th:text="${totalExercicios}">0</div><div class="hint">Biblioteca própria e geral</div></article>
   </section>
+  <section class="section" th:if="${!#lists.isEmpty(ultimasNotificacoes)}">
+    <div class="recent-heading"><div><h2>Notificações recentes</h2><p>Alertas financeiros e confirmações importantes da sua conta.</p></div><a class="text-link" th:href="@{/notificacoes}">Ver todas →</a></div>
+    <div class="recent-list">
+      <article class="recent-item" th:each="n : ${ultimasNotificacoes}">
+        <div class="recent-info"><strong th:text="${n.titulo}">Notificação</strong><span th:text="${n.mensagem}">Mensagem</span></div>
+        <div class="recent-meta"><span class="status" th:classappend="${n.lida} ? ' status-draft' : ' status-live'" th:text="${n.lida ? 'LIDA' : 'NOVA'}">NOVA</span><a class="text-link" th:href="@{/notificacoes}">Abrir</a></div>
+      </article>
+    </div>
+  </section>
+
   <section class="section">
     <h2>Acesso rápido</h2>
     <p>Continue a gestão dos seus alunos e programas de treinamento.</p>
     <div class="actions">
-      <a class="btn" th:href="@{/alunos}">Gerenciar alunos</a>
+      <a class="btn" th:href="@{/alunos}">Gerenciar alunos</a><a class="btn secondary" th:href="@{/crm}">Abrir CRM</a><a class="btn secondary" th:href="@{/performance}">Ver performance</a>
       <a class="btn secondary" th:href="@{/exercicios}">Biblioteca de exercícios</a>
     </div>
   </section>

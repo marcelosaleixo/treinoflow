@@ -26,6 +26,8 @@ public interface UsuarioPersonalRepository extends JpaRepository<UsuarioPersonal
 
     boolean existsByEmail(String email);
 
+    List<UsuarioPersonal> findByPerfilAndAtivoTrue(String perfil);
+
     long countByPerfil(String perfil);
 
     java.util.List<UsuarioPersonal> findByPerfilAndPlanoIsNull(String perfil);

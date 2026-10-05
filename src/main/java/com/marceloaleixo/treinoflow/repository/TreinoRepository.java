@@ -25,6 +25,24 @@ public interface TreinoRepository extends JpaRepository<Treino, Long> {
     Optional<Treino> findByTokenAcesso(String tokenAcesso);
 
     @Query("""
+        SELECT t FROM Treino t
+        JOIN FETCH t.aluno a
+        WHERE a.id = :alunoId
+          AND t.status = 'LIBERADO'
+          AND (t.acessoExpiraEm IS NULL OR t.acessoExpiraEm > :agora)
+        ORDER BY t.dataLiberacao DESC, t.dataCriacao DESC
+    """)
+    List<Treino> buscarLiberadosDoPortal(@Param("alunoId") Long alunoId, @Param("agora") java.time.LocalDateTime agora);
+
+    @Query("""
+        SELECT t FROM Treino t
+        JOIN FETCH t.aluno a
+        WHERE t.id = :treinoId AND a.id = :alunoId AND t.status = 'LIBERADO'
+          AND (t.acessoExpiraEm IS NULL OR t.acessoExpiraEm > :agora)
+    """)
+    Optional<Treino> buscarTreinoDoPortal(@Param("treinoId") Long treinoId, @Param("alunoId") Long alunoId, @Param("agora") java.time.LocalDateTime agora);
+
+    @Query("""
         SELECT t
         FROM Treino t
         JOIN FETCH t.aluno a

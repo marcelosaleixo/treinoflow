@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
     List<Aluno> findByPersonalIdOrderByNomeAsc(Long personalId);
+    List<Aluno> findByPersonalIdAndStatusOrderByNomeAsc(Long personalId, String status);
     Page<Aluno> findByPersonalIdOrderByNomeAsc(Long personalId, Pageable pageable);
 
     @Query("SELECT a FROM Aluno a WHERE a.personal.id = :personalId " +
@@ -23,5 +24,7 @@ public interface AlunoRepository extends JpaRepository<Aluno, Long> {
                                          @Param("termo") String termo,
                                          Pageable pageable);
     Optional<Aluno> findByIdAndPersonalId(Long id, Long personalId);
+    @Query("SELECT a FROM Aluno a JOIN FETCH a.personal p WHERE a.tokenPortal = :tokenPortal")
+    Optional<Aluno> findByTokenPortal(@Param("tokenPortal") String tokenPortal);
     long countByPersonalIdAndStatus(Long personalId, String status);
 }

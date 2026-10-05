@@ -5,6 +5,7 @@ import com.marceloaleixo.treinoflow.repository.AlunoRepository;
 import com.marceloaleixo.treinoflow.repository.ExercicioRepository;
 import com.marceloaleixo.treinoflow.repository.TreinoRepository;
 import com.marceloaleixo.treinoflow.service.UsuarioPersonalService;
+import com.marceloaleixo.treinoflow.service.NotificacaoService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,9 @@ public class DashboardController {
     @Autowired
     private ExercicioRepository exercicioRepository;
 
+    @Autowired
+    private NotificacaoService notificacaoService;
+
     @GetMapping({"/", "/dashboard"})
     public String dashboard(Authentication authentication, Model model) {
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MASTER"))) return "redirect:/admin";
@@ -34,6 +38,8 @@ public class DashboardController {
         Long personalId = personal.getId();
 
         model.addAttribute("personal", personal);
+        model.addAttribute("notificacoesNaoLidas", notificacaoService.contarNaoLidas(personalId));
+        model.addAttribute("ultimasNotificacoes", notificacaoService.ultimas(personalId));
         model.addAttribute("totalAlunos", alunoRepository.countByPersonalIdAndStatus(personalId, "ATIVO"));
         model.addAttribute("totalTreinos", treinoRepository.contarTodosDoPersonal(personalId));
         model.addAttribute("treinosLiberados", treinoRepository.contarPorPersonalEStatus(personalId, "LIBERADO"));

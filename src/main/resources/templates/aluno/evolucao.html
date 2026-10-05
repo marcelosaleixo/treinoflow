@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evolução | TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/treinoflow.css}">
+<style>
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.metric{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px #17255412}.metric small{display:block;color:#64748b}.metric strong{font-size:28px;color:#172554}.panel{background:#fff;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #17255412}.exercise{border-bottom:1px solid #e2e8f0;padding:16px 0}.exercise:last-child{border-bottom:0}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:700;margin-right:6px}.history{color:#64748b;font-size:14px;margin:6px 0}.empty{color:#64748b;text-align:center;padding:30px}@media(max-width:850px){.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.metrics{grid-template-columns:1fr}.metric strong{font-size:24px}}
+</style></head>
+<body>
+<header class="bar"><div class="brand">TreinoFlow</div><nav class="nav"><a th:href="@{/alunos}">Alunos</a><a th:href="@{/crm}">CRM</a><form th:action="@{/logout}" method="post"><button type="submit">Sair</button></form></nav></header>
+<main class="wrap">
+<div class="head"><div><div class="eyebrow">Acompanhamento</div><h1 th:text="'Evolução de ' + ${aluno.nome}">Evolução</h1><p class="sub">Histórico de frequência, avaliações e execução real dos exercícios.</p></div><a class="btn soft" th:href="@{/alunos}">← Voltar</a></div>
+<section class="metrics">
+<div class="metric"><small>Sessões concluídas</small><strong th:text="${evolucao.sessoesConcluidas}">0</strong></div>
+<div class="metric"><small>Últimos 7 dias</small><strong th:text="${evolucao.sessoesUltimos7Dias}">0</strong></div>
+<div class="metric"><small>Últimos 30 dias</small><strong th:text="${evolucao.sessoesUltimos30Dias}">0</strong></div>
+<div class="metric"><small>Média das avaliações</small><strong th:text="${evolucao.mediaNotas > 0 ? #numbers.formatDecimal(evolucao.mediaNotas,1,1) + '/5' : '-'}">-</strong></div>
+</section>
+<section class="panel"><h2>Desempenho por exercício</h2>
+<div class="empty" th:if="${evolucao.exercicios.isEmpty()}">Ainda não existem registros detalhados de execução dos exercícios.</div>
+<div class="exercise" th:each="item : ${evolucao.exercicios}">
+<h3 th:text="${item.nome}">Exercício</h3>
+<span class="badge" th:text="${item.sessoes + ' sessões'}">0 sessões</span>
+<span class="badge" th:text="${item.ultimaCarga != null ? 'Última carga: ' + item.ultimaCarga : 'Carga não informada'}">Carga</span>
+<span class="badge" th:if="${item.ultimasRepeticoes != null}" th:text="${'Últimas reps: ' + item.ultimasRepeticoes}">Reps</span>
+<div class="history" th:each="linha : ${item.historico}" th:text="${linha}">Histórico</div>
+</div></section>
+</main></body></html>

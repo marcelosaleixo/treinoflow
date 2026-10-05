@@ -1,1 +1,40 @@
-<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Master | TreinoFlow</title><style>body{margin:0;background:#f1f5f9;color:#172554;font:15px Arial}.wrap{max-width:1100px;margin:35px auto;padding:0 18px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}.card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:22px}.num{font-size:32px;font-weight:bold;margin-top:10px}.btn{display:inline-block;background:#2563eb;color:white;text-decoration:none;padding:11px 15px;border-radius:8px;margin:10px 8px 0 0}.muted{color:#64748b}</style></head><body><div th:replace="~{admin/base-fragment :: topo('Painel de administração')}"></div><main class="wrap"><h1>Administração da plataforma</h1><p class="muted">Gerencie os personais (contas/empresas), planos e status de acesso.</p><section class="cards"><article class="card">Personais cadastrados<div class="num" th:text="${totalPersonais}">0</div></article><article class="card">Contas ativas<div class="num" th:text="${personaisAtivos}">0</div></article><article class="card">Planos<div class="num" th:text="${totalPlanos}">0</div></article></section><a class="btn" th:href="@{/admin/personais}">Gerenciar personais</a><a class="btn" th:href="@{/admin/planos}">Gerenciar planos</a><section class="card" style="margin-top:22px"><h2>Cadastros recentes</h2><p th:if="${#lists.isEmpty(personaisRecentes)}">Nenhum personal cadastrado ainda.</p><table th:unless="${#lists.isEmpty(personaisRecentes)}" width="100%" cellpadding="10"><thead><tr><th align="left">Personal</th><th align="left">E-mail</th><th align="left">Plano</th><th align="left">Status</th></tr></thead><tbody><tr th:each="p:${personaisRecentes}"><td th:text="${p.nome}"></td><td th:text="${p.email}"></td><td th:text="${p.plano != null ? p.plano.nome : 'Sem plano'}"></td><td th:text="${p.ativo ? 'Ativo':'Inativo'}"></td></tr></tbody></table></section></main></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Comercial | TreinoFlow</title>
+<style>
+body{margin:0;background:#f1f5f9;color:#172554;font:14px Arial,sans-serif}.wrap{max-width:1180px;margin:30px auto;padding:0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-sizing:border-box}.num{font-size:30px;font-weight:700;margin-top:8px}.label{color:#64748b;font-size:13px}.money{font-size:27px;font-weight:700;margin-top:8px}.btn{display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;margin:0 8px 12px 0}.section{margin-top:22px}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;white-space:nowrap}.badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#e2e8f0;font-size:12px}.danger{color:#b91c1c}.warn{color:#92400e}.ok{color:#166534}.muted{color:#64748b}@media(max-width:800px){.two{grid-template-columns:1fr}.wrap{margin:18px auto}.card{padding:16px}}
+</style></head>
+<body>
+<div th:replace="~{admin/base-fragment :: topo('Dashboard comercial')}"></div>
+<main class="wrap">
+<h1>Dashboard comercial</h1>
+<p class="muted">Visão geral de clientes, assinaturas, receita recorrente estimada e pontos que precisam de atenção.</p>
+<div>
+<a class="btn" th:href="@{/admin/personais}">Personais</a>
+<a class="btn" th:href="@{/admin/planos}">Planos</a>
+<a class="btn" th:href="@{/admin/assinaturas}">Assinaturas</a>
+</div>
+<section class="grid">
+<article class="card"><div class="label">Personais cadastrados</div><div class="num" th:text="${totalPersonais}">0</div></article>
+<article class="card"><div class="label">Contas ativas</div><div class="num" th:text="${personaisAtivos}">0</div></article>
+<article class="card"><div class="label">MRR estimado</div><div class="money" th:text="${'R$ ' + #numbers.formatDecimal(mrrEstimado,1,2)}">R$ 0,00</div></article>
+<article class="card"><div class="label">Assinaturas ativas</div><div class="num ok" th:text="${assinaturasAtivas}">0</div></article>
+<article class="card"><div class="label">Em teste</div><div class="num" th:text="${assinaturasEmTeste}">0</div></article>
+<article class="card"><div class="label">Inadimplentes</div><div class="num warn" th:text="${assinaturasInadimplentes}">0</div></article>
+<article class="card"><div class="label">Vencidas</div><div class="num danger" th:text="${assinaturasVencidas}">0</div></article>
+<article class="card"><div class="label">Suspensas</div><div class="num danger" th:text="${assinaturasSuspensas}">0</div></article>
+<article class="card"><div class="label">Canceladas</div><div class="num" th:text="${assinaturasCanceladas}">0</div></article>
+</section>
+<section class="two section">
+<div class="card"><h2>Vencendo nos próximos 7 dias</h2><p class="muted" th:if="${#lists.isEmpty(vencendo7Dias)}">Nenhuma assinatura vencendo neste período.</p><div class="table-wrap" th:unless="${#lists.isEmpty(vencendo7Dias)}"><table><thead><tr><th>Personal</th><th>Plano</th><th>Vencimento</th></tr></thead><tbody><tr th:each="a:${vencendo7Dias}"><td th:text="${a.personal.nome}"></td><td th:text="${a.plano.nome}"></td><td th:text="${#temporals.format(a.dataVencimento,'dd/MM/yyyy')}"></td></tr></tbody></table></div></div>
+<div class="card"><h2>Vencendo nos próximos 30 dias</h2><p class="muted" th:if="${#lists.isEmpty(vencendo30Dias)}">Nenhuma assinatura vencendo neste período.</p><div class="table-wrap" th:unless="${#lists.isEmpty(vencendo30Dias)}"><table><thead><tr><th>Personal</th><th>Plano</th><th>Vencimento</th></tr></thead><tbody><tr th:each="a:${vencendo30Dias}"><td th:text="${a.personal.nome}"></td><td th:text="${a.plano.nome}"></td><td th:text="${#temporals.format(a.dataVencimento,'dd/MM/yyyy')}"></td></tr></tbody></table></div></div>
+</section>
+<section class="card section"><h2>Assinaturas que precisam de atenção</h2><p class="muted" th:if="${#lists.isEmpty(assinaturasAtencao)}">Nenhuma assinatura crítica no momento.</p><div class="table-wrap" th:unless="${#lists.isEmpty(assinaturasAtencao)}"><table><thead><tr><th>Personal</th><th>Plano</th><th>Status</th><th>Vencimento</th><th>Ação</th></tr></thead><tbody><tr th:each="a:${assinaturasAtencao}"><td th:text="${a.personal.nome}"></td><td th:text="${a.plano.nome}"></td><td><span class="badge" th:text="${a.status.descricao}"></span></td><td th:text="${a.dataVencimento != null ? #temporals.format(a.dataVencimento,'dd/MM/yyyy') : '-'}"></td><td><a th:href="@{/admin/assinaturas/{id}/editar(id=${a.id})}">Gerenciar</a></td></tr></tbody></table></div></section>
+<section class="two section">
+<div class="card"><h2>Distribuição por plano</h2><div class="table-wrap"><table><thead><tr><th>Plano</th><th>Assinaturas ativas</th></tr></thead><tbody><tr th:each="item:${planosComerciais}"><td th:text="${item[0].nome}"></td><td th:text="${item[1]}"></td></tr><tr th:if="${#lists.isEmpty(planosComerciais)}"><td colspan="2">Nenhum plano ativo.</td></tr></tbody></table></div></div>
+<div class="card"><h2>Cadastros recentes</h2><p class="muted" th:if="${#lists.isEmpty(personaisRecentes)}">Nenhum personal cadastrado ainda.</p><div class="table-wrap" th:unless="${#lists.isEmpty(personaisRecentes)}"><table><thead><tr><th>Personal</th><th>Plano</th><th>Status</th></tr></thead><tbody><tr th:each="p:${personaisRecentes}"><td th:text="${p.nome}"></td><td th:text="${p.plano != null ? p.plano.nome : 'Sem plano'}"></td><td th:text="${p.ativo ? 'Ativo':'Inativo'}"></td></tr></tbody></table></div></div>
+</section>
+</main></body></html>

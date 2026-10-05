@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pagamento PIX | TreinoFlow</title>
+<style>body{margin:0;background:#f3f6fb;color:#172554;font:14px Arial}.wrap{max-width:620px;margin:35px auto;padding:0 16px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;text-align:center}.qr{max-width:280px;width:100%;border:1px solid #e2e8f0;border-radius:10px;margin:18px auto}.code{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;text-align:left;word-break:break-all;border-radius:8px}.btn{display:inline-block;background:#2563eb;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none}.muted{color:#64748b}</style></head>
+<body><main class="wrap"><div class="card"><h1>Pagamento via PIX</h1><p class="muted" th:text="${'Cobrança ' + #temporals.format(cobranca.competencia,'MM/yyyy')}">Cobrança</p><h2 th:text="${'R$ ' + #numbers.formatDecimal(cobranca.valor,1,2)}">R$ 0,00</h2>
+<div th:if="${cobranca.qrCodeBase64 != null and !cobranca.qrCodeBase64.isBlank()}"><img class="qr" th:src="${'data:image/png;base64,' + cobranca.qrCodeBase64}" alt="QR Code PIX"><p>Escaneie o QR Code no aplicativo do seu banco.</p></div>
+<div th:if="${cobranca.qrCode != null and !cobranca.qrCode.isBlank()}"><p>Ou copie o código PIX:</p><div class="code" th:text="${cobranca.qrCode}"></div></div>
+<p th:if="${cobranca.paymentUrl != null and !cobranca.paymentUrl.isBlank()}"><a class="btn" target="_blank" rel="noopener" th:href="${cobranca.paymentUrl}">Abrir pagamento</a></p>
+<p th:if="${cobranca.qrCode == null or cobranca.qrCode.isBlank()}" class="muted">O PIX ainda não foi gerado para esta cobrança.</p>
+<p><a th:href="@{/assinatura/cobrancas}">← Voltar para cobranças</a></p></div></main></body></html>
