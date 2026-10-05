@@ -47,6 +47,7 @@ public class PortalAlunoController {
             model.addAttribute("treino", treino);
             model.addAttribute("exercicios", portal.listarExercicios(treino));
             model.addAttribute("ultimaExecucao", portal.ultimaExecucao(treino));
+            model.addAttribute("exerciciosConcluidos", portal.exerciciosConcluidosHoje(treino));
             model.addAttribute("token", token);
             return "portal/treino";
         } catch (IllegalArgumentException ex) {
@@ -64,7 +65,7 @@ public class PortalAlunoController {
         try {
             Aluno aluno = portal.buscarAlunoPorToken(token);
             portal.registrarConclusao(aluno, treinoId, nota, feedback, parametros);
-            ra.addFlashAttribute("sucesso", "Treino registrado como concluído. Obrigado pelo feedback!");
+            ra.addFlashAttribute("sucesso", "Progresso do treino salvo com sucesso.");
         } catch (IllegalArgumentException ex) {
             ra.addFlashAttribute("erro", ex.getMessage());
         }

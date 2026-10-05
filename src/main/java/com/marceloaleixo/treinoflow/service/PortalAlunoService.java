@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -86,16 +87,18 @@ public class PortalAlunoService {
             String carga = valor(parametros, "carga_" + item.getId());
             Integer repeticoes = inteiro(valor(parametros, "reps_" + item.getId()));
             String observacao = valor(parametros, "obs_" + item.getId());
-            if ((carga == null || carga.isBlank()) && repeticoes == null && (observacao == null || observacao.isBlank())) continue;
+            boolean concluido = checkboxMarcado(parametros, "concluido_" + item.getId());
+            boolean possuiDados = (carga != null && !carga.isBlank()) || repeticoes != null || (observacao != null && !observacao.isBlank());
+            var existente = execucoes.findByRegistroIdAndTreinoExercicioId(registro.getId(), item.getId());
+            if (!concluido && !possuiDados && existente.isEmpty()) continue;
 
-            ExecucaoExercicio execucao = execucoes.findByRegistroIdAndTreinoExercicioId(registro.getId(), item.getId())
-                    .orElseGet(ExecucaoExercicio::new);
+            ExecucaoExercicio execucao = existente.orElseGet(ExecucaoExercicio::new);
             execucao.setRegistro(registro);
             execucao.setTreinoExercicio(item);
             execucao.setCargaRealizada(carga);
             execucao.setRepeticoesRealizadas(repeticoes);
             execucao.setObservacao(observacao);
-            execucao.setConcluido(true);
+            execucao.setConcluido(concluido);
             execucoes.save(execucao);
         }
         return registro;
@@ -108,10 +111,32 @@ public class PortalAlunoService {
         return valor.isBlank() ? null : valor;
     }
 
+
+    private boolean checkboxMarcado(Map<String, String> parametros, String chave) {
+        String valor = parametros == null ? null : parametros.get(chave);
+        return valor != null && ("true".equalsIgnoreCase(valor) || "on".equalsIgnoreCase(valor));
+    }
+
     private Integer inteiro(String valor) {
         if (valor == null) return null;
         try { return Integer.valueOf(valor); }
         catch (NumberFormatException ex) { throw new IllegalArgumentException("Repetições realizadas devem ser números inteiros."); }
+    }
+
+
+    @Transactional(readOnly = true)
+    public Map<Long, Boolean> exerciciosConcluidosHoje(Treino treino) {
+        return registros.findByTreinoIdAndDataExecucao(treino.getId(), LocalDate.now())
+                .map(registro -> {
+                    Map<Long, Boolean> resultado = new HashMap<>();
+                    for (ExecucaoExercicio execucao : execucoes.findByRegistroId(registro.getId())) {
+                        if (execucao.getTreinoExercicio() != null && execucao.getTreinoExercicio().getId() != null) {
+                            resultado.put(execucao.getTreinoExercicio().getId(), execucao.isConcluido());
+                        }
+                    }
+                    return resultado;
+                })
+                .orElseGet(HashMap::new);
     }
 
     @Transactional(readOnly = true)

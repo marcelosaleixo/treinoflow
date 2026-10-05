@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface ExecucaoExercicioRepository extends JpaRepository<ExecucaoExercicio, Long> {
     Optional<ExecucaoExercicio> findByRegistroIdAndTreinoExercicioId(Long registroId, Long treinoExercicioId);
 
+    List<ExecucaoExercicio> findByRegistroId(Long registroId);
+
     @Query("""
         SELECT e FROM ExecucaoExercicio e
         JOIN FETCH e.registro r
