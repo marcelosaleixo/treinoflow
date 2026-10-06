@@ -23,4 +23,22 @@ public interface RegistroTreinoAlunoRepository extends JpaRepository<RegistroTre
 
     @Query("SELECT COUNT(r) FROM RegistroTreinoAluno r WHERE r.aluno.id = :alunoId AND r.dataExecucao = :data AND r.concluido = true")
     long contarConcluidosNoDia(@Param("alunoId") Long alunoId, @Param("data") LocalDate data);
+
+    @Query("""
+        SELECT r
+        FROM RegistroTreinoAluno r
+        JOIN FETCH r.aluno a
+        JOIN FETCH r.treino t
+        WHERE a.personal.id = :personalId
+          AND r.concluido = true
+          AND r.dataExecucao >= :inicio
+        ORDER BY r.dataExecucao DESC, r.dataRegistro DESC
+    """)
+    List<RegistroTreinoAluno> buscarConcluidosDoPersonalDesde(@Param("personalId") Long personalId,
+                                                               @Param("inicio") LocalDate inicio);
+
+    @Query("SELECT COUNT(r) FROM RegistroTreinoAluno r WHERE r.aluno.personal.id = :personalId AND r.concluido = true AND r.dataExecucao >= :inicio AND r.dataExecucao < :fim")
+    long countTreinosConcluidosNoPeriodo(@Param("personalId") Long personalId, @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+    @Query("SELECT COUNT(DISTINCT r.aluno.id) FROM RegistroTreinoAluno r WHERE r.aluno.personal.id = :personalId AND r.concluido = true AND r.dataExecucao >= :inicio AND r.dataExecucao < :fim")
+    long countAlunosComTreinoNoPeriodo(@Param("personalId") Long personalId, @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 }

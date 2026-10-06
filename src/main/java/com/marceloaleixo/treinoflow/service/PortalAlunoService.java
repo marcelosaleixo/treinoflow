@@ -28,13 +28,15 @@ public class PortalAlunoService {
     private final TreinoExercicioRepository itens;
     private final RegistroTreinoAlunoRepository registros;
     private final ExecucaoExercicioRepository execucoes;
+    private final com.marceloaleixo.treinoflow.repository.AgendamentoRepository agendamentos;
 
-    public PortalAlunoService(AlunoRepository alunos, TreinoRepository treinos, TreinoExercicioRepository itens, RegistroTreinoAlunoRepository registros, ExecucaoExercicioRepository execucoes) {
+    public PortalAlunoService(AlunoRepository alunos, TreinoRepository treinos, TreinoExercicioRepository itens, RegistroTreinoAlunoRepository registros, ExecucaoExercicioRepository execucoes, com.marceloaleixo.treinoflow.repository.AgendamentoRepository agendamentos) {
         this.alunos = alunos;
         this.treinos = treinos;
         this.itens = itens;
         this.registros = registros;
         this.execucoes = execucoes;
+        this.agendamentos = agendamentos;
     }
 
     public Aluno buscarAlunoPorToken(String token) {
@@ -55,6 +57,10 @@ public class PortalAlunoService {
     }
 
     @Transactional(readOnly = true)
+    public List<com.marceloaleixo.treinoflow.entity.Agendamento> listarAgendamentosProximos(Aluno aluno) {
+        return agendamentos.buscarProximosDoAluno(aluno.getId(), LocalDateTime.now(), LocalDateTime.now().plusDays(14));
+    }
+
     public List<Treino> listarTreinos(Aluno aluno) {
         return treinos.buscarLiberadosDoPortal(aluno.getId(), LocalDateTime.now());
     }
@@ -68,6 +74,32 @@ public class PortalAlunoService {
     @Transactional(readOnly = true)
     public List<TreinoExercicio> listarExercicios(Treino treino) {
         return itens.listarComExercicioPorTreino(treino.getId());
+    }
+
+    public void confirmarAgendamento(Aluno aluno, Long agendamentoId) {
+        com.marceloaleixo.treinoflow.entity.Agendamento agendamento = agendamentos.findByIdAndAlunoId(agendamentoId, aluno.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Agendamento não encontrado."));
+        if (!"AGENDADO".equals(agendamento.getStatus())) {
+            throw new IllegalArgumentException("Este agendamento não está aguardando confirmação.");
+        }
+        if (agendamento.getInicio().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Não é possível confirmar um agendamento que já passou.");
+        }
+        agendamento.setStatus("CONFIRMADO");
+        agendamentos.save(agendamento);
+    }
+
+    public void cancelarAgendamento(Aluno aluno, Long agendamentoId) {
+        com.marceloaleixo.treinoflow.entity.Agendamento agendamento = agendamentos.findByIdAndAlunoId(agendamentoId, aluno.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Agendamento não encontrado."));
+        if (!"AGENDADO".equals(agendamento.getStatus()) && !"CONFIRMADO".equals(agendamento.getStatus())) {
+            throw new IllegalArgumentException("Este agendamento não pode mais ser cancelado.");
+        }
+        if (agendamento.getInicio().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Não é possível cancelar um agendamento que já passou.");
+        }
+        agendamento.setStatus("CANCELADO");
+        agendamentos.save(agendamento);
     }
 
     public RegistroTreinoAluno registrarConclusao(Aluno aluno, Long treinoId, Integer nota, String feedback, Map<String, String> parametros) {

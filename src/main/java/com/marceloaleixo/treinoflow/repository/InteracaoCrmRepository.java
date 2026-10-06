@@ -51,12 +51,20 @@ public interface InteracaoCrmRepository extends JpaRepository<InteracaoCrm, Long
     @Query("select count(i) > 0 from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId and i.resultado = :resultado and i.dataProximaAcao is not null")
     boolean existeFollowUpPendente(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId, @Param("resultado") ResultadoCrm resultado);
 
+    @EntityGraph(attributePaths = {"aluno"})
+    @Query("select i from InteracaoCrm i where i.personal.id = :personalId and i.tipo = com.marceloaleixo.treinoflow.enums.TipoInteracaoCrm.RETENCAO and i.dataContato >= :inicio order by i.dataContato desc")
+    List<InteracaoCrm> buscarRetencoesDesde(@Param("personalId") Long personalId, @Param("inicio") LocalDateTime inicio);
+
     @Query("select count(i) > 0 from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId and i.dataContato >= :inicio")
     boolean existeContatoDesde(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId, @Param("inicio") LocalDateTime inicio);
 
 
     @Query("select max(i.dataContato) from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId")
     LocalDateTime ultimaInteracao(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId);
+
+    @EntityGraph(attributePaths = {"aluno"})
+    @Query("select i from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId and i.dataContato > :inicio order by i.dataContato desc")
+    List<InteracaoCrm> buscarDepois(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId, @Param("inicio") LocalDateTime inicio);
 
     @Query("select count(a) from Aluno a where a.personal.id = :personalId and a.status = 'ATIVO' and not exists (select i.id from InteracaoCrm i where i.aluno.id = a.id and i.dataContato >= :inicio)")
     long countAlunosSemContatoDesde(@Param("personalId") Long personalId, @Param("inicio") LocalDateTime inicio);

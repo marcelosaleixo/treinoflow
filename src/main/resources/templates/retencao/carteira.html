@@ -10,7 +10,7 @@
 <body>
 <header class="top"><div class="top-inner"><div><div class="brand">TreinoFlow</div><div class="hello" th:text="'Carteira inteligente · ' + ${personal.nome}">Carteira inteligente</div></div><nav class="nav"><a th:href="@{/dashboard}">Dashboard</a><a th:href="@{/crm}">CRM</a><a th:href="@{/retencao}">Retenção</a><form th:action="@{/logout}" method="post" style="display:inline"><button class="nav-logout" type="submit">Sair</button></form></nav></div></header>
 <main class="wrap">
-<section class="intro"><div><h1>Carteira Inteligente</h1><div class="muted">Priorize sua carteira pelo nível de risco e pelo momento de cada aluno.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn soft" th:href="@{/retencao/analytics}">← Analytics</a><a class="btn" th:href="@{/retencao/acoes-inteligentes}">Ações inteligentes</a></div></section>
+<section class="intro"><div><h1>Carteira Inteligente</h1><div class="muted">Priorize sua carteira pelo nível de risco e pelo momento de cada aluno.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn soft" th:href="@{/retencao/analytics}">← Analytics</a><a class="btn" th:href="@{/retencao/acoes-inteligentes}">Ações inteligentes</a><a class="btn soft" th:href="@{/retencao/risco}">Score de risco</a></div></section>
 <section class="stats">
 <article class="stat"><small>Total ativo</small><div class="number" th:text="${carteira.total}">0</div><small>Alunos na carteira</small></article>
 <article class="stat"><small>Saudáveis</small><div class="number green" th:text="${carteira.saudaveis}">0</div><small>Risco 0–24</small></article>

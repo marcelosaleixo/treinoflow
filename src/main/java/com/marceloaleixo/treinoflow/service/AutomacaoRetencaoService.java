@@ -27,15 +27,18 @@ public class AutomacaoRetencaoService {
     private final InteracaoCrmRepository interacoes;
     private final com.marceloaleixo.treinoflow.repository.UsuarioPersonalRepository personais;
     private final AlunoRepository alunos;
+    private final RetencaoFaltasService retencaoFaltas;
 
     public AutomacaoRetencaoService(PlanoAcaoAlunoService planoAcao,
                                     InteracaoCrmRepository interacoes,
                                     com.marceloaleixo.treinoflow.repository.UsuarioPersonalRepository personais,
-                                    AlunoRepository alunos) {
+                                    AlunoRepository alunos,
+                                    RetencaoFaltasService retencaoFaltas) {
         this.planoAcao = planoAcao;
         this.interacoes = interacoes;
         this.personais = personais;
         this.alunos = alunos;
+        this.retencaoFaltas = retencaoFaltas;
     }
 
     @Transactional
@@ -81,6 +84,7 @@ public class AutomacaoRetencaoService {
         personais.findByPerfilAndAtivoTrue("PERSONAL").forEach(personal -> {
             try {
                 gerarParaPersonal(personal.getId());
+                retencaoFaltas.gerarAcoes(personal.getId());
             } catch (RuntimeException ignored) {
                 // Uma falha em um personal não deve interromper a rotina dos demais.
             }

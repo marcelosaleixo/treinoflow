@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada de Retenção</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;color:#172033}.wrap{max-width:1100px;margin:30px auto;padding:0 16px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:22px 0}.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 18px #0000000d}.number{font-size:28px;font-weight:700;margin-top:8px}.muted{color:#6b7280}.btn{border:0;border-radius:9px;padding:11px 15px;background:#172033;color:#fff;cursor:pointer}.ok{color:#087443}.warn{color:#9a6700}@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.cards{grid-template-columns:1fr}.top{align-items:flex-start}}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <div><h1>Jornada automática de retenção</h1><p class="muted">Acompanhe os alunos que entraram em uma sequência automática e veja o resultado.</p></div>
+        <form method="post" th:action="@{/assistente/jornada/processar}"><button class="btn" type="submit">Processar agora</button></form>
+    </div>
+    <div th:if="${sucesso}" class="card ok" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="card warn" th:text="${erro}"></div>
+    <div class="cards">
+        <div class="card"><div class="muted">Jornadas ativas</div><div class="number" th:text="${resumo.ativas}">0</div></div>
+        <div class="card"><div class="muted">Recuperadas</div><div class="number ok" th:text="${resumo.recuperadas}">0</div></div>
+        <div class="card"><div class="muted">Renovadas</div><div class="number ok" th:text="${resumo.renovadas}">0</div></div>
+        <div class="card"><div class="muted">Canceladas</div><div class="number warn" th:text="${resumo.canceladas}">0</div></div>
+        <div class="card"><div class="muted">Taxa de recuperação</div><div class="number" th:text="${#numbers.formatDecimal(resumo.taxaRecuperacao,1,1) + '%'}">0%</div></div>
+    </div>
+    <div class="card">
+        <h2>Como funciona</h2>
+        <p>1. O risco é identificado pela inteligência do TreinoFlow.</p>
+        <p>2. A primeira ação automática inicia a jornada.</p>
+        <p>3. Se não houver resposta, a jornada pode realizar novos contatos nos próximos dias.</p>
+        <p>4. Se houver recuperação, renovação ou cancelamento, a sequência é encerrada.</p>
+        <p>5. Se o aluno responder por outro canal registrado no CRM, a sequência também é interrompida para evitar insistência automática.</p>
+    </div>
+</div>
+</body>
+</html>

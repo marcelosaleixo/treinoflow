@@ -29,6 +29,7 @@ public class PortalAlunoController {
             model.addAttribute("aluno", aluno);
             model.addAttribute("treinos", portal.listarTreinos(aluno));
             model.addAttribute("historico", portal.historico(aluno));
+            model.addAttribute("agendamentos", portal.listarAgendamentosProximos(aluno));
             model.addAttribute("evolucao", evolucao.montar(aluno));
             model.addAttribute("token", token);
             return "portal/index";
@@ -36,6 +37,32 @@ public class PortalAlunoController {
             model.addAttribute("erro", ex.getMessage());
             return "portal/indisponivel";
         }
+    }
+
+    @PostMapping("/{token}/agendamentos/{agendamentoId}/confirmar")
+    public String confirmarAgendamento(@PathVariable String token, @PathVariable Long agendamentoId,
+                                       RedirectAttributes ra) {
+        try {
+            Aluno aluno = portal.buscarAlunoPorToken(token);
+            portal.confirmarAgendamento(aluno, agendamentoId);
+            ra.addFlashAttribute("sucesso", "Treino confirmado com sucesso. Nos vemos lá! 💪");
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("erro", ex.getMessage());
+        }
+        return "redirect:/portal/" + token;
+    }
+
+    @PostMapping("/{token}/agendamentos/{agendamentoId}/cancelar")
+    public String cancelarAgendamento(@PathVariable String token, @PathVariable Long agendamentoId,
+                                      RedirectAttributes ra) {
+        try {
+            Aluno aluno = portal.buscarAlunoPorToken(token);
+            portal.cancelarAgendamento(aluno, agendamentoId);
+            ra.addFlashAttribute("sucesso", "Agendamento cancelado. Se precisar, combine um novo horário com seu Personal.");
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("erro", ex.getMessage());
+        }
+        return "redirect:/portal/" + token;
     }
 
     @GetMapping("/{token}/treinos/{treinoId}")
