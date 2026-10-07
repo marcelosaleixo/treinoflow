@@ -17,9 +17,11 @@ public class RecomendacaoAdaptativaService {
     private static final int DIAS_HISTORICO = 90;
     private static final int MIN_RESULTADOS = 3;
     private final AcaoAssistenteRepository repository;
+    private final OtimizacaoRetencaoService otimizacao;
 
-    public RecomendacaoAdaptativaService(AcaoAssistenteRepository repository) {
+    public RecomendacaoAdaptativaService(AcaoAssistenteRepository repository, OtimizacaoRetencaoService otimizacao) {
         this.repository = repository;
+        this.otimizacao = otimizacao;
     }
 
     @Transactional(readOnly = true)
@@ -45,11 +47,18 @@ public class RecomendacaoAdaptativaService {
                     "ALTA");
         }
 
+        var aprendida = otimizacao.estrategiaPara(risco.score(), personalId);
+        if (aprendida != null) {
+            return new Recomendacao(aprendida.acao(),
+                    "Estratégia aprendida com " + aprendida.amostra() + " resultados finais da mesma faixa de risco, com taxa de sucesso de " +
+                            String.format(java.util.Locale.US, "%.1f", aprendida.taxa()) + "%.",
+                    aprendida.confianca());
+        }
+
         TipoAcaoAssistente padrao = risco.telefone() != null && !risco.telefone().isBlank()
                 ? TipoAcaoAssistente.WHATSAPP : TipoAcaoAssistente.FOLLOW_UP;
         return new Recomendacao(padrao.getDescricao(),
-                "Ainda não há pelo menos " + MIN_RESULTADOS + " resultados finais na mesma faixa de risco. " +
-                        "A recomendação usa o canal disponível, sem assumir que ele é mais eficaz.",
+                "Ainda não há histórico suficiente para uma estratégia aprendida. A recomendação usa o canal disponível.",
                 "BAIXA");
     }
 

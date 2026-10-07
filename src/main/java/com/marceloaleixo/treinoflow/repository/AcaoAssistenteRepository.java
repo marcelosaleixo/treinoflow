@@ -38,6 +38,9 @@ public interface AcaoAssistenteRepository extends JpaRepository<AcaoAssistente, 
     @Query("select a from AcaoAssistente a join fetch a.aluno where a.personal.id = :personalId and a.executadaEm >= :inicio and a.executadaEm <= :fim and a.automatica = :automatica order by a.executadaEm desc")
     List<AcaoAssistente> buscarPeriodo(@Param("personalId") Long personalId, @Param("inicio") LocalDateTime inicio, @Param("fim") LocalDateTime fim, @Param("automatica") boolean automatica);
 
+    @Query("select a from AcaoAssistente a join fetch a.aluno where a.personal.id = :personalId and a.experimentoId = :experimentoId order by a.executadaEm desc")
+    List<AcaoAssistente> buscarPorExperimento(@Param("personalId") Long personalId, @Param("experimentoId") Long experimentoId);
+
     @Query("select a from AcaoAssistente a join fetch a.aluno where a.id = :id and a.personal.id = :personalId")
     Optional<AcaoAssistente> buscarPorIdDoPersonal(@Param("id") Long id, @Param("personalId") Long personalId);
 }

@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -16,10 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PortalAlunoController {
     private final PortalAlunoService portal;
     private final EvolucaoAlunoService evolucao;
+    private final com.marceloaleixo.treinoflow.service.ProgressaoInteligenteService progressao;
 
-    public PortalAlunoController(PortalAlunoService portal, EvolucaoAlunoService evolucao) {
+    public PortalAlunoController(PortalAlunoService portal, EvolucaoAlunoService evolucao, com.marceloaleixo.treinoflow.service.ProgressaoInteligenteService progressao) {
         this.portal = portal;
         this.evolucao = evolucao;
+        this.progressao = progressao;
     }
 
     @GetMapping("/{token}")
@@ -75,11 +78,44 @@ public class PortalAlunoController {
             model.addAttribute("exercicios", portal.listarExercicios(treino));
             model.addAttribute("ultimaExecucao", portal.ultimaExecucao(treino));
             model.addAttribute("exerciciosConcluidos", portal.exerciciosConcluidosHoje(treino));
+            model.addAttribute("seriesHoje", portal.seriesHoje(treino));
+            model.addAttribute("ultimaSerieAnterior", portal.ultimaSerieAnteriorPorExercicio(treino, aluno));
+            Map<Long, com.marceloaleixo.treinoflow.dto.RecomendacaoProgressaoView> recomendacoesProgressao = new HashMap<>();
+            for (var item : portal.listarExercicios(treino)) {
+                recomendacoesProgressao.put(item.getId(), progressao.recomendar(item, aluno));
+            }
+            model.addAttribute("recomendacoesProgressao", recomendacoesProgressao);
             model.addAttribute("token", token);
             return "portal/treino";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("erro", ex.getMessage());
             return "portal/indisponivel";
+        }
+    }
+
+    @PostMapping("/{token}/treinos/{treinoId}/exercicios/{treinoExercicioId}/series")
+    @ResponseBody
+    public Map<String, Object> registrarSerie(@PathVariable String token,
+                                               @PathVariable Long treinoId,
+                                               @PathVariable Long treinoExercicioId,
+                                               @RequestParam Integer numeroSerie,
+                                               @RequestParam(required = false) String carga,
+                                               @RequestParam(required = false) Integer repeticoes,
+                                               @RequestParam(required = false) Integer rpe,
+                                               @RequestParam(required = false) String observacao) {
+        Map<String, Object> resposta = new HashMap<>();
+        try {
+            Aluno aluno = portal.buscarAlunoPorToken(token);
+            var serie = portal.registrarSerie(aluno, treinoId, treinoExercicioId, numeroSerie, carga, repeticoes, rpe, observacao);
+            resposta.put("sucesso", true);
+            resposta.put("serie", serie.getNumeroSerie());
+            resposta.put("rpe", serie.getRpe());
+            resposta.put("mensagem", "Série " + serie.getNumeroSerie() + " registrada.");
+            return resposta;
+        } catch (IllegalArgumentException ex) {
+            resposta.put("sucesso", false);
+            resposta.put("mensagem", ex.getMessage());
+            return resposta;
         }
     }
 

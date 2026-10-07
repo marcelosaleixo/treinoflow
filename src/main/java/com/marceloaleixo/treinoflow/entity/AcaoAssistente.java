@@ -56,6 +56,12 @@ public class AcaoAssistente {
     @Column(name = "jornada_id", length = 36)
     private String jornadaId;
 
+    @Column(name = "experimento_id")
+    private Long experimentoId;
+
+    @Column(name = "experimento_variante", length = 1)
+    private String experimentoVariante;
+
     @Column(name = "etapa_jornada", nullable = false)
     private int etapaJornada = 0;
 
@@ -94,6 +100,10 @@ public class AcaoAssistente {
     public void setAutomatica(boolean automatica) { this.automatica = automatica; }
     public String getRegraAutomacao() { return regraAutomacao; }
     public void setRegraAutomacao(String regraAutomacao) { this.regraAutomacao = regraAutomacao; }
+    public Long getExperimentoId() { return experimentoId; }
+    public void setExperimentoId(Long experimentoId) { this.experimentoId = experimentoId; }
+    public String getExperimentoVariante() { return experimentoVariante; }
+    public void setExperimentoVariante(String experimentoVariante) { this.experimentoVariante = experimentoVariante; }
     public String getJornadaId() { return jornadaId; }
     public void setJornadaId(String jornadaId) { this.jornadaId = jornadaId; }
     public int getEtapaJornada() { return etapaJornada; }

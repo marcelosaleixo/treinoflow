@@ -65,8 +65,8 @@ public class ResultadoAcoesAssistenteService {
     }
 
     @Transactional
-    public void registrarAcaoExecutada(Long personalId, Long alunoId, int score, String descricao,
-                                       String mensagem, com.marceloaleixo.treinoflow.enums.TipoAcaoAssistente tipo) {
+    public AcaoAssistente registrarAcaoExecutada(Long personalId, Long alunoId, int score, String descricao,
+                                                  String mensagem, com.marceloaleixo.treinoflow.enums.TipoAcaoAssistente tipo) {
         UsuarioPersonal personal = personais.findById(personalId)
                 .orElseThrow(() -> new IllegalArgumentException("Personal não encontrado."));
         Aluno aluno = alunos.findByIdAndPersonalId(alunoId, personalId)
@@ -80,6 +80,7 @@ public class ResultadoAcoesAssistenteService {
         acao.setMensagem(mensagem);
         acao.setResultado(ResultadoCrm.EM_ACOMPANHAMENTO);
         repository.save(acao);
+        return acao;
     }
 
     private long contar(List<AcaoAssistente> acoes, ResultadoCrm resultado) {

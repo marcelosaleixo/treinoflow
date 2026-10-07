@@ -38,19 +38,22 @@ public class JornadaRetencaoService {
     private final ScoreRiscoAlunoService scoreService;
     private final WhatsAppNotificacaoService whatsapp;
     private final UsuarioPersonalRepository personais;
+    private final MensagemInteligenteService mensagens;
 
     public JornadaRetencaoService(AcaoAssistenteRepository acoes,
                                   InteracaoCrmRepository interacoes,
                                   AutomacaoRetencaoConfigRepository configs,
                                   ScoreRiscoAlunoService scoreService,
                                   WhatsAppNotificacaoService whatsapp,
-                                  UsuarioPersonalRepository personais) {
+                                  UsuarioPersonalRepository personais,
+                                  MensagemInteligenteService mensagens) {
         this.acoes = acoes;
         this.interacoes = interacoes;
         this.configs = configs;
         this.scoreService = scoreService;
         this.whatsapp = whatsapp;
         this.personais = personais;
+        this.mensagens = mensagens;
     }
 
     /** Agenda o primeiro passo da jornada na própria ação automática criada pela Etapa 75. */
@@ -140,7 +143,7 @@ public class JornadaRetencaoService {
     }
 
     private void executarSegundoContato(Long personalId, AcaoAssistente original, ScoreRiscoAlunoView risco) {
-        String mensagem = mensagem(risco, "Só passando para reforçar que podemos ajustar seu treino e sua rotina para você não perder o ritmo. 💪");
+        String mensagem = mensagens.escolher(personalId, risco, TipoAcaoAssistente.WHATSAPP).mensagem();
         if (risco.telefone() != null && !risco.telefone().isBlank()) {
             whatsapp.enviar(risco.telefone(), mensagem);
             registrarContato(personalId, original, mensagem, "Jornada · segundo contato WhatsApp");
@@ -151,7 +154,8 @@ public class JornadaRetencaoService {
     }
 
     private void executarUltimoContato(Long personalId, AcaoAssistente original, ScoreRiscoAlunoView risco) {
-        String mensagem = mensagem(risco, "Esta é minha última mensagem desta sequência. Se quiser retomar ou ajustar seu plano, me chama por aqui e eu te ajudo. 🤝");
+        String base = mensagens.escolher(personalId, risco, TipoAcaoAssistente.WHATSAPP).mensagem();
+        String mensagem = base + "\n\nEsta é a última mensagem desta sequência. Se quiser retomar ou ajustar seu plano, me chama por aqui e eu te ajudo. 🤝";
         if (risco.telefone() != null && !risco.telefone().isBlank()) {
             whatsapp.enviar(risco.telefone(), mensagem);
             registrarContato(personalId, original, mensagem, "Jornada · último contato WhatsApp");

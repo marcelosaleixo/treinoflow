@@ -1,9 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title th:text="${treino.nome} + ' | TreinoFlow'">Treino</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172554}.top{background:#172554;color:#fff;padding:20px}.wrap{max-width:980px;margin:0 auto;padding:24px 16px}.back{display:inline-block;margin-bottom:16px;color:#2563eb;text-decoration:none;font-weight:700}.hero,.panel{background:#fff;border-radius:18px;padding:22px;box-shadow:0 8px 24px #17255412;margin-bottom:18px}.hero{background:linear-gradient(135deg,#172554,#2563eb);color:#fff}.exercise{padding:18px 0;border-bottom:1px solid #e2e8f0}.exercise:last-child{border-bottom:0}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.tag{background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 9px;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-weight:700;margin-bottom:6px}input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit}textarea{min-height:80px}.btn{border:0;cursor:pointer;padding:12px 16px;border-radius:10px;background:#2563eb;color:#fff;font-weight:700}.success{padding:12px;background:#dcfce7;color:#166534;border-radius:10px;margin-bottom:16px}.error{padding:12px;background:#fee2e2;color:#991b1b;border-radius:10px;margin-bottom:16px}.muted{color:#64748b}.tracking{margin-top:12px;padding:14px;background:#f8fafc;border-radius:12px}.tracking h4{margin:0 0 12px}.exercise-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.check-wrap{display:flex;align-items:center;gap:8px;white-space:nowrap;background:#eff6ff;color:#1d4ed8;padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer}.check-wrap input{width:20px;height:20px;margin:0;accent-color:#2563eb}.done{background:#dcfce7;color:#166534;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800}.exercise.is-done{border-left:4px solid #22c55e;padding-left:14px}.save-note{margin-top:12px;color:#64748b;font-size:13px}.field{margin-top:10px}@media(max-width:650px){.grid{grid-template-columns:1fr}.exercise-head{display:block}.check-wrap{margin-top:10px;display:inline-flex}}
-</style></head><body><header class="top"><strong>TreinoFlow</strong></header><main class="wrap"><a class="back" th:href="@{/portal/{token}(token=${token})}">← Voltar para meu portal</a><section class="hero"><h1 th:text="${treino.nome}">Treino</h1><p th:text="${treino.descricao ?: 'Treino personalizado'}"></p></section><div class="success" th:if="${sucesso}" th:text="${sucesso}"></div><div class="error" th:if="${erro}" th:text="${erro}"></div>
-<section class="panel"><h2>Exercícios</h2><form method="post" th:action="@{/portal/{token}/treinos/{id}/concluir(token=${token},id=${treino.id})}">
-<article class="exercise" th:each="item : ${exercicios}" th:classappend="${exerciciosConcluidos[item.id] == true ? ' is-done' : ''}"><div class="exercise-head"><div><h3 th:text="${item.ordem + '. ' + item.exercicio.nome}">1. Agachamento</h3></div><label class="check-wrap" th:for="${'concluido_' + item.id}"><input type="checkbox" th:id="${'concluido_' + item.id}" th:name="${'concluido_' + item.id}" value="true" th:checked="${exerciciosConcluidos[item.id] == true}"> <span>✓ Exercício concluído</span></label></div><div class="meta"><span class="tag" th:text="${item.series != null ? item.series + ' séries' : 'Séries conforme orientação'}"></span><span class="tag" th:text="${item.repeticoes ?: 'Repetições conforme orientação'}"></span><span class="tag" th:if="${item.carga != null and !item.carga.isBlank()}" th:text="${'Prescrição: ' + item.carga}"></span><span class="tag" th:if="${item.descansoSegundos != null}" th:text="${'Descanso: ' + item.descansoSegundos + 's'}"></span></div><p class="muted" th:if="${item.exercicio.descricao}" th:text="${item.exercicio.descricao}"></p><p th:if="${item.observacao}" th:text="${'Orientação: ' + item.observacao}"></p><a th:if="${item.exercicio.urlVideo != null and !item.exercicio.urlVideo.isBlank()}" th:href="${item.exercicio.urlVideo}" target="_blank" rel="noopener">▶ Ver vídeo do exercício</a>
-<div class="tracking"><h4>Registrar execução</h4><div class="grid"><div><label th:for="${'carga_' + item.id}">Carga realizada</label><input th:id="${'carga_' + item.id}" th:name="${'carga_' + item.id}" placeholder="Ex.: 40 kg"></div><div><label th:for="${'reps_' + item.id}">Repetições realizadas</label><input type="number" min="0" max="999" th:id="${'reps_' + item.id}" th:name="${'reps_' + item.id}" placeholder="Ex.: 12"></div></div><div class="field"><label th:for="${'obs_' + item.id}">Observação</label><textarea th:id="${'obs_' + item.id}" th:name="${'obs_' + item.id}" maxlength="500" placeholder="Como foi este exercício?"></textarea></div></div></article>
-<div class="tracking"><h3>Como foi o treino?</h3><p class="muted">Registre sua avaliação e feedback para seu Personal acompanhar sua evolução.</p><div class="grid"><div><label for="nota">Nota do treino (1 a 5)</label><select id="nota" name="nota"><option value="">Não informar</option><option value="1">1 — Muito difícil</option><option value="2">2 — Difícil</option><option value="3">3 — Bom</option><option value="4">4 — Muito bom</option><option value="5">5 — Excelente</option></select></div><div><label for="feedback">Feedback geral</label><textarea id="feedback" name="feedback" maxlength="1000" placeholder="Como você se sentiu? Alguma dor ou dificuldade?"></textarea></div></div><div class="save-note">Marque cada exercício conforme concluir. Você pode salvar carga, repetições e observações junto com o progresso.</div><button class="btn" type="submit" style="margin-top:14px">✓ Salvar progresso do treino</button></div></form></section></main></body></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="csrf-token" th:content="${_csrf.token}">
+    <meta name="csrf-header" th:content="${_csrf.headerName}">
+    <title th:text="${treino.nome} + ' | TreinoFlow'">Treino</title>
+    <style>
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172554}
+        .top{background:#172554;color:#fff;padding:14px 18px;position:sticky;top:0;z-index:20}
+        .top-inner{max-width:980px;margin:auto;display:flex;justify-content:space-between;align-items:center}
+        .wrap{max-width:980px;margin:0 auto;padding:18px 16px 40px}
+        .back{display:inline-block;margin-bottom:14px;color:#2563eb;text-decoration:none;font-weight:800}
+        .hero,.panel{background:#fff;border-radius:20px;padding:22px;box-shadow:0 8px 24px #17255412;margin-bottom:18px}
+        .hero{background:linear-gradient(135deg,#172554,#2563eb);color:#fff}
+        .hero h1{margin:0 0 7px;font-size:clamp(26px,5vw,40px)}
+        .hero p{margin:0;opacity:.9}
+        .progress-row{display:flex;justify-content:space-between;gap:12px;margin-top:18px;font-size:14px;font-weight:800}
+        .progress{height:10px;background:#ffffff33;border-radius:999px;overflow:hidden;margin-top:8px}
+        .progress>span{display:block;height:100%;background:#fff;border-radius:999px;transition:width .3s}
+        .success{padding:12px;background:#dcfce7;color:#166534;border-radius:12px;margin-bottom:16px}
+        .error{padding:12px;background:#fee2e2;color:#991b1b;border-radius:12px;margin-bottom:16px}
+        .exercise{padding:20px 0;border-bottom:1px solid #e2e8f0;scroll-margin-top:80px}
+        .exercise:last-child{border-bottom:0}
+        .exercise.is-done{border-left:4px solid #22c55e;padding-left:16px}
+        .exercise-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+        .exercise-number{font-size:13px;font-weight:900;color:#2563eb;text-transform:uppercase;letter-spacing:.05em}
+        .exercise h3{margin:4px 0 0;font-size:21px}
+        .check-wrap{display:flex;align-items:center;gap:8px;white-space:nowrap;background:#eff6ff;color:#1d4ed8;padding:9px 12px;border-radius:10px;font-weight:800}
+        .check-wrap input{width:20px;height:20px;margin:0;accent-color:#2563eb}
+        .done{background:#dcfce7;color:#166534;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800}
+        .meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+        .tag{background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:6px 9px;font-size:13px}
+        .muted{color:#64748b}
+        .video{display:inline-flex;margin:4px 0 12px;color:#2563eb;font-weight:800;text-decoration:none}
+        .tracking{margin-top:12px;padding:16px;background:#f8fafc;border-radius:16px}
+        .tracking-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+        .tracking h4{margin:0}
+        .previous{background:#eef6ff;border:1px solid #dbeafe;padding:12px;border-radius:12px;margin-bottom:14px}
+        .previous strong{color:#1d4ed8}
+        .previous button{border:0;background:#dbeafe;color:#1d4ed8;border-radius:8px;padding:7px 10px;font-weight:800;cursor:pointer;margin-top:8px}
+        .smart{padding:13px 14px;border-radius:14px;margin-bottom:14px;border:1px solid #bfdbfe;background:#f8fbff}
+        .smart.PROGREDIR{background:#ecfdf5;border-color:#bbf7d0}.smart.ATENCAO{background:#fff7ed;border-color:#fed7aa}.smart.CONSOLIDAR{background:#fff7ed;border-color:#fed7aa}
+        .smart-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:5px}
+        .smart-badge{font-size:11px;font-weight:900;letter-spacing:.04em;padding:5px 8px;border-radius:999px;background:#dbeafe;color:#1d4ed8}
+        .smart.PROGREDIR .smart-badge{background:#dcfce7;color:#166534}.smart.ATENCAO .smart-badge,.smart.CONSOLIDAR .smart-badge{background:#ffedd5;color:#9a3412}
+        .smart strong{font-size:14px}.smart p{margin:4px 0;font-size:13px;line-height:1.45;color:#334155}.smart .smart-action{font-weight:800;color:#172554}
+
+        .series-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+        .series-pill{min-width:42px;text-align:center;padding:7px 9px;border-radius:999px;background:#e2e8f0;color:#475569;font-size:13px;font-weight:900}
+        .series-pill.done{background:#dcfce7;color:#166534}
+        .series-status{font-size:14px;font-weight:800;margin-bottom:10px}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        label{display:block;font-weight:800;margin-bottom:6px}
+        input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:#fff}
+        input:focus,select:focus,textarea:focus{outline:3px solid #dbeafe;border-color:#2563eb}
+        textarea{min-height:76px;resize:vertical}
+        .field{margin-top:10px}
+        .rpe-row{display:flex;gap:5px;flex-wrap:wrap}
+        .rpe-row label{margin:0}
+        .rpe-row input{display:none}
+        .rpe-row span{display:inline-flex;align-items:center;justify-content:center;width:35px;height:35px;border-radius:9px;background:#e2e8f0;color:#334155;cursor:pointer;font-weight:900}
+        .rpe-row input:checked+span{background:#2563eb;color:#fff}
+        .btn{border:0;cursor:pointer;padding:13px 16px;border-radius:11px;background:#2563eb;color:#fff;font-weight:900}
+        .btn:disabled{opacity:.55;cursor:not-allowed}
+        .btn-secondary{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8}
+        .series-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+        .rest{display:none;background:#172554;color:#fff;border-radius:16px;padding:16px;margin-top:14px;text-align:center}
+        .rest.active{display:block}
+        .rest-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.75;font-weight:900}
+        .timer{font-size:42px;font-weight:900;line-height:1;margin:8px 0}
+        .rest-text{font-size:13px;opacity:.85}
+        .rest-actions{display:flex;justify-content:center;gap:8px;margin-top:10px}
+        .rest-actions button{border:1px solid #ffffff55;background:#ffffff12;color:#fff;border-radius:9px;padding:8px 11px;font-weight:800;cursor:pointer}
+        .nav-exercise{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+        .nav-exercise a{color:#2563eb;text-decoration:none;font-weight:900}
+        .save-note{margin-top:12px;color:#64748b;font-size:13px}
+        .finish{position:sticky;bottom:12px;z-index:15;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;box-shadow:0 12px 30px #1725541c}
+        .finish-grid{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+        .toast{position:fixed;right:16px;bottom:16px;z-index:50;background:#172554;color:#fff;padding:12px 15px;border-radius:12px;box-shadow:0 10px 30px #0003;display:none;max-width:320px}
+        .toast.show{display:block}
+        @media(max-width:650px){
+            .wrap{padding:14px 12px 32px}.hero,.panel{padding:17px;border-radius:16px}
+            .exercise-head{display:block}.check-wrap{margin-top:12px;display:inline-flex}
+            .grid,.finish-grid{grid-template-columns:1fr}.exercise h3{font-size:19px}
+            .timer{font-size:50px}.btn{width:100%}.series-actions{display:grid;grid-template-columns:1fr}
+            .top{padding:12px 14px}
+        }
+    </style>
+</head>
+<body>
+<header class="top"><div class="top-inner"><strong>TreinoFlow</strong><span th:text="${aluno.nome}">Aluno</span></div></header>
+<main class="wrap">
+    <a class="back" th:href="@{/portal/{token}(token=${token})}">← Meus treinos</a>
+
+    <section class="hero">
+        <div style="font-size:13px;font-weight:900;opacity:.8;text-transform:uppercase;letter-spacing:.06em">Treino personalizado</div>
+        <h1 th:text="${treino.nome}">Treino A — Inferiores</h1>
+        <p th:text="${treino.descricao ?: 'Treino personalizado'}">Treino personalizado</p>
+        <div class="progress-row"><span id="progressText">0 de 0 exercícios</span><span id="progressPercent">0%</span></div>
+        <div class="progress"><span id="progressBar" style="width:0%"></span></div>
+    </section>
+
+    <div class="success" th:if="${sucesso}" th:text="${sucesso}"></div>
+    <div class="error" th:if="${erro}" th:text="${erro}"></div>
+
+    <section class="panel">
+        <h2 style="margin-top:0">Exercícios</h2>
+        <p class="muted" style="margin-top:-6px">Registre cada série. Ao concluir uma série, o descanso configurado pelo Personal inicia automaticamente.</p>
+
+        <article class="exercise"
+                 th:each="item,stat : ${exercicios}"
+                 th:id="${'exercicio_' + item.id}"
+                 th:attr="data-item-id=${item.id},data-total-series=${item.series != null && item.series > 0 ? item.series : 1},data-rest=${item.descansoSegundos != null && item.descansoSegundos > 0 ? item.descansoSegundos : 0}"
+                 th:classappend="${exerciciosConcluidos[item.id] == true ? ' is-done' : ''}">
+            <div class="exercise-head">
+                <div>
+                    <div class="exercise-number" th:text="${'Exercício ' + item.ordem}">Exercício 1</div>
+                    <h3 th:text="${item.exercicio.nome}">Agachamento</h3>
+                </div>
+                <label class="check-wrap">
+                    <input type="checkbox" disabled th:checked="${exerciciosConcluidos[item.id] == true}">
+                    <span class="done-label" th:text="${exerciciosConcluidos[item.id] == true ? '✓ Exercício concluído' : 'Aguardando séries'}">Aguardando séries</span>
+                </label>
+            </div>
+
+            <div class="meta">
+                <span class="tag" th:text="${item.series != null ? item.series + ' séries' : '1 série'}">4 séries</span>
+                <span class="tag" th:text="${item.repeticoes ?: 'Repetições conforme orientação'}">10 - 12</span>
+                <span class="tag" th:if="${item.carga != null and !item.carga.isBlank()}" th:text="${'Prescrição: ' + item.carga}">Prescrição: 40 kg</span>
+                <span class="tag" th:text="${item.descansoSegundos != null && item.descansoSegundos > 0 ? 'Descanso: ' + item.descansoSegundos + 's' : 'Descanso livre'}">Descanso: 90s</span>
+            </div>
+
+            <p class="muted" th:if="${item.exercicio.descricao}" th:text="${item.exercicio.descricao}"></p>
+            <p th:if="${item.observacao}" th:text="${'💡 Orientação do Personal: ' + item.observacao}"></p>
+            <a class="video" th:if="${item.exercicio.urlVideo != null and !item.exercicio.urlVideo.isBlank()}" th:href="${item.exercicio.urlVideo}" target="_blank" rel="noopener">▶ Ver vídeo do exercício</a>
+
+            <div class="tracking">
+                <div class="tracking-title">
+                    <h4>Execução por série</h4>
+                    <strong class="remaining" th:text="${((item.series != null && item.series > 0 ? item.series : 1) - (seriesHoje[item.id] != null ? seriesHoje[item.id].size() : 0)) + ' restantes'}">4 restantes</strong>
+                </div>
+
+                <div class="previous" th:if="${ultimaSerieAnterior[item.id] != null}">
+                    <div><strong>Último treino:</strong> <span th:text="${ultimaSerieAnterior[item.id].cargaRealizada ?: 'carga não informada'}">40 kg</span> × <span th:text="${ultimaSerieAnterior[item.id].repeticoesRealizadas ?: '-'}">12</span><span th:if="${ultimaSerieAnterior[item.id].rpe != null}" th:text="${' • RPE ' + ultimaSerieAnterior[item.id].rpe}"></span></div>
+                    <button type="button" class="use-previous" th:attr="data-item-id=${item.id},data-carga=${ultimaSerieAnterior[item.id].cargaRealizada},data-reps=${ultimaSerieAnterior[item.id].repeticoesRealizadas}">Usar como referência</button>
+                </div>
+
+                <div class="smart" th:if="${recomendacoesProgressao[item.id] != null}" th:classappend="${' ' + recomendacoesProgressao[item.id].nivel}">
+                    <div class="smart-head">
+                        <strong>💡 Recomendação do TreinoFlow</strong>
+                        <span class="smart-badge" th:text="${recomendacoesProgressao[item.id].nivel}">MANTER</span>
+                    </div>
+                    <p><strong th:text="${recomendacoesProgressao[item.id].titulo}">Mantenha por enquanto</strong></p>
+                    <p th:text="${recomendacoesProgressao[item.id].mensagem}">O histórico ainda não mostra evidência suficiente.</p>
+                    <p class="smart-action" th:text="${recomendacoesProgressao[item.id].acao}">Repita a carga atual e registre as séries.</p>
+                </div>
+
+                <div class="series-list">
+                    <span th:each="n : ${#numbers.sequence(1, item.series != null && item.series > 0 ? item.series : 1)}"
+                          class="series-pill"
+                          th:classappend="${seriesHoje[item.id] != null and #lists.contains(seriesHoje[item.id].![numeroSerie], n) ? ' done' : ''}"
+                          th:text="${'S' + n}">S1</span>
+                </div>
+
+                <div class="series-status">Próxima série: <span class="next-series">1</span> de <span th:text="${item.series != null && item.series > 0 ? item.series : 1}">4</span></div>
+
+                <div class="grid">
+                    <div><label>Carga realizada</label><input class="carga-input" type="text" placeholder="Ex.: 40 kg" autocomplete="off"></div>
+                    <div><label>Repetições realizadas</label><input class="reps-input" type="number" min="0" max="999" placeholder="Ex.: 12" inputmode="numeric"></div>
+                </div>
+
+                <div class="field">
+                    <label>RPE — esforço da série</label>
+                    <div class="rpe-row">
+                        <label th:each="r : ${#numbers.sequence(1,10)}"><input class="rpe-input" type="radio" th:name="${'rpe_' + item.id}" th:value="${r}"><span th:text="${r}">1</span></label>
+                    </div>
+                </div>
+
+                <div class="field"><label>Observação <span class="muted" style="font-weight:400">(opcional)</span></label><textarea class="obs-input" maxlength="500" placeholder="Como foi esta série?"></textarea></div>
+
+                <div class="series-actions">
+                    <button type="button" class="btn register-series">✓ Registrar série <span class="next-series-label">1</span></button>
+                </div>
+
+                <div class="rest" aria-live="polite">
+                    <div class="rest-label">Descanso</div>
+                    <div class="timer">00:00</div>
+                    <div class="rest-text">Ao terminar, a próxima série será liberada.</div>
+                    <div class="rest-actions"><button type="button" class="add-rest">+30s</button><button type="button" class="skip-rest">Pular descanso</button></div>
+                </div>
+            </div>
+
+            <div class="nav-exercise">
+                <a href="#" class="prev-exercise">← Anterior</a>
+                <a href="#" class="next-exercise">Próximo →</a>
+            </div>
+        </article>
+
+        <form method="post" th:action="@{/portal/{token}/treinos/{id}/concluir(token=${token},id=${treino.id})}" class="finish">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="finish-grid">
+                <div><label for="nota">Como foi o treino?</label><select id="nota" name="nota"><option value="">Não informar</option><option value="1">1 — Muito difícil</option><option value="2">2 — Difícil</option><option value="3">3 — Bom</option><option value="4">4 — Muito bom</option><option value="5">5 — Excelente</option></select></div>
+                <div><label for="feedback">Feedback para o Personal</label><textarea id="feedback" name="feedback" maxlength="1000" placeholder="Como você se sentiu? Alguma dor ou dificuldade?"></textarea></div>
+            </div>
+            <button class="btn" type="submit" style="margin-top:14px">✓ Salvar feedback do treino</button>
+            <div class="save-note">As séries são salvas individualmente. Você pode registrar o feedback ao terminar.</div>
+        </form>
+    </section>
+</main>
+<div id="toast" class="toast"></div>
+
+<script th:inline="javascript">
+(() => {
+    const token = /*[[${token}]]*/ '';
+    const treinoId = /*[[${treino.id}]]*/ 0;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const csrfHeader = document.querySelector('meta[name="csrf-header"]')?.content || 'X-CSRF-TOKEN';
+    const exercises = [...document.querySelectorAll('.exercise')];
+    const state = new Map();
+    let activeTimer = null;
+
+    const toast = (message, error=false) => {
+        const el=document.getElementById('toast'); el.textContent=message; el.style.background=error?'#991b1b':'#172554'; el.classList.add('show');
+        clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2800);
+    };
+
+    function getState(article){
+        const id=article.dataset.itemId;
+        if(!state.has(id)){
+            const total=parseInt(article.dataset.totalSeries||'1',10);
+            const done=article.querySelectorAll('.series-pill.done').length;
+            state.set(id,{done,total,next:Math.min(done+1,total+1),rest:parseInt(article.dataset.rest||'0',10),timer:null});
+        }
+        return state.get(id);
+    }
+
+    function updateExercise(article){
+        const s=getState(article), remaining=Math.max(0,s.total-s.done);
+        article.querySelector('.remaining').textContent=remaining+' restantes';
+        article.querySelector('.next-series').textContent=Math.min(s.next,s.total);
+        article.querySelector('.next-series-label').textContent=Math.min(s.next,s.total);
+        const btn=article.querySelector('.register-series');
+        btn.disabled=s.done>=s.total;
+        const label=article.querySelector('.done-label');
+        const check=article.querySelector('.check-wrap input');
+        if(s.done>=s.total){
+            label.textContent='✓ Exercício concluído'; check.checked=true; article.classList.add('is-done');
+            btn.textContent='✓ Todas as séries registradas';
+        } else {
+            label.textContent='Aguardando séries'; check.checked=false; article.classList.remove('is-done');
+            btn.innerHTML='✓ Registrar série <span class="next-series-label">'+s.next+'</span>';
+        }
+        article.querySelectorAll('.series-pill').forEach((pill,i)=>pill.classList.toggle('done',i<s.done));
+        updateGlobalProgress();
+    }
+
+    function updateGlobalProgress(){
+        const completed=exercises.filter(a=>getState(a).done>=getState(a).total).length;
+        const total=exercises.length, pct=total?Math.round(completed/total*100):0;
+        document.getElementById('progressText').textContent=completed+' de '+total+' exercícios';
+        document.getElementById('progressPercent').textContent=pct+'%';
+        document.getElementById('progressBar').style.width=pct+'%';
+    }
+
+    function stopTimer(){ if(activeTimer){clearInterval(activeTimer.interval); activeTimer=null;} document.querySelectorAll('.rest.active').forEach(e=>e.classList.remove('active')); }
+    function startTimer(article, seconds){
+        stopTimer(); if(!seconds || seconds<=0) return;
+        const rest=article.querySelector('.rest'), timerEl=rest.querySelector('.timer'); let remaining=seconds;
+        rest.classList.add('active');
+        const render=()=>{const m=String(Math.floor(remaining/60)).padStart(2,'0'),s=String(remaining%60).padStart(2,'0');timerEl.textContent=m+':'+s;}; render();
+        activeTimer={interval:setInterval(()=>{remaining--;render();if(remaining<=0){clearInterval(activeTimer.interval);activeTimer=null;rest.classList.remove('active');toast('Descanso concluído. Próxima série liberada!');article.querySelector('.carga-input').focus();}},1000),article};
+        rest.querySelector('.add-rest').onclick=()=>{remaining+=30;render();};
+        rest.querySelector('.skip-rest').onclick=()=>{stopTimer();article.querySelector('.carga-input').focus();};
+    }
+
+    exercises.forEach((article,index)=>{
+        const s=getState(article); updateExercise(article);
+        article.querySelector('.register-series').addEventListener('click', async ()=>{
+            if(s.done>=s.total) return;
+            const carga=article.querySelector('.carga-input').value.trim();
+            const reps=article.querySelector('.reps-input').value;
+            const obs=article.querySelector('.obs-input').value.trim();
+            const rpe=article.querySelector('.rpe-input:checked')?.value || '';
+            if(!reps){toast('Informe as repetições realizadas.',true);article.querySelector('.reps-input').focus();return;}
+            const body=new URLSearchParams({numeroSerie:String(s.next),carga,repeticoes:reps,observacao:obs,rpe});
+            const btn=article.querySelector('.register-series');btn.disabled=true;
+            try{
+                const res=await fetch(`/portal/${encodeURIComponent(token)}/treinos/${treinoId}/exercicios/${article.dataset.itemId}/series`,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',[csrfHeader]:csrfToken},body});
+                const data=await res.json();
+                if(!res.ok || !data.sucesso) throw new Error(data.mensagem||'Não foi possível registrar a série.');
+                s.done++; s.next++;
+                article.querySelector('.carga-input').value=carga;
+                article.querySelector('.reps-input').value='';
+                article.querySelectorAll('.rpe-input').forEach(i=>i.checked=false);
+                article.querySelector('.obs-input').value='';
+                updateExercise(article); toast(data.mensagem);
+                if(s.done<s.total) startTimer(article,s.rest);
+                else stopTimer();
+            }catch(e){toast(e.message,true);btn.disabled=false;}
+        });
+
+        article.querySelector('.use-previous')?.addEventListener('click', e=>{
+            const b=e.currentTarget; article.querySelector('.carga-input').value=b.dataset.carga||''; article.querySelector('.reps-input').value=b.dataset.reps||''; article.querySelector('.carga-input').focus(); toast('Carga e repetições anteriores carregadas como referência.');
+        });
+        article.querySelector('.prev-exercise').addEventListener('click',e=>{e.preventDefault();if(index>0)exercises[index-1].scrollIntoView({behavior:'smooth'});});
+        article.querySelector('.next-exercise').addEventListener('click',e=>{e.preventDefault();if(index<exercises.length-1)exercises[index+1].scrollIntoView({behavior:'smooth'});});
+    });
+
+    updateGlobalProgress();
+})();
+</script>
+</body>
+</html>

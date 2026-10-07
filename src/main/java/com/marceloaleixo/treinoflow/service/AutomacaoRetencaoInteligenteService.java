@@ -26,6 +26,8 @@ public class AutomacaoRetencaoInteligenteService {
     private final RecomendacaoAdaptativaService recomendacao;
     private final ResultadoAcoesAssistenteService resultados;
     private final JornadaRetencaoService jornada;
+    private final MensagemInteligenteService mensagens;
+    private final OtimizacaoRetencaoService otimizacao;
 
     public AutomacaoRetencaoInteligenteService(AutomacaoRetencaoConfigRepository configs,
                                                 ScoreRiscoAlunoService scoreService,
@@ -36,10 +38,13 @@ public class AutomacaoRetencaoInteligenteService {
                                                 WhatsAppNotificacaoService whatsapp,
                                                 RecomendacaoAdaptativaService recomendacao,
                                                 ResultadoAcoesAssistenteService resultados,
-                                                JornadaRetencaoService jornada) {
+                                                JornadaRetencaoService jornada,
+                                                MensagemInteligenteService mensagens,
+                                                OtimizacaoRetencaoService otimizacao) {
         this.configs=configs; this.scoreService=scoreService; this.acoes=acoes; this.alunos=alunos;
         this.personais=personais; this.interacoes=interacoes; this.whatsapp=whatsapp;
         this.recomendacao=recomendacao; this.resultados=resultados; this.jornada=jornada;
+        this.mensagens=mensagens; this.otimizacao=otimizacao;
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +76,16 @@ public class AutomacaoRetencaoInteligenteService {
 
     @Transactional
     public Execucao executar(Long personalId) {
+        return executar(personalId, false);
+    }
+
+    /** Execução usada pelo scheduler: aplica também o melhor horário aprendido. */
+    @Transactional
+    public Execucao executarNoHorarioAprendido(Long personalId) {
+        return executar(personalId, true);
+    }
+
+    private Execucao executar(Long personalId, boolean respeitarHorarioAprendido) {
         AutomacaoRetencaoConfig config = configs.findByPersonalId(personalId).orElse(null);
         if (config == null || !config.isAtiva()) return new Execucao(0,0,0,"Automação desativada.");
         if (!dentroDoHorario(config)) return new Execucao(0,0,0,"Fora do horário permitido.");
@@ -90,6 +105,15 @@ public class AutomacaoRetencaoInteligenteService {
             var rec=recomendacao.recomendar(personalId,risco);
             TipoAcaoAssistente tipo=tipoPermitido(risco,rec.acao(),config);
             if(tipo==null) { ignoradas++; continue; }
+
+            // Quando o histórico já possui amostra suficiente, a execução horária
+            // só acontece no horário vencedor daquela faixa de risco. Sem amostra,
+            // o motor continua usando a janela configurada pelo Personal.
+            var horario=otimizacao.melhorHorarioPara(risco.score(),personalId);
+            if(respeitarHorarioAprendido && horario!=null && LocalTime.now().getHour()!=horario.hora()) {
+                ignoradas++; continue;
+            }
+
             avaliadas++;
             try {
                 if(tipo==TipoAcaoAssistente.WHATSAPP) executarWhatsApp(personalId,risco,rec.justificativa());
@@ -102,7 +126,7 @@ public class AutomacaoRetencaoInteligenteService {
 
     @Scheduled(cron="${treinoflow.assistente.automacao-cron:0 5 * * * *}")
     public void rotinaHoraria() {
-        configs.findByAtivaTrue().forEach(c -> { try { executar(c.getPersonal().getId()); } catch(RuntimeException ignored) {} });
+        configs.findByAtivaTrue().forEach(c -> { try { executarNoHorarioAprendido(c.getPersonal().getId()); } catch(RuntimeException ignored) {} });
     }
 
     private TipoAcaoAssistente tipoPermitido(ScoreRiscoAlunoView risco,String recomendada,AutomacaoRetencaoConfig c){
@@ -114,31 +138,37 @@ public class AutomacaoRetencaoInteligenteService {
 
     private void executarWhatsApp(Long personalId,ScoreRiscoAlunoView risco,String justificativa){
         Aluno aluno=alunos.findByIdAndPersonalId(risco.alunoId(),personalId).orElseThrow();
-        String mensagem=mensagem(risco);
+        var escolha=mensagens.escolher(personalId,risco,TipoAcaoAssistente.WHATSAPP);
+        String mensagem=escolha.mensagem();
         whatsapp.enviar(aluno.getTelefone(),mensagem);
         InteracaoCrm i=new InteracaoCrm(); i.setPersonal(personais.findById(personalId).orElseThrow()); i.setAluno(aluno);
         i.setCanal(CanalCrm.WHATSAPP); i.setTipo(TipoInteracaoCrm.RETENCAO); i.setResultado(ResultadoCrm.EM_ACOMPANHAMENTO);
-        i.setAssunto("Automação de retenção · WhatsApp"); i.setDescricao(MARCADOR+" · WhatsApp automático. Score "+risco.score()+"/100. "+justificativa);
+        i.setAssunto("Automação de retenção · WhatsApp"); i.setDescricao(MARCADOR+" · WhatsApp automático. Score "+risco.score()+"/100. Confiança "+escolha.confianca()+", amostra "+escolha.amostra()+". "+justificativa);
         i.setDataProximaAcao(LocalDate.now().plusDays(2)); interacoes.save(i);
-        resultados.registrarAcaoExecutada(personalId,risco.alunoId(),risco.score(),MARCADOR+" · WhatsApp automático",mensagem,TipoAcaoAssistente.WHATSAPP);
-        marcarUltimaComoAutomatica(personalId,risco.alunoId(),TipoAcaoAssistente.WHATSAPP,"CRITICO_WHATSAPP");
+        AcaoAssistente acao=resultados.registrarAcaoExecutada(personalId,risco.alunoId(),risco.score(),MARCADOR+" · WhatsApp automático · "+escolha.justificativa(),mensagem,TipoAcaoAssistente.WHATSAPP);
+        marcarComoAutomaticaEIniciarJornada(acao,"CRITICO_WHATSAPP", escolha.experimentoId(), escolha.variante());
     }
 
     private void executarFollowUp(Long personalId,ScoreRiscoAlunoView risco,String justificativa){
         Aluno aluno=alunos.findByIdAndPersonalId(risco.alunoId(),personalId).orElseThrow();
         UsuarioPersonal p=personais.findById(personalId).orElseThrow();
+        var escolha=mensagens.escolher(personalId,risco,TipoAcaoAssistente.FOLLOW_UP);
         InteracaoCrm i=new InteracaoCrm(); i.setPersonal(p); i.setAluno(aluno); i.setCanal(CanalCrm.INTERNO); i.setTipo(TipoInteracaoCrm.RETENCAO);
         i.setResultado(ResultadoCrm.EM_ACOMPANHAMENTO); i.setAssunto("Automação de retenção · Follow-up");
-        i.setDescricao(MARCADOR+" · Follow-up automático. Score "+risco.score()+"/100. "+justificativa);
+        i.setDescricao(MARCADOR+" · Follow-up automático. Score "+risco.score()+"/100. Confiança "+escolha.confianca()+", amostra "+escolha.amostra()+". "+justificativa+" Mensagem sugerida: "+escolha.mensagem());
         i.setDataProximaAcao(LocalDate.now()); interacoes.save(i);
-        resultados.registrarAcaoExecutada(personalId,risco.alunoId(),risco.score(),MARCADOR+" · Follow-up automático",null,TipoAcaoAssistente.FOLLOW_UP);
-        marcarUltimaComoAutomatica(personalId,risco.alunoId(),TipoAcaoAssistente.FOLLOW_UP,"ALTO_FOLLOW_UP");
+        AcaoAssistente acao=resultados.registrarAcaoExecutada(personalId,risco.alunoId(),risco.score(),MARCADOR+" · Follow-up automático · "+escolha.justificativa(),escolha.mensagem(),TipoAcaoAssistente.FOLLOW_UP);
+        marcarComoAutomaticaEIniciarJornada(acao,"ALTO_FOLLOW_UP", escolha.experimentoId(), escolha.variante());
     }
 
-    private void marcarUltimaComoAutomatica(Long personalId,Long alunoId,TipoAcaoAssistente tipo,String regra){
-        acoes.buscarDesde(personalId,LocalDateTime.now().minusMinutes(2)).stream().filter(a->a.getAluno().getId().equals(alunoId)&&a.getTipoAcao()==tipo).findFirst().ifPresent(a->{a.setAutomatica(true);a.setRegraAutomacao(regra);acoes.save(a);jornada.iniciar(a);});
+    private void marcarComoAutomaticaEIniciarJornada(AcaoAssistente acao,String regra, Long experimentoId, String variante){
+        acao.setAutomatica(true);
+        acao.setExperimentoId(experimentoId);
+        acao.setExperimentoVariante(variante);
+        acao.setRegraAutomacao(regra);
+        acoes.save(acao);
+        jornada.iniciar(acao);
     }
-    private String mensagem(ScoreRiscoAlunoView r){ String nome=r.nome()==null?"tudo bem":r.nome().trim().split("\\s+")[0]; return "Olá, "+nome+"! 👋\n\nPercebi alguns sinais de que sua rotina de treinos mudou e queria saber se está tudo bem.\n\nSe precisar, podemos ajustar o treino ou o horário para facilitar sua rotina. 💪\n\nMe responde por aqui e vamos resolver juntos!"; }
     private boolean dentroDoHorario(AutomacaoRetencaoConfig c){ LocalTime agora=LocalTime.now(); LocalTime ini=LocalTime.parse(c.getHoraInicio()); LocalTime fim=LocalTime.parse(c.getHoraFim()); return !agora.isBefore(ini)&&!agora.isAfter(fim); }
     private void validarHora(String h){ try{LocalTime.parse(h);}catch(Exception e){throw new IllegalArgumentException("Horário inválido. Use HH:mm.");} }
     public record Execucao(int avaliadas,int executadas,int ignoradas,String mensagem){}

@@ -19,7 +19,7 @@ public class AprendizadoAcoesAssistenteController {
         this.usuarioPersonalService = usuarioPersonalService;
     }
 
-    @GetMapping("/assistente/aprendizado")
+    @GetMapping("/assistente/aprendizado-acoes")
     public String index(Authentication authentication, Model model, @RequestParam(defaultValue = "90") int dias) {
         UsuarioPersonal personal = usuarioPersonalService.buscarPorEmail(authentication.getName());
         model.addAttribute("personal", personal);
