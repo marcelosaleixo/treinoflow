@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Financeiro | TreinoFlow</title>
+  <link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}"><link rel="stylesheet" th:href="@{/css/tf-pages.css}">
+  <style>
+    :root{--navy:#172554;--blue:#2563eb;--muted:#64748b;--line:#e2e8f0;--bg:#f3f6fb;--green:#15803d;--red:#b91c1c;--amber:#a16207}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font-family:Inter,Arial,sans-serif}
+    main{max-width:1180px;margin:34px auto;padding:0 22px}.eyebrow{color:var(--blue);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase}h1{font-size:30px;margin:8px 0}.intro{color:var(--muted);margin:0 0 24px}
+    .top{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:20px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;background:var(--blue);color:#fff;border-radius:9px;padding:11px 15px;font-weight:700;font-size:14px;cursor:pointer}.btn.secondary{background:#eff6ff;color:#1d4ed8}
+    .flash{padding:12px 14px;border-radius:10px;margin-bottom:14px;font-size:14px;font-weight:650}.success{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 8px 26px #17255408}.stat-label{font-size:13px;color:var(--muted);font-weight:650}.stat-value{font-size:29px;font-weight:800;margin:12px 0 4px;letter-spacing:-.03em}.stat-hint{font-size:12px;color:var(--muted)}.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
+    .section{margin-top:20px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}.section h2{font-size:18px;margin:0}.section-sub{font-size:13px;color:var(--muted);margin:5px 0 0}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}.table th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.money{font-weight:800}.badge{display:inline-flex;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}.badge-pendente{background:#eff6ff;color:#1d4ed8}.badge-atrasada{background:#fee2e2;color:#b91c1c}.badge-paga{background:#dcfce7;color:#166534}.badge-cancelada{background:#f1f5f9;color:#64748b}.inline-form{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.payment-box{min-width:360px}.payment-form{display:grid;gap:6px}.payment-row{display:grid;grid-template-columns:minmax(115px,1fr) 105px 28px;gap:5px;align-items:center}.payment-tools{display:flex;justify-content:space-between;align-items:center;gap:8px}.add-payment{border:0;background:#eff6ff;color:#1d4ed8;border-radius:7px;padding:6px 8px;font-size:11px;font-weight:800;cursor:pointer}.payment-total{font-size:11px;color:var(--muted);font-weight:750}.payment-error{font-size:11px;color:#b91c1c;min-height:0}.remove-payment{border:0;background:#fee2e2;color:#b91c1c;border-radius:7px;height:30px;cursor:pointer;font-weight:900}.payment-actions{display:flex;gap:6px;align-items:center}.cancel-form{margin-top:5px}.paid-info{display:grid;gap:5px}.payment-summary{display:flex;gap:4px;flex-wrap:wrap}.payment-chip{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0;border-radius:999px;padding:4px 7px;font-size:10px;font-weight:800}.select,.date{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff;color:var(--navy);font:inherit;font-size:12px}.small-btn{border:0;background:#2563eb;color:#fff;border-radius:8px;padding:8px 10px;font-weight:700;cursor:pointer;font-size:12px}.small-btn.cancel{background:#f1f5f9;color:#475569}
+    .empty{padding:25px 0;color:var(--muted);font-size:14px}.note{margin-top:14px;font-size:12px;color:var(--muted)}
+    @media(max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start;flex-direction:column}}@media(max-width:540px){.payment-box{min-width:0}.payment-row{grid-template-columns:1fr 105px 28px}.payment-actions{flex-wrap:wrap}.payment-actions .small-btn{flex:1}main{margin:24px auto;padding:0 16px}h1{font-size:26px}.stats{grid-template-columns:1fr}.actions,.btn{width:100%}.section .card{padding:14px}.table th,.table td{padding:11px 8px}}
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main>
+  <div class="top"><div><div class="eyebrow">Gestão do Personal</div><h1>Financeiro</h1><p class="intro">Tenha uma visão simples do dinheiro que entrou, está previsto e ainda precisa ser recebido.</p></div><div class="actions"><a class="btn" th:href="@{/financeiro/contas-receber/nova}">+ Nova conta a receber</a><a class="btn secondary" th:href="@{/financeiro/mensalidades}">Planos e mensalidades</a><a class="btn secondary" th:href="@{/dashboard}">Voltar ao dashboard</a></div></div>
+
+  <div class="flash success" th:if="${sucesso}" th:text="${sucesso}"></div>
+  <div class="flash error" th:if="${erro}" th:text="${erro}"></div>
+
+  <section class="stats" aria-label="Resumo financeiro">
+    <article class="card"><div class="stat-label">Recebido no mês</div><div class="stat-value green" th:text="${'R$ ' + #numbers.formatDecimal(recebidoNoMes,1,'POINT',2,'COMMA')}">R$ 0,00</div><div class="stat-hint">Pagamentos confirmados neste mês</div></article>
+    <article class="card"><div class="stat-label">Previsto no mês</div><div class="stat-value" th:text="${'R$ ' + #numbers.formatDecimal(previstoNoMes,1,'POINT',2,'COMMA')}">R$ 0,00</div><div class="stat-hint">Contas pendentes com vencimento no mês</div></article>
+    <article class="card"><div class="stat-label">A receber</div><div class="stat-value" th:text="${'R$ ' + #numbers.formatDecimal(aReceber,1,'POINT',2,'COMMA')}">R$ 0,00</div><div class="stat-hint">Contas ainda pendentes</div></article>
+    <article class="card"><div class="stat-label">Em atraso</div><div class="stat-value red" th:text="${'R$ ' + #numbers.formatDecimal(emAtraso,1,'POINT',2,'COMMA')}">R$ 0,00</div><div class="stat-hint" th:text="${quantidadeAtrasadas + ' conta(s) atrasada(s)'}">0 conta(s) atrasada(s)</div></article>
+  </section>
+
+  <section class="card section">
+    <div class="section-head"><div><h2>Contas a receber</h2><p class="section-sub">As contas são isoladas por Personal e podem ser vinculadas a um aluno.</p></div></div>
+    <div class="table-wrap" th:if="${!#lists.isEmpty(contas)}">
+      <table class="table"><thead><tr><th>Vencimento</th><th>Aluno</th><th>Descrição</th><th>Valor</th><th>Status</th><th>Ação</th></tr></thead>
+      <tbody><tr th:each="c : ${contas}">
+        <td th:text="${#temporals.format(c.dataVencimento,'dd/MM/yyyy')}">01/10/2026</td>
+        <td th:text="${c.aluno != null ? c.aluno.nome : '—'}">Aluno</td>
+        <td th:text="${c.descricao}">Mensalidade</td>
+        <td class="money" th:text="${'R$ ' + #numbers.formatDecimal(c.valor,1,'POINT',2,'COMMA')}">R$ 300,00</td>
+        <td><span class="badge" th:classappend="${' badge-' + #strings.toLowerCase(c.status.name())}" th:text="${c.status.descricao}">Pendente</span></td>
+        <td>
+          <div class="payment-box" th:if="${c.status.name() == 'PENDENTE' or c.status.name() == 'ATRASADA'}">
+            <form th:action="@{/financeiro/contas-receber/{id}/pagar(id=${c.id})}" method="post" class="payment-form" th:attr="data-total=${c.valor}">
+              <div class="payment-rows">
+                <div class="payment-row">
+                  <select class="select payment-method" name="formaPagamento" required>
+                    <option value="">Forma...</option>
+                    <option th:each="f : ${T(com.marceloaleixo.treinoflow.enums.FormaPagamento).values()}" th:value="${f}" th:text="${f.descricao}"></option>
+                  </select>
+                  <input class="select payment-amount" name="valorPagamento" type="number" min="0.01" step="0.01" th:value="${c.valor}" required aria-label="Valor pago">
+                  <button class="remove-payment" type="button" title="Remover forma" style="display:none">×</button>
+                </div>
+              </div>
+              <div class="payment-tools">
+                <button class="add-payment" type="button">+ Outra forma</button>
+                <span class="payment-total">R$ 0,00 / R$ 0,00</span>
+              </div>
+              <div class="payment-error" role="alert"></div>
+              <div class="payment-actions"><button class="small-btn receive-btn" type="submit">Receber</button></div>
+            </form>
+            <form class="cancel-form" th:action="@{/financeiro/contas-receber/{id}/cancelar(id=${c.id})}" method="post">
+              <button class="small-btn cancel" type="submit">Cancelar</button>
+            </form>
+          </div>
+          <div th:if="${c.status.name() == 'PAGA'}" class="paid-info">
+            <div th:if="${!#lists.isEmpty(c.pagamentos)}" class="payment-summary">
+              <span th:each="p : ${c.pagamentos}" class="payment-chip" th:text="${p.formaPagamento.descricao + ' · R$ ' + #numbers.formatDecimal(p.valor,1,'POINT',2,'COMMA')}">PIX · R$ 300,00</span>
+            </div>
+            <span class="section-sub" th:text="${c.dataPagamento != null ? 'Pago em ' + #temporals.format(c.dataPagamento,'dd/MM/yyyy') : 'Pago'}">Pago</span>
+          </div>
+        </td>
+      </tr></tbody></table>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(contas)}">Nenhuma conta a receber cadastrada. Comece lançando a próxima mensalidade ou atendimento.</div>
+    <div class="note">Nesta etapa o financeiro é manual. Recorrência, despesas, cobrança automática e integrações de pagamento entram nas próximas etapas.</div>
+  </section>
+</main>
+
+<script>
+(function(){
+  function money(v){ return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v || 0); }
+  document.querySelectorAll('.payment-form').forEach(function(form){
+    const rows=form.querySelector('.payment-rows');
+    const add=form.querySelector('.add-payment');
+    const totalEl=form.querySelector('.payment-total');
+    const error=form.querySelector('.payment-error');
+    const total=Number(form.dataset.total || 0);
+    function recalc(){
+      let sum=0; const methods=new Set(); let duplicate=false;
+      rows.querySelectorAll('.payment-row').forEach(function(row){
+        const method=row.querySelector('.payment-method')?.value;
+        const value=Number(row.querySelector('.payment-amount')?.value || 0);
+        sum += value;
+        if(method){ if(methods.has(method)) duplicate=true; methods.add(method); }
+      });
+      totalEl.textContent=money(sum)+' / '+money(total);
+      const diff=Math.round((sum-total)*100)/100;
+      if(duplicate) error.textContent='Use cada forma de pagamento uma vez e ajuste o valor dela.';
+      else if(diff !== 0) error.textContent='A soma precisa ser exatamente '+money(total)+'.';
+      else error.textContent='';
+      form.querySelector('.receive-btn').disabled=!!duplicate || diff !== 0;
+      form.querySelector('.receive-btn').style.opacity=(duplicate || diff !== 0)?'.55':'1';
+    }
+    function refreshRemove(){
+      rows.querySelectorAll('.remove-payment').forEach(function(btn,i){ btn.style.display=rows.children.length>1?'inline-flex':'none'; });
+    }
+    function bindRow(row){
+      row.querySelectorAll('select,input').forEach(function(el){ el.addEventListener('input',recalc); el.addEventListener('change',recalc); });
+      row.querySelector('.remove-payment').addEventListener('click',function(){ row.remove(); refreshRemove(); recalc(); });
+    }
+    bindRow(rows.querySelector('.payment-row'));
+    add.addEventListener('click',function(){
+      const template=rows.querySelector('.payment-row').cloneNode(true);
+      template.querySelector('.payment-method').value='';
+      template.querySelector('.payment-amount').value='';
+      rows.appendChild(template); bindRow(template); refreshRemove(); recalc();
+    });
+    form.addEventListener('submit',function(e){ recalc(); if(form.querySelector('.receive-btn').disabled){ e.preventDefault(); } });
+    refreshRemove(); recalc();
+  });
+})();
+</script>
+</body></html>

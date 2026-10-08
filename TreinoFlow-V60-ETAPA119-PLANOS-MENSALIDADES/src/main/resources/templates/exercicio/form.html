@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de exercício | TreinoFlow</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f6fb;
+            color: #172554;
+            font-family: Arial, sans-serif;
+        }
+
+        .wrap {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .panel {
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #172554;
+            font: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.18);
+            border-color: #2563eb;
+        }
+
+        .hint {
+            margin: 7px 0 0;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 11px 15px;
+            border: 0;
+            border-radius: 8px;
+            background: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .wrap {
+                margin: 18px auto;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="wrap">
+    <p>
+        <a th:href="@{/exercicios}">← Biblioteca</a>
+    </p>
+
+    <section class="panel">
+        <h1 th:text="${exercicio.id == null ? 'Novo exercício' : 'Editar exercício'}">
+            Novo exercício
+        </h1>
+
+        <form method="post"
+              th:action="@{/exercicios/salvar}"
+              th:object="${exercicio}">
+
+            <input type="hidden" th:field="*{id}">
+
+            <label for="nome">Nome *</label>
+            <input id="nome"
+                   type="text"
+                   th:field="*{nome}"
+                   maxlength="120"
+                   required>
+
+            <label for="grupoMuscular">Grupo muscular</label>
+            <select id="grupoMuscular" th:field="*{grupoMuscular}">
+                <option value="">Selecione um grupo muscular</option>
+                <option th:each="grupo : ${gruposMusculares}"
+                        th:value="${grupo.name()}"
+                        th:text="${grupo.rotulo}">
+                </option>
+            </select>
+            <p class="hint">
+                Selecione o grupo muscular que melhor classifica este exercício.
+            </p>
+
+            <label for="descricao">Descrição / instruções</label>
+            <textarea id="descricao"
+                      th:field="*{descricao}"
+                      rows="4"></textarea>
+
+            <label for="urlVideo">URL do vídeo demonstrativo</label>
+            <input id="urlVideo"
+                   type="url"
+                   th:field="*{urlVideo}"
+                   maxlength="500"
+                   placeholder="https://...">
+
+            <button class="btn" type="submit">Salvar exercício</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

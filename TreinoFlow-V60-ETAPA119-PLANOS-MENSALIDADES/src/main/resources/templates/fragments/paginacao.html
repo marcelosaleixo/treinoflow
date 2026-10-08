@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="paginacao(pagina, caminho, q, status)"
+     class="pagination"
+     aria-label="Paginação de registros">
+
+    <div class="pagination-info">
+        <span class="pagination-range"
+              th:if="${pagina.totalElements > 0}"
+              th:text="|Mostrando ${pagina.number * pagina.size + 1}–${pagina.number * pagina.size + pagina.numberOfElements} de ${pagina.totalElements} registros|">
+            Mostrando registros
+        </span>
+        <span class="pagination-range"
+              th:unless="${pagina.totalElements > 0}">
+            Nenhum registro
+        </span>
+        <span class="pagination-page"
+              th:text="|Página ${pagina.number + 1} de ${pagina.totalPages == 0 ? 1 : pagina.totalPages}|">
+            Página 1 de 1
+        </span>
+    </div>
+
+    <div class="pagination-controls">
+        <form class="pagination-size" method="get" th:action="${caminho}">
+            <input type="hidden" name="page" value="0">
+            <input type="hidden" name="q" th:value="${q}">
+            <input type="hidden" name="status" th:value="${status}">
+            <label for="paginationSize">Por página</label>
+            <select id="paginationSize" name="size" onchange="this.form.submit()">
+                <option value="5" th:selected="${pagina.size == 5}">5</option>
+                <option value="10" th:selected="${pagina.size == 10}">10</option>
+                <option value="20" th:selected="${pagina.size == 20}">20</option>
+                <option value="50" th:selected="${pagina.size == 50}">50</option>
+            </select>
+        </form>
+
+        <div class="pagination-actions">
+            <a class="page-link"
+               th:if="${pagina.hasPrevious()}"
+               th:href="@{${caminho}(page=0,size=${pagina.size},q=${q},status=${status})}"
+               aria-label="Primeira página">«</a>
+            <span class="page-link disabled" th:unless="${pagina.hasPrevious()}" aria-disabled="true">«</span>
+
+            <a class="page-link"
+               th:if="${pagina.hasPrevious()}"
+               th:href="@{${caminho}(page=${pagina.number - 1},size=${pagina.size},q=${q},status=${status})}">Anterior</a>
+            <span class="page-link disabled" th:unless="${pagina.hasPrevious()}" aria-disabled="true">Anterior</span>
+
+            <a class="page-link"
+               th:if="${pagina.hasNext()}"
+               th:href="@{${caminho}(page=${pagina.number + 1},size=${pagina.size},q=${q},status=${status})}">Próxima</a>
+            <span class="page-link disabled" th:unless="${pagina.hasNext()}" aria-disabled="true">Próxima</span>
+
+            <a class="page-link"
+               th:if="${pagina.hasNext()}"
+               th:href="@{${caminho}(page=${pagina.totalPages - 1},size=${pagina.size},q=${q},status=${status})}"
+               aria-label="Última página">»</a>
+            <span class="page-link disabled" th:unless="${pagina.hasNext()}" aria-disabled="true">»</span>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

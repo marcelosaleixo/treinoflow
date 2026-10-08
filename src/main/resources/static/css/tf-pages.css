@@ -1,0 +1,101 @@
+/* TreinoFlow Design System — Etapa 101
+ * Aplicação do Design System nas telas principais.
+ * Escopo por página para preservar regras legadas e evitar regressões.
+ */
+.tf-page{background:var(--tf-bg);color:var(--tf-text);min-height:100vh}
+.tf-page main{max-width:1160px;margin:34px auto;padding:0 22px}
+.tf-page .wrap{max-width:1160px;margin:34px auto;padding:0 22px;min-width:0}
+.tf-page .head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}
+.tf-page .eyebrow{color:var(--tf-blue);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.tf-page h1{color:var(--tf-navy);font-size:30px;line-height:1.15;margin:7px 0}
+.tf-page .sub,.tf-page .intro{color:var(--tf-muted);line-height:1.5}
+.tf-page .panel,.tf-page .hero,.tf-page .section{background:#fff;border:1px solid var(--tf-border);border-radius:var(--tf-radius);box-shadow:var(--tf-shadow)}
+.tf-page .panel{padding:20px;margin-top:18px}
+.tf-page .hero{padding:24px;margin-bottom:18px}
+.tf-page .section{padding:20px;margin-top:18px}
+.tf-page .panel h2,.tf-page .section h2{color:var(--tf-navy);font-size:17px;margin:0 0 6px}
+.tf-page .panel>p,.tf-page .section>p{color:var(--tf-muted);font-size:13px;line-height:1.5}
+.tf-page .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.tf-page .stat,.tf-page .tf-stat{background:#fff;border:1px solid var(--tf-border);border-radius:var(--tf-radius);box-shadow:var(--tf-shadow)}
+.tf-page .stat{padding:18px;min-width:0}
+.tf-page .stat small,.tf-page .stat-label{color:var(--tf-muted);font-size:12px;font-weight:700}
+.tf-page .value,.tf-page .number{color:var(--tf-navy);font-size:28px;font-weight:850;margin:8px 0 3px}
+.tf-page .btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:9px;padding:9px 13px;background:var(--tf-blue);color:#fff;text-decoration:none;font-size:13px;font-weight:750;cursor:pointer;transition:.15s ease}
+.tf-page .btn:hover{background:var(--tf-blue-hover);transform:translateY(-1px)}
+.tf-page .btn.soft,.tf-page .btn.secondary{background:#eff6ff;color:#1d4ed8;border-color:#dbeafe}
+.tf-page .btn.danger{background:var(--tf-danger-bg);color:#991b1b;border-color:#fecaca}
+.tf-page .actions,.tf-page .buttons{display:flex;gap:8px;flex-wrap:wrap}
+.tf-page .table-wrap,.tf-page .tf-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--tf-border);border-radius:var(--tf-radius);background:#fff}
+.tf-page table{width:100%;min-width:760px;border-collapse:collapse}
+.tf-page th{padding:12px 14px;background:#f8fafc;color:var(--tf-muted);border-bottom:1px solid var(--tf-border);font-size:11px;font-weight:800;text-align:left;text-transform:uppercase;letter-spacing:.05em}
+.tf-page td{padding:13px 14px;border-bottom:1px solid #edf2f7;color:#334155;font-size:13px;vertical-align:middle}
+.tf-page tbody tr:last-child td{border-bottom:0}
+.tf-page tbody tr:hover{background:#f8fafc}
+.tf-page .msg,.tf-page .flash{padding:12px 14px;border-radius:var(--tf-radius-sm);margin:10px 0;font-size:13px;font-weight:700}
+.tf-page .msg.success,.tf-page .flash.success{background:var(--tf-success-bg);color:#166534;border:1px solid #bbf7d0}
+.tf-page .msg.error,.tf-page .flash.error{background:var(--tf-danger-bg);color:#991b1b;border:1px solid #fecaca}
+.tf-page .list-search,.tf-page .search{display:flex;gap:9px;margin:0 0 15px;padding:16px;background:#fff;border:1px solid var(--tf-border);border-radius:var(--tf-radius);box-shadow:var(--tf-shadow);align-items:end}
+.tf-page .list-search label{display:block;color:#243b63;font-size:13px;font-weight:700;margin-bottom:6px}
+.tf-page .list-search-controls{display:flex;gap:8px;flex:1;align-items:center}
+.tf-page input:not([type=hidden]):not([type=checkbox]):not([type=radio]),.tf-page select,.tf-page textarea{min-height:40px;padding:9px 11px;border:1px solid var(--tf-border-strong);border-radius:var(--tf-radius-sm);background:#fff;color:var(--tf-text);font:inherit;outline:none}
+.tf-page input:focus,.tf-page select:focus,.tf-page textarea:focus{border-color:var(--tf-blue);box-shadow:0 0 0 3px var(--tf-focus)}
+.tf-page .status,.tf-page .badge,.tf-page .tag{display:inline-flex;align-items:center;width:max-content;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:800}
+.tf-page .status.inativo,.tf-page .badge.danger{background:var(--tf-danger-bg);color:#991b1b}
+.tf-page .badge.good{background:var(--tf-success-bg);color:#166534}
+.tf-page .badge.warn{background:var(--tf-warning-bg);color:#854d0e}
+.tf-page .empty{padding:30px 18px;text-align:center;color:var(--tf-muted);background:#f8fafc;border-radius:var(--tf-radius-sm)}
+.tf-page .name{font-weight:800;overflow-wrap:anywhere}
+
+/* Perfil inteligente */
+.tf-page-aluno-perfil .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.tf-page-aluno-perfil .metric,.tf-page-aluno-perfil .radar-card{background:#f8fafc;border:1px solid var(--tf-border);border-radius:12px;padding:15px}
+.tf-page-aluno-perfil .metric strong,.tf-page-aluno-perfil .radar-card strong{color:var(--tf-navy)}
+.tf-page-aluno-perfil .radar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.tf-page-aluno-perfil .radar-summary{background:var(--tf-navy);border-radius:14px;color:#fff}
+
+/* Dashboard */
+.tf-page-dashboard .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tf-page-dashboard .stat{min-height:145px}
+.tf-page-dashboard .attention-section{border-left:4px solid #f59e0b}
+
+/* Performance */
+.tf-page-performance .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tf-page-performance .grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px}
+.tf-page-performance .recommendations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tf-page-performance .recommendation{border:1px solid var(--tf-border);border-radius:12px;padding:16px;background:#f8fafc}
+.tf-page-performance .progress{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.tf-page-performance .progress>span{display:block;height:100%;background:var(--tf-success)}
+
+/* CRM */
+.tf-page-crm .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tf-page-crm .agenda{display:grid;gap:8px}
+.tf-page-crm .agenda-item{display:flex;justify-content:space-between;gap:14px;padding:12px;border:1px solid var(--tf-border);border-radius:10px;background:#fff}
+
+/* Retenção */
+.tf-page-retencao .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tf-page-retencao .automation{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:16px;margin-bottom:18px}
+.tf-page-retencao .item{display:flex;justify-content:space-between;gap:16px;padding:14px;border:1px solid var(--tf-border);border-radius:11px;background:#f8fafc}
+.tf-page-retencao .result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tf-page-retencao .result-card{border:1px solid var(--tf-border);border-radius:11px;padding:14px;background:#fff}
+
+@media(max-width:950px){
+ .tf-page .stats,.tf-page-performance .stats,.tf-page-retencao .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tf-page-aluno-perfil .grid,.tf-page-aluno-perfil .radar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tf-page-performance .grid{grid-template-columns:1fr}
+ .tf-page-performance .recommendations{grid-template-columns:1fr}
+ .tf-page .head{align-items:flex-start}
+}
+@media(max-width:650px){
+ .tf-page main,.tf-page .wrap{margin:24px auto;padding:0 16px}
+ .tf-page .head{flex-direction:column}
+ .tf-page .stats,.tf-page-performance .stats,.tf-page-retencao .stats,.tf-page-aluno-perfil .grid,.tf-page-aluno-perfil .radar-grid{grid-template-columns:1fr}
+ .tf-page .panel,.tf-page .hero,.tf-page .section{padding:16px}
+ .tf-page .list-search,.tf-page .search{align-items:stretch;flex-direction:column}
+ .tf-page .list-search-controls{flex-wrap:wrap}
+ .tf-page .list-search-controls input{flex:1 1 100%}
+ .tf-page .item,.tf-page-crm .agenda-item{flex-direction:column;align-items:stretch}
+ .tf-page-retencao .automation{align-items:stretch;flex-direction:column}
+ .tf-page-retencao .result-grid{grid-template-columns:1fr}
+ .tf-page .actions,.tf-page .buttons{width:100%}
+ .tf-page .actions .btn,.tf-page .buttons .btn{flex:1 1 auto}
+}

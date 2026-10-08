@@ -1,0 +1,41 @@
+-- Converte os rótulos previamente gravados para os nomes das constantes do enum GrupoMuscular.
+-- A coluna permanece VARCHAR; JPA persiste os nomes do enum usando EnumType.STRING.
+UPDATE exercicios
+SET grupo_muscular = CASE LOWER(TRIM(grupo_muscular))
+    WHEN 'peito' THEN 'PEITO'
+    WHEN 'costas' THEN 'COSTAS'
+    WHEN 'ombro' THEN 'OMBROS'
+    WHEN 'ombros' THEN 'OMBROS'
+    WHEN 'bíceps' THEN 'BICEPS'
+    WHEN 'biceps' THEN 'BICEPS'
+    WHEN 'tríceps' THEN 'TRICEPS'
+    WHEN 'triceps' THEN 'TRICEPS'
+    WHEN 'antebraço' THEN 'ANTEBRACOS'
+    WHEN 'antebraços' THEN 'ANTEBRACOS'
+    WHEN 'antebraco' THEN 'ANTEBRACOS'
+    WHEN 'antebracos' THEN 'ANTEBRACOS'
+    WHEN 'abdômen' THEN 'ABDOMEN'
+    WHEN 'abdomen' THEN 'ABDOMEN'
+    WHEN 'lombar' THEN 'LOMBAR'
+    WHEN 'glúteo' THEN 'GLUTEOS'
+    WHEN 'glúteos' THEN 'GLUTEOS'
+    WHEN 'gluteo' THEN 'GLUTEOS'
+    WHEN 'gluteos' THEN 'GLUTEOS'
+    WHEN 'quadríceps' THEN 'QUADRICEPS'
+    WHEN 'quadriceps' THEN 'QUADRICEPS'
+    WHEN 'posterior de coxa' THEN 'POSTERIORES_COXA'
+    WHEN 'posteriores de coxa' THEN 'POSTERIORES_COXA'
+    WHEN 'adutor' THEN 'ADUTORES'
+    WHEN 'adutores' THEN 'ADUTORES'
+    WHEN 'abdutor' THEN 'ABDUTORES'
+    WHEN 'abdutores' THEN 'ABDUTORES'
+    WHEN 'panturrilha' THEN 'PANTURRILHAS'
+    WHEN 'panturrilhas' THEN 'PANTURRILHAS'
+    WHEN 'trapézio' THEN 'TRAPEZIO'
+    WHEN 'trapezio' THEN 'TRAPEZIO'
+    WHEN 'corpo todo' THEN 'CORPO_TODO'
+    WHEN 'outro' THEN 'OUTRO'
+    ELSE 'OUTRO'
+END
+WHERE grupo_muscular IS NOT NULL
+  AND TRIM(grupo_muscular) <> '';

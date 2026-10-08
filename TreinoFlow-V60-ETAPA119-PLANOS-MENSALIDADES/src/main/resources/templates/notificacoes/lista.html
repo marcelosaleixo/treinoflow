@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notificações | TreinoFlow</title>
+<style>
+body{margin:0;background:#f3f6fb;color:#172554;font:14px Arial}.wrap{max-width:900px;margin:30px auto;padding:0 18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:10px;overflow:hidden}.item{display:flex;justify-content:space-between;gap:18px;padding:18px;border-bottom:1px solid #e2e8f0}.item:last-child{border-bottom:0}.item.unread{background:#eff6ff}.content{display:grid;gap:6px}.title{font-weight:700}.msg{color:#475569;line-height:1.45}.date{color:#94a3b8;font-size:12px}.btn{display:inline-block;border:0;background:#2563eb;color:#fff;text-decoration:none;padding:9px 12px;border-radius:8px;cursor:pointer}.btn.secondary{background:#e2e8f0;color:#172554}.empty{padding:35px;text-align:center;color:#64748b}@media(max-width:600px){.top,.item{align-items:flex-start;flex-direction:column}.item form{width:100%}.item .btn{width:100%}}
+</style>
+</head>
+<body><main class="wrap">
+<div class="top"><div><a class="btn secondary" th:href="@{/dashboard}">← Dashboard</a><h1>Notificações</h1></div><form th:action="@{/notificacoes/ler-todas}" method="post"><button class="btn secondary" type="submit">Marcar todas como lidas</button></form></div>
+<section class="panel">
+<article class="item" th:each="n : ${notificacoes}" th:classappend="${!n.lida} ? ' unread'">
+<div class="content"><span class="title" th:text="${n.titulo}">Notificação</span><span class="msg" th:text="${n.mensagem}">Mensagem</span><span class="date" th:text="${#temporals.format(n.dataCriacao,'dd/MM/yyyy HH:mm')}">05/10/2026 08:00</span></div>
+<form th:if="${!n.lida}" th:action="@{/notificacoes/{id}/ler(id=${n.id})}" method="post"><button class="btn" type="submit">Marcar como lida</button></form>
+</article>
+<div class="empty" th:if="${#lists.isEmpty(notificacoes)}">Nenhuma notificação no momento.</div>
+</section></main></body></html>

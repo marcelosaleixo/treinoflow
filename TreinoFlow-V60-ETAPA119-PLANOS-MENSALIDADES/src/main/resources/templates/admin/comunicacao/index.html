@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Comunicação | TreinoFlow</title>
+<style>
+body{margin:0;background:#f1f5f9;color:#172554;font:14px Arial}.wrap{max-width:1180px;margin:28px auto;padding:0 16px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}.card,.panel{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px}.status{font-weight:700}.on{color:#15803d}.off{color:#b91c1c}.table{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:11px;text-align:left;border-bottom:1px solid #e2e8f0}.btn{border:0;background:#2563eb;color:#fff;padding:9px 12px;border-radius:7px;text-decoration:none;display:inline-block}.muted{color:#64748b}.ok{color:#166534}.bad{color:#b91c1c}.badge{padding:4px 8px;border-radius:999px;background:#e2e8f0}@media(max-width:800px){.grid{grid-template-columns:1fr}.wrap{margin:18px auto}th,td{white-space:nowrap}}
+</style></head>
+<body>
+<div th:replace="~{admin/base-fragment :: topo('Central de comunicação')}"></div>
+<main class="wrap">
+<h1>Central de comunicação</h1>
+<p class="muted">Gerencie os textos usados nas notificações internas, e-mails e WhatsApp. As credenciais dos provedores continuam sendo configuradas por variáveis de ambiente.</p>
+<p class="ok" th:if="${sucesso}" th:text="${sucesso}"></p><p class="bad" th:if="${erro}" th:text="${erro}"></p>
+<div class="grid">
+<div class="card"><strong>E-mail</strong><p class="status" th:classappend="${emailEnabled ? ' on' : ' off'}" th:text="${emailEnabled ? 'Habilitado' : 'Desabilitado'}">Desabilitado</p><span class="muted">Ative pelo ambiente: TREINOFLOW_EMAIL_ENABLED=true</span></div>
+<div class="card"><strong>WhatsApp</strong><p class="status" th:classappend="${whatsappEnabled ? ' on' : ' off'}" th:text="${whatsappEnabled ? 'Habilitado' : 'Desabilitado'}">Desabilitado</p><span class="muted">Ative pelo ambiente: TREINOFLOW_WHATSAPP_ENABLED=true</span></div>
+<div class="card"><strong>Templates</strong><p style="font-size:26px;font-weight:700;margin:8px 0" th:text="${totalTemplates}">0</p><span class="muted">Eventos configurados no sistema.</span></div>
+</div>
+<section class="panel table"><h2>Templates</h2><table><thead><tr><th>Evento</th><th>Canal</th><th>Título</th><th>Status</th><th>Ação</th></tr></thead><tbody>
+<tr th:each="t:${templates}"><td th:text="${t.tipo.descricao}"></td><td th:text="${t.canal.descricao}"></td><td th:text="${t.titulo}"></td><td><span class="badge" th:text="${t.ativo ? 'Ativo' : 'Inativo'}"></span></td><td><a class="btn" th:href="@{/admin/comunicacao/templates/editar(tipo=${t.tipo},canal=${t.canal})}">Editar</a></td></tr>
+<tr th:if="${#lists.isEmpty(templates)}"><td colspan="5">Nenhum template cadastrado. Execute a migration V38 ou crie um template pelo fluxo de edição.</td></tr>
+</tbody></table></section>
+</main></body></html>

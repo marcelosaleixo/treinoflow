@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="tf-header" th:fragment="header">
+  <div class="tf-header-inner">
+    <a class="tf-brand" th:href="@{/dashboard}" aria-label="TreinoFlow - Dashboard">TreinoFlow</a>
+    <nav class="tf-nav" aria-label="Navegação principal">
+      <a th:href="@{/dashboard}">Dashboard</a>
+      <a th:href="@{/alunos}">Alunos</a>
+      <a th:href="@{/agenda}">Agenda</a>
+      <a th:href="@{/performance}">Performance</a>
+      <a th:href="@{/crm}">CRM</a>
+      <a th:href="@{/financeiro}">Financeiro</a>
+      <a th:href="@{/retencao}">Retenção</a>
+      <a th:href="@{/assistente/acoes}">Assistente</a>
+      <a th:href="@{/exercicios}">Exercícios</a>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit">Sair</button>
+      </form>
+    </nav>
+  </div>
+</header>
+</body>
+</html>

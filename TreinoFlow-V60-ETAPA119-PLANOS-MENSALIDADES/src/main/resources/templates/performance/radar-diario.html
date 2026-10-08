@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Radar Diário · TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/tf-design-system.css}">
+<link rel="stylesheet" th:href="@{/css/tf-pages.css}">
+<style>
+:root{--rd-blue:#2563eb;--rd-dark:#172554;--rd-muted:#64748b;--rd-line:#dbe4f0;--rd-bg:#f5f7fb}body{margin:0;background:var(--rd-bg);color:var(--rd-dark)}.rd-page{max-width:1180px;margin:0 auto;padding:28px 22px 60px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;color:var(--rd-blue);text-transform:uppercase}.intro{color:var(--rd-muted);margin-top:-5px;line-height:1.55}.hero{background:linear-gradient(135deg,#172554,#2563eb);color:#fff;border-radius:20px;padding:24px;margin:20px 0;box-shadow:0 14px 30px rgba(23,37,84,.16)}.hero h1{margin:0 0 7px;font-size:28px}.hero p{margin:0;color:#dbeafe;max-width:760px;line-height:1.5}.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}.hero-actions a{background:#fff;color:#1d4ed8;text-decoration:none;padding:10px 13px;border-radius:9px;font-size:12px;font-weight:800}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.stat{background:#fff;border:1px solid var(--rd-line);border-radius:15px;padding:17px}.stat strong{display:block;font-size:27px}.stat span{display:block;margin-top:4px;font-size:12px;color:var(--rd-muted)}.priority{margin-top:20px;background:#fff;border:1px solid var(--rd-line);border-radius:16px;padding:18px}.priority-title{font-size:12px;font-weight:800;color:var(--rd-muted);text-transform:uppercase;letter-spacing:.06em}.priority-main{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:8px}.priority-main strong{font-size:20px}.badge{display:inline-flex;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:850}.danger{background:#fee2e2;color:#991b1b}.high{background:#ffedd5;color:#9a3412}.warn{background:#fef3c7;color:#92400e}.good{background:#dcfce7;color:#166534}.radar-list{display:grid;gap:14px;margin-top:20px}.radar-card{background:#fff;border:1px solid var(--rd-line);border-radius:17px;padding:18px;box-shadow:0 7px 22px rgba(23,37,84,.045)}.radar-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.student{font-size:18px;font-weight:850}.meta{font-size:11px;color:var(--rd-muted);margin-top:5px}.content{display:grid;grid-template-columns:1fr 1.3fr;gap:13px;margin-top:15px}.box{background:#f8fafc;border:1px solid var(--rd-line);border-radius:11px;padding:13px}.box h3{font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px;color:#475569}.box p{font-size:13px;line-height:1.5;margin:0;color:#334155}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn{display:inline-flex;text-decoration:none;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:800;background:var(--rd-blue);color:#fff}.btn.soft{background:#eff6ff;color:#1d4ed8}.empty{margin-top:20px;background:#fff;border:1px solid var(--rd-line);border-radius:16px;padding:25px;color:var(--rd-muted)}.footer-links{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.section-title{margin-top:26px}.section-title h2{margin:0;font-size:18px}.section-title p{color:var(--rd-muted);font-size:13px;margin:5px 0 0}
+@media(max-width:800px){.rd-page{padding:20px 14px 45px}.stats{grid-template-columns:repeat(2,1fr)}.content{grid-template-columns:1fr}.priority-main,.radar-top{flex-direction:column;align-items:flex-start}.actions .btn{flex:1;justify-content:center}.hero h1{font-size:24px}}
+@media(max-width:450px){.stats{grid-template-columns:1fr}.hero{padding:20px}.student{font-size:17px}}
+</style>
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="rd-page">
+<div class="eyebrow">Performance · Inteligência</div>
+<div class="hero">
+<h1>Radar Diário</h1>
+<p>Uma visão rápida do que merece sua atenção hoje. O TreinoFlow cruza follow-ups, feedbacks e risco para ajudar você a decidir por onde começar.</p>
+<div class="hero-actions"><a th:href="@{/performance/follow-up-inteligente}">Follow-ups</a><a th:href="@{/performance/plano-inteligente}">Plano inteligente</a><a th:href="@{/crm}">CRM</a></div>
+</div>
+<section class="stats">
+<article class="stat"><strong th:text="${radar.atencao}">0</strong><span>Prioridades de atenção</span></article>
+<article class="stat"><strong th:text="${radar.alta}">0</strong><span>Ações de alta prioridade</span></article>
+<article class="stat"><strong th:text="${radar.followUpsHoje}">0</strong><span>Follow-ups para hoje</span></article>
+<article class="stat"><strong th:text="${radar.followUpsVencidos}">0</strong><span>Follow-ups vencidos</span></article>
+</section>
+<section class="priority" th:if="${radar.prioridadeUm != null}">
+<div class="priority-title">Comece por aqui</div>
+<div class="priority-main"><strong th:text="${radar.prioridadeUm.alunoNome + ' · ' + radar.prioridadeUm.titulo}">Aluno · Ação</strong><span class="badge" th:classappend="${radar.prioridadeUm.prioridadeCss()}" th:text="${radar.prioridadeUm.prioridade}">ATENÇÃO</span></div>
+<div style="font-size:13px;color:#475569;margin-top:8px" th:text="${radar.prioridadeUm.motivo}">Motivo principal.</div>
+<div class="actions"><a class="btn" th:href="@{/performance/radar-diario/acao/{id}(id=${radar.prioridadeUm.alunoId},tipo=${radar.prioridadeUm.tipo},titulo=${radar.prioridadeUm.titulo},motivo=${radar.prioridadeUm.motivo},acao=${radar.prioridadeUm.acao})}">✓ Executar ação</a><a class="btn soft" th:if="${radar.prioridadeUm.whatsappUrl != null and !#strings.isEmpty(radar.prioridadeUm.whatsappUrl)}" th:href="${radar.prioridadeUm.whatsappUrl}" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn soft" th:href="@{/crm/alunos/{id}(id=${radar.prioridadeUm.alunoId})}">Ver CRM</a><a class="btn soft" th:href="@{/alunos/{id}/perfil-inteligente(id=${radar.prioridadeUm.alunoId})}">Perfil inteligente</a></div>
+</section>
+<div class="section-title"><h2>Fila de atenção</h2><p>Até 12 itens priorizados. O radar apenas recomenda; a decisão continua com o Personal.</p></div>
+<section class="radar-list" th:if="${!#lists.isEmpty(radar.itens)}">
+<article class="radar-card" th:each="item : ${radar.itens}">
+<div class="radar-top"><div><div class="student" th:text="${item.alunoNome}">Aluno</div><div class="meta" th:text="${item.tipo + ' · ' + (item.dataReferencia == null ? 'sem data' : #temporals.format(item.dataReferencia,'dd/MM/yyyy')) + (item.scoreRisco > 0 ? ' · Risco ' + item.scoreRisco + '/100' : '')}">RISCO · 08/10</div></div><span class="badge" th:classappend="${item.prioridadeCss()}" th:text="${item.prioridade}">ALTA</span></div>
+<div class="content"><div class="box"><h3>O que aconteceu</h3><p th:text="${item.motivo}">Motivo</p></div><div class="box"><h3>Próxima ação</h3><p th:text="${item.acao}">Ação</p></div></div>
+<div class="actions"><a class="btn" th:href="@{/performance/radar-diario/acao/{id}(id=${item.alunoId},tipo=${item.tipo},titulo=${item.titulo},motivo=${item.motivo},acao=${item.acao})}">✓ Executar ação</a><a class="btn soft" th:if="${item.whatsappUrl != null and !#strings.isEmpty(item.whatsappUrl)}" th:href="${item.whatsappUrl}" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn soft" th:href="@{/crm/alunos/{id}(id=${item.alunoId})}">CRM</a><a class="btn soft" th:href="@{/alunos/{id}/perfil-inteligente(id=${item.alunoId})}">Perfil</a><a class="btn soft" th:href="@{/alunos/{id}/treinos(id=${item.alunoId})}">Treinos</a></div>
+</article>
+</section>
+<div class="empty" th:if="${#lists.isEmpty(radar.itens)}"><strong>Seu radar está limpo. 🎯</strong><br>Nenhuma prioridade relevante foi identificada com os sinais disponíveis hoje. Continue acompanhando normalmente.</div>
+<div class="footer-links"><a class="btn soft" th:href="@{/performance}">← Performance</a><a class="btn soft" th:href="@{/dashboard}">Dashboard</a><a class="btn soft" th:href="@{/performance/follow-up-inteligente}">Follow-up</a><a class="btn soft" th:href="@{/performance/plano-inteligente}">Plano inteligente</a></div>
+</main>
+</body>
+</html>

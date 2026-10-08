@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${treino.nome} + ' | TreinoFlow'">Meu treino | TreinoFlow</title>
+  <style>
+    :root{font-family:Inter,system-ui,Arial,sans-serif;color:#172033;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}.wrap{max-width:850px;margin:auto;padding:24px 16px 48px}.brand{font-weight:800;color:#1769d2;letter-spacing:.3px}.hero,.exercise{background:white;border:1px solid #e4eaf3;border-radius:16px;padding:22px;box-shadow:0 8px 24px #1d35570b}.hero{margin:18px 0 16px}.muted{color:#667085}.exercise{margin:12px 0}.exercise h2{font-size:1.1rem;margin:0 0 8px}.tag{display:inline-block;background:#edf4ff;color:#1756a9;padding:5px 9px;border-radius:20px;font-size:.8rem}.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.detail{background:#f7f9fc;padding:12px;border-radius:10px}.detail b{display:block;font-size:.75rem;color:#667085;margin-bottom:4px}.video{display:inline-block;margin-top:8px;color:#1769d2;font-weight:600;text-decoration:none}.note{border-left:3px solid #9ab9e8;padding:8px 12px;background:#f8faff}.empty{padding:18px;background:#fff;border-radius:12px}@media(max-width:520px){.wrap{padding:16px 12px 32px}.hero,.exercise{padding:17px}.details{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body><main class="wrap">
+  <div class="brand">TreinoFlow</div>
+  <section class="hero">
+    <h1 th:text="${treino.nome}">Treino</h1>
+    <p class="muted">Aluno: <strong th:text="${treino.nomeAluno}">Aluno</strong> · Personal: <strong th:text="${treino.nomePersonal}">Personal</strong></p>
+    <p th:if="${treino.descricao != null and !#strings.isEmpty(treino.descricao)}" th:text="${treino.descricao}"></p>
+    <small class="muted" th:if="${treino.dataLiberacao != null}" th:text="'Liberado em ' + ${#temporals.format(treino.dataLiberacao, 'dd/MM/yyyy HH:mm')}"></small><br><small class="muted" th:if="${treino.acessoExpiraEm != null}" th:text="'Acesso válido até ' + ${#temporals.format(treino.acessoExpiraEm, 'dd/MM/yyyy HH:mm')}"></small>
+  </section>
+  <h2>Exercícios</h2>
+  <div th:if="${#lists.isEmpty(treino.exercicios)}" class="empty">Este treino ainda não possui exercícios cadastrados.</div>
+  <article class="exercise" th:each="ex : ${treino.exercicios}">
+    <span class="tag" th:text="'Exercício ' + ${ex.ordem}">Exercício 1</span>
+    <h2 th:text="${ex.nome}">Nome do exercício</h2>
+    <p class="muted" th:if="${ex.grupoMuscular != null}" th:text="${ex.grupoMuscular}"></p>
+    <div class="details">
+      <div class="detail"><b>Séries</b><span th:text="${ex.series != null ? ex.series : '—'}">3</span></div>
+      <div class="detail"><b>Repetições</b><span th:text="${ex.repeticoes != null ? ex.repeticoes : '—'}">12</span></div>
+      <div class="detail"><b>Carga</b><span th:text="${ex.carga != null ? ex.carga : 'Conforme orientação'}">—</span></div>
+      <div class="detail"><b>Descanso</b><span th:text="${ex.descansoSegundos != null ? ex.descansoSegundos + ' segundos' : 'Conforme orientação'}">60 segundos</span></div>
+    </div>
+    <p th:if="${ex.descricao != null and !#strings.isEmpty(ex.descricao)}" th:text="${ex.descricao}"></p>
+    <p class="note" th:if="${ex.observacao != null and !#strings.isEmpty(ex.observacao)}" th:text="${ex.observacao}"></p>
+    <a class="video" th:if="${ex.urlVideo != null and !#strings.isEmpty(ex.urlVideo)}" th:href="${ex.urlVideo}" target="_blank" rel="noopener noreferrer">▶ Assistir demonstração</a>
+  </article>
+  <p class="muted" style="font-size:.85rem;margin-top:24px">Siga as orientações do seu profissional. Em caso de dor ou desconforto, interrompa o exercício e comunique seu personal.</p>
+</main></body></html>

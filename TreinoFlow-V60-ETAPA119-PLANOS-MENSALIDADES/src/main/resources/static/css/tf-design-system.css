@@ -1,0 +1,111 @@
+/* TreinoFlow Design System — Etapa 100
+ * Componentes visuais reutilizáveis. Mantém classes tf-* para evitar colisões com CSS legado.
+ */
+:root{
+  --tf-navy:#172554;
+  --tf-blue:#2563eb;
+  --tf-blue-hover:#1d4ed8;
+  --tf-bg:#f1f5f9;
+  --tf-white:#fff;
+  --tf-text:#0f172a;
+  --tf-muted:#64748b;
+  --tf-border:#e2e8f0;
+  --tf-border-strong:#cbd5e1;
+  --tf-soft:#f8fafc;
+  --tf-focus:rgba(37,99,235,.16);
+  --tf-success:#15803d;
+  --tf-success-bg:#dcfce7;
+  --tf-warning:#a16207;
+  --tf-warning-bg:#fef3c7;
+  --tf-danger:#b91c1c;
+  --tf-danger-bg:#fee2e2;
+  --tf-info:#1d4ed8;
+  --tf-info-bg:#dbeafe;
+  --tf-radius-sm:8px;
+  --tf-radius:14px;
+  --tf-radius-lg:18px;
+  --tf-shadow:0 8px 26px rgba(15,23,42,.05);
+}
+
+.tf-card{background:var(--tf-white);border:1px solid var(--tf-border);border-radius:var(--tf-radius);box-shadow:var(--tf-shadow);overflow:hidden}
+.tf-card-body{padding:20px}
+.tf-card-header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;border-bottom:1px solid var(--tf-border);background:var(--tf-white)}
+.tf-card-title{margin:0;color:var(--tf-navy);font-size:17px;font-weight:800}
+.tf-card-subtitle{margin:4px 0 0;color:var(--tf-muted);font-size:13px}
+
+.tf-grid{display:grid;gap:14px}
+.tf-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tf-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tf-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+.tf-field{display:grid;gap:6px}
+.tf-field label{color:#243b63;font-size:13px;font-weight:700}
+.tf-field small{color:var(--tf-muted);font-size:12px}
+.tf-input,.tf-select,.tf-textarea,
+main.wrap form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+main.wrap form select,main.wrap form textarea{
+  width:100%;min-height:40px;padding:9px 11px;border:1px solid var(--tf-border-strong);border-radius:var(--tf-radius-sm);
+  background:#fff;color:var(--tf-text);font:inherit;font-size:14px;outline:none;transition:border-color .15s ease,box-shadow .15s ease,background .15s ease
+}
+.tf-textarea,main.wrap form textarea{min-height:100px;resize:vertical}
+.tf-input:focus,.tf-select:focus,.tf-textarea:focus,
+main.wrap form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):focus,
+main.wrap form select:focus,main.wrap form textarea:focus{border-color:var(--tf-blue);box-shadow:0 0 0 3px var(--tf-focus)}
+.tf-input:disabled,.tf-select:disabled,.tf-textarea:disabled{background:#f8fafc;color:#94a3b8;cursor:not-allowed}
+
+.tf-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tf-actions-end{justify-content:flex-end}
+
+.tf-alert{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid transparent;border-radius:var(--tf-radius-sm);font-size:13px}
+.tf-alert-success{background:var(--tf-success-bg);border-color:#bbf7d0;color:#166534}
+.tf-alert-info{background:var(--tf-info-bg);border-color:#bfdbfe;color:#1e40af}
+.tf-alert-warning{background:var(--tf-warning-bg);border-color:#fde68a;color:#854d0e}
+.tf-alert-danger{background:var(--tf-danger-bg);border-color:#fecaca;color:#991b1b}
+
+.tf-badge{display:inline-flex;align-items:center;width:max-content;min-height:25px;padding:4px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:800;line-height:1}
+.tf-badge-success{background:var(--tf-success-bg);color:#166534}
+.tf-badge-warning{background:var(--tf-warning-bg);color:#854d0e}
+.tf-badge-danger{background:var(--tf-danger-bg);color:#991b1b}
+.tf-badge-neutral{background:#f1f5f9;color:#475569}
+
+.tf-stat{background:var(--tf-white);border:1px solid var(--tf-border);border-radius:var(--tf-radius);padding:17px;box-shadow:var(--tf-shadow)}
+.tf-stat-label{display:block;color:var(--tf-muted);font-size:12px;font-weight:650}
+.tf-stat-value{display:block;margin-top:4px;color:var(--tf-navy);font-size:26px;font-weight:850;line-height:1.2}
+.tf-stat-help{display:block;margin-top:5px;color:var(--tf-muted);font-size:11px}
+
+.tf-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--tf-border);border-radius:var(--tf-radius);background:#fff}
+.tf-table{width:100%;min-width:650px;border-collapse:collapse}
+.tf-table th{padding:12px 15px;background:#f8fafc;color:var(--tf-muted);border-bottom:1px solid var(--tf-border);font-size:11px;font-weight:800;text-align:left;text-transform:uppercase;letter-spacing:.5px}
+.tf-table td{padding:13px 15px;border-bottom:1px solid #edf2f7;color:#334155;font-size:13px;vertical-align:middle}
+.tf-table tbody tr:last-child td{border-bottom:0}
+.tf-table tbody tr:hover{background:#f8fafc}
+
+.tf-empty{padding:42px 20px;text-align:center;color:var(--tf-muted)}
+.tf-empty strong{display:block;margin-bottom:5px;color:var(--tf-navy);font-size:16px}
+
+.tf-divider{height:1px;background:var(--tf-border);border:0;margin:20px 0}
+.tf-muted{color:var(--tf-muted)!important}
+.tf-text-navy{color:var(--tf-navy)!important}
+
+/* Compatibilidade visual para formulários legados que ainda usam .field/.grid/.card. */
+main.wrap .field{display:grid;gap:6px}
+main.wrap .field label{color:#243b63;font-size:13px;font-weight:700}
+main.wrap .field small{color:var(--tf-muted);font-size:12px}
+main.wrap .grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+main.wrap .grid .wide{grid-column:1 / -1}
+main.wrap .card{background:#fff;border:1px solid var(--tf-border);border-radius:var(--tf-radius);box-shadow:var(--tf-shadow);padding:20px}
+main.wrap .secondary{background:#f8fafc;color:#334155;border:1px solid var(--tf-border)}
+main.wrap .alert{padding:12px 14px;border-radius:var(--tf-radius-sm);background:var(--tf-danger-bg);color:#991b1b;margin-bottom:14px}
+
+@media(max-width:900px){
+  .tf-grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tf-grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  .tf-card-body{padding:16px}
+  .tf-card-header{align-items:flex-start;flex-direction:column;padding:14px 16px}
+  .tf-grid-2,.tf-grid-3,.tf-grid-4,main.wrap .grid{grid-template-columns:1fr}
+  main.wrap .grid .wide{grid-column:auto}
+  .tf-actions{width:100%}
+  .tf-actions > .btn,.tf-actions > a,.tf-actions > button{flex:1 1 auto}
+}

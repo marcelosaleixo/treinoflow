@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reavaliação pós-ação · TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/tf-design-system.css}"><link rel="stylesheet" th:href="@{/css/tf-pages.css}">
+<style>
+body{margin:0;background:#f5f7fb;color:#172554}.page{max-width:980px;margin:auto;padding:28px 22px 60px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#2563eb;text-transform:uppercase}.intro{color:#64748b;line-height:1.55}.hero{background:linear-gradient(135deg,#172554,#2563eb);color:#fff;border-radius:20px;padding:24px;margin-top:18px;box-shadow:0 14px 30px rgba(23,37,84,.16)}.hero h1{margin:0 0 7px;font-size:27px}.hero p{margin:0;color:#dbeafe}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.card{background:#fff;border:1px solid #dbe4f0;border-radius:16px;padding:18px}.card h2{font-size:14px;margin:0 0 12px}.score{font-size:42px;font-weight:900;line-height:1}.score small{font-size:15px;color:#64748b;font-weight:700}.muted{font-size:12px;color:#64748b;margin-top:6px}.compare{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}.compare-box{border:1px solid #dbe4f0;border-radius:13px;padding:15px;background:#f8fafc}.arrow{font-size:22px;color:#94a3b8}.delta{display:inline-flex;margin-top:10px;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:850}.positive{background:#dcfce7;color:#166534}.negative{background:#fee2e2;color:#991b1b}.neutral{background:#e2e8f0;color:#475569}.badge{display:inline-flex;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:850;margin-top:8px}.danger{background:#fee2e2;color:#991b1b}.high{background:#ffedd5;color:#9a3412}.warn{background:#fef3c7;color:#92400e}.good{background:#dcfce7;color:#166534}.label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:850}.value{font-size:14px;color:#334155;line-height:1.55;margin-top:5px}.full{grid-column:1/-1}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:9px;padding:11px 14px;font-size:12px;font-weight:800;background:#2563eb;color:#fff}.btn.soft{background:#eff6ff;color:#1d4ed8}.btn.dark{background:#172554;color:#fff}.note{margin-top:14px;padding:12px 14px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:11px;font-size:12px;color:#475569;line-height:1.5}
+@media(max-width:700px){.page{padding:20px 14px 45px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.compare{grid-template-columns:1fr}.arrow{text-align:center;transform:rotate(90deg)}.hero{padding:20px}.hero h1{font-size:23px}.actions .btn{width:100%}}
+</style></head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="page">
+<div class="eyebrow">Performance · Radar Diário · Etapa 111</div>
+<div class="hero">
+<h1>Reavaliação pós-ação</h1>
+<p th:text="${reavaliacao.alunoNome + ' · o Radar recalculou o risco após o registro da ação.'}">Aluno · Reavaliação</p>
+</div>
+<section class="card" style="margin-top:18px">
+<h2>Antes da ação → Depois da ação</h2>
+<div class="compare">
+<div class="compare-box"><div class="label">Risco antes</div><div class="score" th:text="${reavaliacao.scoreAntes + '/100'}">60/100</div><div class="muted" th:text="${reavaliacao.nivelAntes}">ALTO</div><span class="badge" th:text="${reavaliacao.prioridadeAntes}">ALTA</span></div>
+<div class="arrow">→</div>
+<div class="compare-box"><div class="label">Novo risco</div><div class="score" th:text="${reavaliacao.scoreDepois + '/100'}">45/100</div><div class="muted" th:text="${reavaliacao.nivelDepois}">MÉDIO</div><span class="badge" th:classappend="${reavaliacao.prioridadeDepoisCss()}" th:text="${reavaliacao.prioridadeDepois}">MÉDIA</span></div>
+</div>
+<div class="delta" th:classappend="${reavaliacao.tendenciaCss()}" th:text="${(reavaliacao.variacaoScore > 0 ? '+' : '') + reavaliacao.variacaoScore + ' pontos · ' + reavaliacao.tendencia}">-15 pontos · Risco reduzido após a ação.</div>
+</section>
+<section class="grid">
+<div class="card"><div class="label">Resultado registrado</div><div class="value" th:text="${reavaliacao.resultado}">Em acompanhamento</div></div>
+<div class="card"><div class="label">Nova prioridade</div><div class="value" th:text="${reavaliacao.prioridadeDepois + ' · ' + reavaliacao.nivelDepois}">MÉDIA · MEDIO</div></div>
+<div class="card"><div class="label">Próxima ação</div><div class="value" th:text="${reavaliacao.proximaAcao}">Nenhuma próxima ação definida.</div></div>
+<div class="card"><div class="label">Nova recomendação do Radar</div><div class="value" th:text="${reavaliacao.novaRecomendacao}">Acompanhar a próxima semana.</div></div>
+<div class="card full"><div class="label">Observação registrada</div><div class="value" th:text="${reavaliacao.observacao}">Nenhuma observação adicional registrada.</div></div>
+</section>
+<div class="note">A reavaliação é operacional: ela recalcula os sinais disponíveis após o contato e ajuda o Personal a decidir o próximo passo. O TreinoFlow não envia mensagens automaticamente, não diagnostica e não altera o treino sozinho.</div>
+<div class="actions"><a class="btn" th:href="@{/performance/radar-diario}">✓ Voltar ao Radar</a><a class="btn soft" th:href="@{/crm/alunos/{id}(id=${reavaliacao.alunoId})}">Ver CRM</a><a class="btn soft" th:href="@{/alunos/{id}/perfil-inteligente(id=${reavaliacao.alunoId})}">Perfil inteligente</a><a class="btn dark" th:href="@{/alunos/{id}/treinos(id=${reavaliacao.alunoId})}">Treinos</a></div>
+</main>
+</body></html>

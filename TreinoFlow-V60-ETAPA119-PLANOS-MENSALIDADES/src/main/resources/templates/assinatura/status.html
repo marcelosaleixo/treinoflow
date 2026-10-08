@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Minha assinatura | TreinoFlow</title>
+<style>
+body{margin:0;background:#f3f6fb;color:#172554;font-family:Inter,Arial,sans-serif}.wrap{max-width:760px;margin:55px auto;padding:0 20px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:30px;box-shadow:0 12px 35px #1725540d}.brand{font-weight:800;color:#2563eb}.badge{display:inline-block;margin-top:12px;padding:7px 11px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:750;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:25px 0}.item{border:1px solid #e2e8f0;border-radius:12px;padding:15px}.label{font-size:12px;color:#64748b}.value{font-weight:700;margin-top:5px}.btn{display:inline-block;text-decoration:none;background:#2563eb;color:#fff;padding:11px 16px;border-radius:9px;font-weight:700}@media(max-width:560px){.grid{grid-template-columns:1fr}.wrap{margin:25px auto}.card{padding:22px}}
+</style></head>
+<body><main class="wrap"><div class="card"><div class="brand">TreinoFlow</div><h1>Minha assinatura</h1>
+<p th:text="${personal != null ? 'Olá, ' + personal.nome + '. Aqui está a situação atual do seu plano.' : 'Situação da assinatura.'}">Situação da assinatura.</p>
+<div th:if="${assinatura != null}"><span class="badge" th:text="${assinatura.status.descricao}">Ativa</span><div class="grid">
+<div class="item"><div class="label">Plano</div><div class="value" th:text="${assinatura.plano.nome}">Plano</div></div>
+<div class="item"><div class="label">Início</div><div class="value" th:text="${#temporals.format(assinatura.dataInicio,'dd/MM/yyyy')}">01/01/2026</div></div>
+<div class="item"><div class="label">Vencimento</div><div class="value" th:text="${assinatura.dataVencimento != null ? #temporals.format(assinatura.dataVencimento,'dd/MM/yyyy') : 'Sem vencimento definido'}">31/12/2026</div></div>
+<div class="item"><div class="label">Próxima cobrança</div><div class="value" th:text="${assinatura.dataProximaCobranca != null ? #temporals.format(assinatura.dataProximaCobranca,'dd/MM/yyyy') : 'Não definida'}">Não definida</div></div>
+</div></div><div th:if="${assinatura == null}"><p>Sua assinatura ainda não foi configurada. Entre em contato com o administrador.</p></div>
+<a class="btn" th:if="${assinatura != null && assinatura.permiteAcesso && !assinatura.estaVencida}" th:href="@{/dashboard}">Voltar ao painel</a>
+</div><a class="btn" style="margin-left:8px" th:href="@{/assinatura/cobrancas}">Ver cobranças</a></main></body></html>

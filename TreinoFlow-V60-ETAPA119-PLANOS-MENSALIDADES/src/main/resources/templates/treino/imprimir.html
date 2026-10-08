@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="'Treino - ' + ${treino.nome} + ' | TreinoFlow'">Treino | TreinoFlow</title>
+  <style>
+    *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;background:#eef2f7}.sheet{max-width:850px;margin:24px auto;background:#fff;padding:36px;box-shadow:0 3px 18px #0f172a18}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;border-bottom:2px solid #1d4ed8;padding-bottom:18px}.brand{font-size:13px;font-weight:bold;letter-spacing:2px;color:#1d4ed8}.muted{color:#64748b;font-size:14px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}.meta div{background:#f8fafc;border:1px solid #e2e8f0;padding:12px;border-radius:8px}.meta strong{display:block;font-size:12px;color:#64748b;margin-bottom:5px}.description{white-space:pre-wrap;margin:16px 0}.exercise{padding:15px 0;border-bottom:1px solid #e2e8f0;break-inside:avoid}.exercise h3{margin:0 0 8px;font-size:16px}.prescription{display:flex;flex-wrap:wrap;gap:8px}.pill{background:#eff6ff;border-radius:5px;padding:6px 9px;font-size:13px}.obs{font-size:13px;color:#475569;white-space:pre-wrap;margin:8px 0 0}.actions{max-width:850px;margin:16px auto;display:flex;justify-content:flex-end;gap:8px}.btn{border:0;border-radius:7px;padding:10px 15px;background:#1d4ed8;color:white;font-weight:bold;cursor:pointer;text-decoration:none;font-size:14px}.footer{margin-top:28px;padding-top:12px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px;text-align:center}
+    @media(max-width:600px){.sheet{margin:0;padding:20px}.top{flex-direction:column}.meta{grid-template-columns:1fr}.actions{padding:12px;justify-content:stretch}.actions .btn{flex:1;text-align:center}}
+    @media print{body{background:#fff}.sheet{max-width:none;margin:0;padding:0;box-shadow:none}.actions{display:none}.exercise{break-inside:avoid}a{color:inherit;text-decoration:none}@page{size:A4;margin:16mm}}
+  </style>
+</head>
+<body>
+  <div class="actions"><button class="btn" type="button" onclick="window.print()">Imprimir / Salvar PDF</button><a class="btn" style="background:#475569" th:href="@{/treinos/{id}/editar(id=${treino.id})}">Voltar ao editor</a></div>
+  <main class="sheet">
+    <header class="top"><div><div class="brand">TREINOFLOW</div><h1 th:text="${treino.nome}">Nome do treino</h1><p class="muted">Ficha de treinamento</p></div><div class="muted" th:text="'Emitido em ' + ${#temporals.format(emitidoEm, 'dd/MM/yyyy HH:mm')}">Emitido em</div></header>
+    <section class="meta"><div><strong>ALUNO(A)</strong><span th:text="${aluno.nome}">Aluno</span></div><div><strong>STATUS</strong><span th:text="${treino.status}">Status</span></div></section>
+    <p class="description" th:if="${treino.descricao != null and !treino.descricao.isBlank()}" th:text="${treino.descricao}"></p>
+    <h2>Exercícios</h2>
+    <p class="muted" th:if="${itens.isEmpty()}">Nenhum exercício cadastrado neste treino.</p>
+    <section class="exercise" th:each="item : ${itens}">
+      <h3 th:text="${item.ordem + '. ' + item.exercicio.nome}">Exercício</h3>
+      <div class="prescription">
+        <span class="pill" th:text="'Séries: ' + (${item.series != null ? item.series : '—'})">Séries</span>
+        <span class="pill" th:text="'Repetições: ' + (${item.repeticoes != null and !item.repeticoes.isBlank() ? item.repeticoes : '—'})">Repetições</span>
+        <span class="pill" th:text="'Carga: ' + (${item.carga != null and !item.carga.isBlank() ? item.carga : '—'})">Carga</span>
+        <span class="pill" th:text="'Descanso: ' + (${item.descansoSegundos != null ? item.descansoSegundos + ' s' : '—'})">Descanso</span>
+      </div>
+      <p class="obs" th:if="${item.observacao != null and !item.observacao.isBlank()}" th:text="'Observações: ' + ${item.observacao}"></p>
+    </section>
+    <footer class="footer">TreinoFlow · Ficha de treinamento pessoal</footer>
+  </main>
+</body>
+</html>

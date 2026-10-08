@@ -1,0 +1,5 @@
+-- ETAPA 122 - Recorrência automática de cobranças de mensalidades.
+-- A aplicação gera a cobrança quando o vencimento do mês chega; este script é apenas documental
+-- para ambientes que optarem por migração controlada. Não é necessário para ddl-auto=update.
+-- Não há nova tabela: a cobrança continua em contas_receber_personal e fica vinculada
+-- ao plano por plano_mensalidade_id.

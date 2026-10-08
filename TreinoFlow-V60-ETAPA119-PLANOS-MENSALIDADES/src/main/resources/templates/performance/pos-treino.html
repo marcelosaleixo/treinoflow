@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ações pós-treino | TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}">
+<link rel="stylesheet" th:href="@{/css/tf-design-system.css}"><link rel="stylesheet" th:href="@{/css/tf-pages.css}">
+<style>
+body{background:#f3f6fb;color:#172554}.tf-post{max-width:1160px;margin:32px auto;padding:0 22px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#2563eb}.intro{color:#64748b;margin:7px 0 24px}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.kpi,.card{background:#fff;border:1px solid #e2e8f0;border-radius:15px;box-shadow:0 8px 26px #17255408}.kpi{padding:18px}.label{font-size:12px;color:#64748b}.number{font-size:30px;font-weight:800;margin-top:8px}.card{padding:20px;margin-top:20px}.card h2{font-size:18px;margin:0 0 6px}.card p{font-size:13px;color:#64748b;margin:0 0 18px}.queue{display:grid;gap:12px}.item{border:1px solid #e2e8f0;border-radius:13px;padding:16px;background:#f8fafc}.item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.student{font-size:16px;font-weight:800}.meta{font-size:12px;color:#64748b;margin-top:4px}.badge{display:inline-flex;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:800}.danger{background:#fee2e2;color:#991b1b}.high{background:#ffedd5;color:#9a3412}.warn{background:#fef3c7;color:#92400e}.good{background:#dcfce7;color:#166534}.action{margin-top:13px;padding:13px;border-radius:10px;background:#fff;border:1px solid #e2e8f0;font-size:13px;line-height:1.55;color:#334155}.action strong{color:#172554}.signals{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.signal{font-size:11px;background:#eef2ff;color:#3730a3;border-radius:999px;padding:5px 8px}.links{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.btn{display:inline-flex;text-decoration:none;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:750;background:#2563eb;color:#fff}.secondary{background:#eff6ff;color:#1d4ed8}.empty{padding:18px;border:1px dashed #cbd5e1;border-radius:12px;color:#64748b;font-size:13px}.note{font-size:12px;color:#64748b;line-height:1.55;margin-top:14px}@media(max-width:700px){.kpis{grid-template-columns:1fr}.item-head{flex-direction:column}.tf-post{padding:0 16px}.card{padding:16px}}
+</style></head>
+<body class="tf-page tf-page-performance">
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="tf-post">
+<div class="eyebrow">Etapa 105 · Ação pós-treino</div>
+<h1>O que preciso fazer agora?</h1>
+<p class="intro">O TreinoFlow cruza o feedback do aluno com o risco operacional para transformar sinais recentes em uma fila de ações. A recomendação é assistida: o Personal decide e registra a conduta.</p>
+<section class="kpis">
+<article class="kpi"><div class="label">Atenção imediata</div><div class="number" th:text="${central.atencao}">0</div></article>
+<article class="kpi"><div class="label">Prioridade alta</div><div class="number" th:text="${central.alta}">0</div></article>
+<article class="kpi"><div class="label">Acompanhamento</div><div class="number" th:text="${central.media}">0</div></article>
+</section>
+<section class="card">
+<h2>Fila inteligente de ações</h2><p>Até 10 casos recentes que apresentam algum sinal para acompanhamento.</p>
+<div class="queue" th:if="${!#lists.isEmpty(central.acoes)}">
+<article class="item" th:each="a : ${central.acoes}">
+<div class="item-head"><div><div class="student" th:text="${a.alunoNome}">Aluno</div><div class="meta" th:text="${a.treinoNome + ' · ' + #temporals.format(a.data,'dd/MM/yyyy') + ' · Risco: ' + a.scoreRisco + '/100'}">Treino</div></div><span class="badge" th:classappend="${a.prioridade == 'ATENÇÃO' ? ' danger' : (a.prioridade == 'ALTA' ? ' high' : (a.prioridade == 'MÉDIA' ? ' warn' : ' good'))}" th:text="${a.prioridade}">ALTA</span></div>
+<div class="action"><strong th:text="${a.titulo}">Ação</strong><br><span th:text="${a.acao}">Descrição da ação.</span></div>
+<div class="signals"><span class="signal" th:each="s : ${a.sinais}" th:text="${s}">Sinal</span></div>
+<div class="links"><a class="btn" th:href="@{/alunos/{id}/perfil-inteligente(id=${a.alunoId})}">Ver perfil inteligente</a><a class="btn secondary" th:href="@{/crm/alunos/{id}(id=${a.alunoId})}">Registrar no CRM</a></div>
+</article></div>
+<div class="empty" th:if="${#lists.isEmpty(central.acoes)}">Nenhuma ação prioritária foi identificada nos feedbacks recentes. Continue acompanhando normalmente.</div>
+<div class="note">Importante: sinais de dor são indicadores de atenção, não diagnóstico. O sistema não altera treino, carga ou prescrição automaticamente.</div>
+</section>
+<section class="card"><h2>Próximos passos</h2><div class="links"><a class="btn secondary" th:href="@{/performance}">Voltar para Performance</a><a class="btn secondary" th:href="@{/performance/execucao}">Execução</a><a class="btn secondary" th:href="@{/crm}">CRM</a><a class="btn secondary" th:href="@{/dashboard}">Dashboard</a></div></section>
+</main></body></html>

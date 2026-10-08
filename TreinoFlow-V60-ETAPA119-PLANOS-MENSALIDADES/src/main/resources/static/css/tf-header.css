@@ -1,0 +1,12 @@
+@import url('/css/tf-design-system.css');
+:root{--tf-navy:#172554;--tf-blue:#2563eb;--tf-blue-hover:#1d4ed8}
+.tf-header{min-height:64px;background:var(--tf-navy);color:#fff;padding:12px max(20px,calc((100% - 1160px)/2));box-shadow:0 4px 16px rgba(23,37,84,.14);position:relative;z-index:20}
+.tf-header-inner{width:100%;min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.tf-brand{color:#fff;text-decoration:none;font-size:18px;font-weight:800;letter-spacing:.15px;white-space:nowrap}
+.tf-brand:hover{color:#fff;text-decoration:none}
+.tf-nav{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.tf-nav a,.tf-nav button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 11px;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;text-decoration:none;font:inherit;font-size:12px;font-weight:650;cursor:pointer;white-space:nowrap;transition:background .15s ease,border-color .15s ease,transform .15s ease}
+.tf-nav a:hover,.tf-nav button:hover{background:rgba(255,255,255,.17);border-color:rgba(255,255,255,.24);transform:translateY(-1px)}
+.tf-nav form{margin:0}
+@media(max-width:900px){.tf-header-inner{align-items:flex-start;flex-direction:column}.tf-nav{width:100%;justify-content:flex-start}}
+@media(max-width:560px){.tf-header{padding:10px 14px}.tf-brand{font-size:17px}.tf-nav{gap:6px}.tf-nav a,.tf-nav button{min-height:34px;padding:7px 9px;font-size:11px}}

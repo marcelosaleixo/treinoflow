@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Executar ação · TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/tf-design-system.css}"><link rel="stylesheet" th:href="@{/css/tf-pages.css}">
+<style>
+body{background:#f8fafc}.page{max-width:980px;margin:auto;padding:28px 22px 60px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#2563eb;text-transform:uppercase}.intro{color:#64748b;margin-top:-4px}.hero,.panel{background:#fff;border:1px solid #dbe4f0;border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(23,37,84,.05);margin-top:18px}.hero h1{margin:0;color:#172554;font-size:25px}.meta{font-size:12px;color:#64748b;margin-top:6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.box{background:#f8fafc;border:1px solid #dbe4f0;border-radius:12px;padding:14px}.box h3{font-size:13px;color:#172554;margin:0 0 7px}.box p{font-size:13px;line-height:1.55;color:#334155;margin:0}.message{white-space:pre-wrap}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:11px;font-weight:800;color:#334155;margin-bottom:5px}.field select,.field input,.field textarea{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:9px;padding:10px;font:inherit;font-size:13px;background:#fff}.field textarea{min-height:100px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;text-decoration:none;border-radius:9px;padding:11px 14px;background:#2563eb;color:#fff;font-size:12px;font-weight:800;cursor:pointer}.btn.soft{background:#eff6ff;color:#1d4ed8}.btn.dark{background:#172554}.notice{margin-top:12px;padding:11px 13px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:12px}.required{color:#b91c1c}.recommendation-panel{border-color:#bfdbfe;background:linear-gradient(180deg,#fff,#f8fbff)}.recommendation-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(220px,.8fr);gap:14px;margin-top:14px}.recommendation-main,.recommendation-side{background:#f8fafc;border:1px solid #dbe4f0;border-radius:12px;padding:15px;min-width:0}.recommendation-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:#2563eb;margin-bottom:6px}.recommendation-main>strong{display:inline-flex;background:#dbeafe;color:#1d4ed8;border-radius:999px;padding:6px 10px;font-size:11px}.recommendation-title{font-size:15px;font-weight:800;color:#172554;margin-top:10px}.recommendation-main p{font-size:13px;line-height:1.55;color:#334155;margin:6px 0 0;overflow-wrap:anywhere}.recommendation-side{display:grid;gap:10px}.recommendation-side div{display:grid;gap:3px}.recommendation-side span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:800}.recommendation-side strong{font-size:12px;color:#172554;overflow-wrap:anywhere}.recommendation-note{margin-top:10px;font-size:11px;color:#64748b;background:#fff;border:1px dashed #cbd5e1;border-radius:9px;padding:9px 11px;overflow-wrap:anywhere}@media(max-width:700px){.page{padding:20px 14px 45px}.grid,.form-grid,.recommendation-grid{grid-template-columns:1fr}.full{grid-column:auto}.actions .btn{width:100%}.hero h1{font-size:21px}}
+
+.explain-panel{border-color:#cbd5e1;background:#fff}.explain-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.explain-item{min-width:0;background:#f8fafc;border:1px solid #dbe4f0;border-radius:11px;padding:12px}.explain-item span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;font-weight:800;margin-bottom:5px}.explain-item strong{display:block;font-size:12px;line-height:1.4;color:#172554;overflow-wrap:anywhere}.explain-summary{margin-top:14px;padding:13px 14px;border-left:4px solid #2563eb;background:#eff6ff;border-radius:9px;color:#334155;font-size:13px;line-height:1.55;overflow-wrap:anywhere}.explain-list{margin:14px 0 0;padding-left:18px;color:#475569;font-size:12px;line-height:1.6}.explain-list li{margin-bottom:4px}.explain-muted{margin-top:10px;color:#64748b;font-size:11px;line-height:1.5;overflow-wrap:anywhere}@media(max-width:850px){.explain-grid{grid-template-columns:1fr 1fr}}@media(max-width:700px){.explain-grid{grid-template-columns:1fr}}
+
+.confidence-card{margin-top:14px;padding:14px 15px;border:1px solid #dbe4f0;border-radius:12px;background:#f8fafc}.confidence-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.confidence-kicker{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:800}.confidence-head strong{display:block;margin-top:3px;font-size:25px;color:#1d4ed8}.confidence-level{padding:5px 9px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:10px;font-weight:800}.confidence-bar{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:12px}.confidence-bar span{display:block;height:100%;background:#2563eb;border-radius:999px}.confidence-summary{margin:10px 0 4px;color:#334155;font-weight:800;font-size:12px}.confidence-reasons{margin:0;color:#64748b;font-size:11px;line-height:1.5}.confidence-card small{display:block;margin-top:9px;color:#94a3b8;font-size:10px;line-height:1.4}@media(max-width:700px){.confidence-head{align-items:flex-start}.confidence-head strong{font-size:22px}}
+
+.compare-panel{border-color:#dbe4f0;background:#fff}.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.strategy-card{min-width:0;border:1px solid #dbe4f0;border-radius:13px;padding:15px;background:#f8fafc}.strategy-card.strategy-best{border-color:#93c5fd;background:#f8fbff}.strategy-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.strategy-kicker{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;font-weight:800}.strategy-card h3{margin:4px 0 0;color:#172554;font-size:16px}.best-badge{background:#dbeafe;color:#1d4ed8;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800;white-space:nowrap}.strategy-rate{font-size:28px;font-weight:900;color:#1d4ed8;margin-top:14px}.strategy-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}.strategy-metrics div{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:9px;min-width:0}.strategy-metrics span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#64748b;font-weight:800}.strategy-metrics strong{display:block;margin-top:4px;font-size:12px;color:#172554;overflow-wrap:anywhere}.strategy-sample{margin:12px 0 0;color:#475569;font-size:11px;font-weight:700}.strategy-reading{margin:8px 0 0;color:#64748b;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.compare-note{margin-top:12px;padding:11px 13px;border-radius:10px;background:#f8fafc;border:1px dashed #cbd5e1;color:#64748b;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.compare-note strong{color:#334155}@media(max-width:850px){.compare-grid{grid-template-columns:1fr}.strategy-metrics{grid-template-columns:1fr 1fr}}@media(max-width:700px){.strategy-head{display:block}.best-badge{display:inline-flex;margin-top:8px}.strategy-rate{font-size:24px}}
+</style></head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="page">
+<div class="eyebrow">Performance · Radar Diário</div>
+<h1>Executar ação</h1>
+<p class="intro">Transforme a recomendação do Radar em uma ação humana registrada e acompanhável.</p>
+<section class="hero">
+<h1 th:text="${acaoRadar.alunoNome + ' · ' + acaoRadar.titulo}">Aluno · Ação</h1>
+<div class="meta" th:text="${acaoRadar.tipo}">RISCO</div>
+<div class="grid">
+<div class="box"><h3>O que aconteceu</h3><p th:text="${acaoRadar.motivo}">Motivo</p></div>
+<div class="box"><h3>O que o TreinoFlow recomenda</h3><p th:text="${acaoRadar.acao}">Ação</p></div>
+<div class="box full"><h3>Mensagem sugerida</h3><p class="message" th:text="${acaoRadar.mensagemSugerida}">Mensagem</p></div>
+</div>
+<div class="actions"><a class="btn" th:if="${acaoRadar.whatsappUrl != null and !#strings.isEmpty(acaoRadar.whatsappUrl)}" th:href="${acaoRadar.whatsappUrl}" target="_blank" rel="noopener">💬 Abrir WhatsApp</a><a class="btn soft" th:href="@{/crm/alunos/{id}(id=${acaoRadar.alunoId})}">Ver CRM</a><a class="btn soft" th:href="@{/alunos/{id}/perfil-inteligente(id=${acaoRadar.alunoId})}">Perfil inteligente</a></div>
+</section>
+<section class="panel recommendation-panel">
+<h2>🧠 Recomendação baseada no histórico</h2>
+<p class="intro">O TreinoFlow compara o perfil do aluno, a faixa de risco e os resultados anteriores desta carteira para sugerir o tipo de ação com melhor evidência.</p>
+<div class="recommendation-grid">
+<div class="recommendation-main">
+<div class="recommendation-label">Ação sugerida</div>
+<strong th:text="${recomendacaoPerfil.acao}">FOLLOW_UP</strong>
+<div class="recommendation-title" th:text="${recomendacaoPerfil.titulo}">Ação com melhor histórico</div>
+<p th:text="${recomendacaoPerfil.motivo}">Motivo da recomendação.</p>
+</div>
+<div class="recommendation-side">
+<div><span>Base</span><strong th:text="${recomendacaoPerfil.baseLabel}">mesma faixa de risco</strong></div>
+<div><span>Efetividade</span><strong th:text="${recomendacaoPerfil.taxaSucessoLabel}">0,0%</strong></div>
+<div><span>Amostra</span><strong th:text="${recomendacaoPerfil.amostraLabel}">0 resultado(s)</strong></div>
+</div>
+</div>
+<div class="recommendation-note" th:text="${recomendacaoPerfil.aviso}">A recomendação é apoio à decisão.</div>
+<div class="confidence-card">
+  <div class="confidence-head"><div><span class="confidence-kicker">Confiança da recomendação</span><strong th:text="${recomendacaoPerfil.confiancaLabel}">0%</strong></div><span class="confidence-level" th:text="${recomendacaoPerfil.nivelConfianca}">Insuficiente</span></div>
+  <div class="confidence-bar"><span th:style="'width:' + recomendacaoPerfil.confianca + '%'" ></span></div>
+  <p class="confidence-summary" th:text="${recomendacaoPerfil.resumoConfianca}">Confiança operacional.</p>
+  <p class="confidence-reasons" th:text="${recomendacaoPerfil.motivosConfianca}">Motivos da confiança.</p>
+  <small>Este percentual é um índice operacional explicável, não uma probabilidade estatística nem garantia de resultado.</small>
+</div>
+</section>
+<section class="panel compare-panel">
+<h2>⚖️ Comparador de estratégias</h2>
+<p class="intro">Compare as estratégias que aparecem no histórico desta carteira antes de decidir. A comparação usa a mesma base contextual da recomendação acima e não executa nenhuma ação.</p>
+<div class="compare-grid">
+<article class="strategy-card" th:each="estrategia : ${comparacaoEstrategias}" th:classappend="${estrategia.melhor} ? ' strategy-best' : ''">
+<div class="strategy-head"><div><span class="strategy-kicker">Estratégia</span><h3 th:text="${estrategia.tipoLabel}">WhatsApp</h3></div><span class="best-badge" th:if="${estrategia.melhor}">Melhor taxa</span></div>
+<div class="strategy-rate" th:text="${estrategia.taxaSucessoLabel}">0,0%</div>
+<div class="strategy-metrics"><div><span>Resultados positivos</span><strong th:text="${estrategia.positivos}">0</strong></div><div><span>Resultados finais</span><strong th:text="${estrategia.resultadosFinais}">0</strong></div><div><span>Ações</span><strong th:text="${estrategia.totalAcoes}">0</strong></div><div><span>Evidência</span><strong th:text="${estrategia.forcaEvidencia}">Insuficiente</strong></div></div>
+<p class="strategy-sample" th:text="${estrategia.amostraLabel}">0 resultado(s) final(is) / 0 ação(ões)</p>
+<p class="strategy-reading" th:text="${estrategia.leitura}">Leitura contextual.</p>
+</article>
+</div>
+<div class="compare-note"><strong>Como interpretar:</strong> a taxa representa recuperação ou renovação entre os resultados finais observados. Ela não prova causalidade e não deve ser usada isoladamente para decidir o contato.</div>
+</section>
+<section class="panel explain-panel">
+<h2>🔎 Por que esta recomendação?</h2>
+<p class="intro">O TreinoFlow mostra os dados que sustentam a indicação. Isso permite que o Personal valide o contexto antes de decidir.</p>
+<div class="explain-grid">
+<div class="explain-item"><span>Objetivo</span><strong th:text="${recomendacaoExplicacao.objetivo}">Não informado</strong></div>
+<div class="explain-item"><span>Faixa etária</span><strong th:text="${recomendacaoExplicacao.faixaEtaria}">Não informada</strong></div>
+<div class="explain-item"><span>Risco atual</span><strong th:text="${recomendacaoExplicacao.faixaRisco}">Médio</strong></div>
+<div class="explain-item"><span>Base comparada</span><strong th:text="${recomendacaoExplicacao.baseLabel}">mesma faixa de risco</strong></div>
+<div class="explain-item"><span>Janela</span><strong th:text="${recomendacaoExplicacao.diasHistorico + ' dias'}">180 dias</strong></div>
+<div class="explain-item"><span>Ação indicada</span><strong th:text="${recomendacaoExplicacao.acaoRecomendada}">FOLLOW_UP</strong></div>
+<div class="explain-item"><span>Efetividade</span><strong th:text="${recomendacaoExplicacao.taxaSucessoLabel}">0,0%</strong></div>
+<div class="explain-item"><span>Força da evidência</span><strong th:text="${recomendacaoExplicacao.forcaEvidencia}">Sem evidência final</strong></div>
+</div>
+<div class="explain-summary" th:text="${recomendacaoExplicacao.resumo}">Explicação da recomendação.</div>
+<ul class="explain-list">
+<li><strong th:text="${recomendacaoExplicacao.amostraLabel}">0 resultado(s) final(is) em 0 ação(ões)</strong></li>
+<li>Recuperação/renovação é usada como sinal de resultado positivo; isso não substitui a avaliação do Personal.</li>
+<li th:text="${recomendacaoExplicacao.comoPodeMudar}">A recomendação pode mudar com novos resultados.</li>
+</ul>
+<p class="explain-muted">A recomendação é apoio à decisão. O TreinoFlow não executa o contato e não altera automaticamente o treino, a carga ou a prescrição.</p>
+</section>
+<section class="panel">
+<h2>Registrar ação</h2>
+<p class="intro">Depois de executar o contato, registre o resultado. Isso fecha o ciclo e permite acompanhar o próximo passo.</p>
+<form method="post" th:action="@{/performance/radar-diario/acao/{id}(id=${acaoRadar.alunoId})}">
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><input type="hidden" name="tipo" th:value="${acaoRadar.tipo}"><input type="hidden" name="assunto" th:value="${acaoRadar.titulo}"><input type="hidden" name="motivo" th:value="${acaoRadar.motivo}"><input type="hidden" name="acao" th:value="${acaoRadar.acao}">
+<div class="form-grid">
+<div class="field"><label>Canal</label><select name="canal" required><option th:each="c : ${canais}" th:value="${c}" th:text="${c.descricao}" th:selected="${c.name() == 'WHATSAPP' and acaoRadar.whatsappUrl != null and !#strings.isEmpty(acaoRadar.whatsappUrl)}">WhatsApp</option></select></div>
+<div class="field"><label>Resultado</label><select name="resultado" required><option th:each="r : ${resultados}" th:value="${r}" th:text="${r.descricao}" th:selected="${r.name() == 'EM_ACOMPANHAMENTO'}">Em acompanhamento</option></select></div>
+<div class="field"><label>Próxima ação <span class="required">*</span> quando ficar em acompanhamento</label><input type="date" name="proximaAcao" th:min="${hojeData}"></div>
+<div class="field"><label>Assunto</label><input type="text" th:value="${acaoRadar.titulo}" disabled></div>
+<div class="field full"><label>Observação / resultado do contato</label><textarea name="observacao" placeholder="O que o aluno respondeu? O que foi combinado? Existe algum cuidado para o próximo treino?"></textarea></div>
+</div>
+<div class="notice">O TreinoFlow não envia a mensagem automaticamente e não altera o treino. O Personal continua responsável pela decisão e pelo contato.</div>
+<div class="actions"><button class="btn dark" type="submit">✓ Registrar ação no CRM</button><a class="btn soft" th:href="@{/performance/radar-diario}">← Voltar ao Radar</a></div>
+</form>
+</section>
+</main>
+</body></html>

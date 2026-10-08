@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acesso limitado | TreinoFlow</title>
+<style>
+body{margin:0;background:#f8fafc;color:#172554;font-family:Inter,Arial,sans-serif}.wrap{min-height:100vh;display:grid;place-items:center;padding:20px}.card{max-width:560px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 15px 40px #17255412;text-align:center}.icon{width:58px;height:58px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:#fee2e2;color:#b91c1c;font-size:27px;font-weight:800}.brand{font-weight:800;color:#2563eb}.badge{display:inline-block;margin:10px 0 18px;padding:7px 12px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:12px;font-weight:800}.info{background:#f8fafc;border-radius:12px;padding:15px;text-align:left;font-size:14px;line-height:1.55}.btn{display:inline-block;margin-top:20px;text-decoration:none;background:#2563eb;color:#fff;padding:11px 16px;border-radius:9px;font-weight:700}
+</style></head>
+<body><main class="wrap"><section class="card"><div class="icon">!</div><div class="brand">TreinoFlow</div><h1>Acesso temporariamente limitado</h1>
+<p>Seu acesso às funcionalidades do sistema está limitado porque a assinatura não está liberada no momento.</p>
+<div th:if="${assinatura != null}"><span class="badge" th:text="${assinatura.status.descricao}">Vencida</span><div class="info"><strong>Plano:</strong> <span th:text="${assinatura.plano.nome}">Plano</span><br><strong>Vencimento:</strong> <span th:text="${assinatura.dataVencimento != null ? #temporals.format(assinatura.dataVencimento,'dd/MM/yyyy') : 'Não definido'}">Não definido</span><br><strong>Orientação:</strong> Entre em contato com o administrador para regularizar sua assinatura.</div></div>
+<div th:if="${assinatura == null}" class="info">Não encontramos uma assinatura vinculada ao seu usuário. Entre em contato com o administrador.</div>
+<a class="btn" th:href="@{/assinatura}">Ver minha assinatura</a></section><a class="btn" style="margin-left:8px" th:href="@{/assinatura/cobrancas}">Ver cobranças</a></main></body></html>
