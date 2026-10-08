@@ -51,6 +51,9 @@ public interface InteracaoCrmRepository extends JpaRepository<InteracaoCrm, Long
     @Query("select count(i) > 0 from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId and i.resultado = :resultado and i.dataProximaAcao is not null")
     boolean existeFollowUpPendente(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId, @Param("resultado") ResultadoCrm resultado);
 
+    @Query("select count(i) > 0 from InteracaoCrm i where i.personal.id = :personalId and i.aluno.id = :alunoId and i.tipo = com.marceloaleixo.treinoflow.enums.TipoInteracaoCrm.COBRANCA and i.assunto = :assunto and i.resultado = com.marceloaleixo.treinoflow.enums.ResultadoCrm.EM_ACOMPANHAMENTO")
+    boolean existeCobrancaPendente(@Param("personalId") Long personalId, @Param("alunoId") Long alunoId, @Param("assunto") String assunto);
+
     @EntityGraph(attributePaths = {"aluno"})
     @Query("select i from InteracaoCrm i where i.personal.id = :personalId and i.tipo = com.marceloaleixo.treinoflow.enums.TipoInteracaoCrm.RETENCAO and i.dataContato >= :inicio order by i.dataContato desc")
     List<InteracaoCrm> buscarRetencoesDesde(@Param("personalId") Long personalId, @Param("inicio") LocalDateTime inicio);

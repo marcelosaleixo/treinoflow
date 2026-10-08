@@ -1,6 +1,7 @@
 package com.marceloaleixo.treinoflow.controller;
 
 import com.marceloaleixo.treinoflow.dto.ScoreRiscoAlunoView;
+import com.marceloaleixo.treinoflow.dto.RadarAcaoRegistro;
 import com.marceloaleixo.treinoflow.entity.UsuarioPersonal;
 import com.marceloaleixo.treinoflow.enums.CanalCrm;
 import com.marceloaleixo.treinoflow.enums.ResultadoCrm;
@@ -86,8 +87,10 @@ public class RadarAcaoController {
             // Snapshot do risco antes da ação. É usado somente para comparação visual.
             ScoreRiscoAlunoView antes = riscos.buscar(personal.getId(), alunoId);
 
-            acoes.registrar(personal.getId(), alunoId, tipo, assunto, motivo, acao,
+            RadarAcaoRegistro registro = new RadarAcaoRegistro(
+                    personal.getId(), alunoId, tipo, assunto, motivo, acao,
                     canal, resultado, proximaAcao, observacao, antes.score());
+            acoes.registrar(registro);
 
             // O contato recém-registrado já passa a compor o cálculo atual do radar.
             ScoreRiscoAlunoView depois = riscos.buscar(personal.getId(), alunoId);

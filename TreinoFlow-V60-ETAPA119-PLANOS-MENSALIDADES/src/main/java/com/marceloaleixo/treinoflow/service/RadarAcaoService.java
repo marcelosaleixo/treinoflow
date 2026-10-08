@@ -1,6 +1,7 @@
 package com.marceloaleixo.treinoflow.service;
 
 import com.marceloaleixo.treinoflow.dto.RadarAcaoView;
+import com.marceloaleixo.treinoflow.dto.RadarAcaoRegistro;
 import com.marceloaleixo.treinoflow.entity.Aluno;
 import com.marceloaleixo.treinoflow.entity.InteracaoCrm;
 import com.marceloaleixo.treinoflow.entity.UsuarioPersonal;
@@ -48,10 +49,21 @@ public class RadarAcaoService {
     }
 
     @Transactional
-    public void registrar(Long personalId, Long alunoId, String tipo, String assunto,
-                          String motivo, String acao, CanalCrm canal,
-                          ResultadoCrm resultado, LocalDate proximaAcao, String observacao,
-                          int scoreRiscoAntes) {
+    public void registrar(RadarAcaoRegistro registro) {
+        if (registro == null) throw new IllegalArgumentException("Dados da ação não informados.");
+
+        Long personalId = registro.personalId();
+        Long alunoId = registro.alunoId();
+        String tipo = registro.tipo();
+        String assunto = registro.assunto();
+        String motivo = registro.motivo();
+        String acao = registro.acao();
+        CanalCrm canal = registro.canal();
+        ResultadoCrm resultado = registro.resultado();
+        LocalDate proximaAcao = registro.proximaAcao();
+        String observacao = registro.observacao();
+        int scoreRiscoAntes = registro.scoreRiscoAntes();
+
         if (resultado == null) throw new IllegalArgumentException("Informe o resultado da ação.");
         if (resultado == ResultadoCrm.EM_ACOMPANHAMENTO && proximaAcao == null) {
             throw new IllegalArgumentException("Defina a próxima ação quando o resultado continuar em acompanhamento.");

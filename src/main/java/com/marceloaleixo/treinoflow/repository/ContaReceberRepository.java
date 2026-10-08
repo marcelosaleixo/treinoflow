@@ -25,6 +25,17 @@ public interface ContaReceberRepository extends JpaRepository<ContaReceber, Long
     @EntityGraph(attributePaths = {"aluno", "pagamentos"})
     List<ContaReceber> findByPersonalIdOrderByDataVencimentoAsc(Long personalId);
 
+
+    @EntityGraph(attributePaths = {"aluno", "pagamentos"})
+    @Query("select c from ContaReceber c where c.personal.id = :personalId and c.status in :status and c.dataVencimento <= :limite order by c.dataVencimento asc, c.id asc")
+    List<ContaReceber> buscarParaCobranca(@Param("personalId") Long personalId,
+                                           @Param("status") List<StatusContaReceber> status,
+                                           @Param("limite") LocalDate limite);
+
+    @EntityGraph(attributePaths = {"aluno", "pagamentos"})
+    @Query("select c from ContaReceber c where c.id = :id and c.personal.id = :personalId")
+    Optional<ContaReceber> buscarPorIdComAluno(@Param("id") Long id, @Param("personalId") Long personalId);
+
     @Query("select coalesce(sum(c.valor),0) from ContaReceber c where c.personal.id = :personalId and c.status = :status")
     BigDecimal somarPorStatus(@Param("personalId") Long personalId, @Param("status") StatusContaReceber status);
 

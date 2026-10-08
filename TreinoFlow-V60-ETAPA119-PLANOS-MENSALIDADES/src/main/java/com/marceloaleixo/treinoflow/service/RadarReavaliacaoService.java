@@ -3,6 +3,9 @@ package com.marceloaleixo.treinoflow.service;
 import com.marceloaleixo.treinoflow.dto.RadarReavaliacaoView;
 import com.marceloaleixo.treinoflow.dto.ScoreRiscoAlunoView;
 import com.marceloaleixo.treinoflow.enums.ResultadoCrm;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 
 /** Etapa 111: transforma o novo score em uma leitura simples pós-ação. */
@@ -12,7 +15,7 @@ public class RadarReavaliacaoService {
     public RadarReavaliacaoView montar(ScoreRiscoAlunoView antes,
                                        ScoreRiscoAlunoView depois,
                                        ResultadoCrm resultado,
-                                       String proximaAcao,
+                                       LocalDate proximaAcao,
                                        String observacao) {
         if (antes == null || depois == null) {
             throw new IllegalArgumentException("Não foi possível reavaliar o risco do aluno.");
@@ -29,9 +32,9 @@ public class RadarReavaliacaoService {
         }
 
         String resultadoDescricao = resultado == null ? "Não informado" : resultado.getDescricao();
-        String proxima = proximaAcao == null || proximaAcao.isBlank()
+        String proxima = proximaAcao == null
                 ? "Nenhuma próxima ação definida."
-                : proximaAcao;
+                : proximaAcao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         String obs = observacao == null || observacao.isBlank()
                 ? "Nenhuma observação adicional registrada."
                 : observacao.trim();

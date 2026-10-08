@@ -19,7 +19,7 @@
 <body>
 <div th:replace="~{fragments/tf-header :: header}"></div>
 <main>
-  <div class="top"><div><div class="eyebrow">Gestão do Personal</div><h1>Financeiro</h1><p class="intro">Tenha uma visão simples do dinheiro que entrou, está previsto e ainda precisa ser recebido.</p></div><div class="actions"><a class="btn" th:href="@{/financeiro/contas-receber/nova}">+ Nova conta a receber</a><a class="btn secondary" th:href="@{/financeiro/mensalidades}">Planos e mensalidades</a><a class="btn secondary" th:href="@{/dashboard}">Voltar ao dashboard</a></div></div>
+  <div class="top"><div><div class="eyebrow">Gestão do Personal</div><h1>Financeiro</h1><p class="intro">Tenha uma visão simples do dinheiro que entrou, está previsto e ainda precisa ser recebido.</p></div><div class="actions"><a class="btn" th:href="@{/financeiro/contas-receber/nova}">+ Nova conta a receber</a><a class="btn" th:href="@{/financeiro/cobranca-inteligente}">Cobrança inteligente</a><a class="btn secondary" th:href="@{/financeiro/mensalidades}">Planos e mensalidades</a><a class="btn secondary" th:href="@{/dashboard}">Voltar ao dashboard</a></div></div>
 
   <div class="flash success" th:if="${sucesso}" th:text="${sucesso}"></div>
   <div class="flash error" th:if="${erro}" th:text="${erro}"></div>
@@ -75,7 +75,7 @@
       </tr></tbody></table>
     </div>
     <div class="empty" th:if="${#lists.isEmpty(contas)}">Nenhuma conta a receber cadastrada. Comece lançando a próxima mensalidade ou atendimento.</div>
-    <div class="note">Nesta etapa o financeiro é manual. Recorrência, despesas, cobrança automática e integrações de pagamento entram nas próximas etapas.</div>
+    <div class="note">A cobrança inteligente organiza lembretes e atrasos e registra o contato no CRM. O envio e a baixa do pagamento continuam sob decisão do Personal.</div>
   </section>
 </main>
 
