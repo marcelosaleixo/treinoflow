@@ -53,7 +53,7 @@ public class RentabilidadeRetencaoController {
             BigDecimal mensalidade = mensalidades.getOrDefault(aluno.alunoId(), BigDecimal.ZERO);
             String prioridade = prioridade(aluno.score(), saldo[1], mensalidade);
             linhas.add(new LinhaIntegrada(aluno.alunoId(), aluno.nome(), aluno.score(), aluno.nivel(), mensalidade,
-                    saldo[0], saldo[1], saldo[0].add(saldo[1]), prioridade, aluno.getMotivoPrincipal(), aluno.getAcaoRecomendada()));
+                    saldo[0], saldo[1], saldo[0].add(saldo[1]), prioridade, aluno.getMotivoPrincipal(), aluno.acaoRecomendada()));
         }
         linhas.sort(Comparator.comparingInt(LinhaIntegrada::score).reversed()
                 .thenComparing(LinhaIntegrada::atrasado, Comparator.reverseOrder())
