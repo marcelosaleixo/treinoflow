@@ -106,7 +106,7 @@ public class AlunoController {
         try {
             UsuarioPersonal personal = personalAutenticado(authentication);
             alunoService.excluir(id, personal.getId());
-            redirectAttributes.addFlashAttribute("sucesso", "Aluno excluído com sucesso.");
+            redirectAttributes.addFlashAttribute("sucesso", "Aluno inativado com sucesso. O histórico foi preservado.");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("erro", ex.getMessage());
         }

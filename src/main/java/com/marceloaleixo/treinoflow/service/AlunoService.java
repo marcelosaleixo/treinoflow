@@ -90,7 +90,16 @@ public class AlunoService {
                             + "). Inative um aluno ou faça upgrade do plano para cadastrar mais.");
         }
     }
-    public void excluir(Long id, Long personalId) { alunos.delete(buscarPorId(id, personalId)); }
+    /**
+     * Inativa o aluno em vez de removê-lo fisicamente.
+     * Avaliações físicas e outros registros históricos dependem do aluno por FK;
+     * preservá-los evita perda de histórico e violações de integridade referencial.
+     */
+    public void excluir(Long id, Long personalId) {
+        Aluno aluno = buscarPorId(id, personalId);
+        aluno.setStatus("INATIVO");
+        alunos.save(aluno);
+    }
     private void validarPersonalId(Long id){ if(id==null || id<=0) throw new IllegalArgumentException("Personal inválido."); }
     private void validarTexto(String valor,String campo,int max){if(valor==null||valor.isBlank()||valor.trim().length()>max)throw new IllegalArgumentException(campo+" é obrigatório e deve ter até "+max+" caracteres.");}
 }
