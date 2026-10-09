@@ -4,6 +4,8 @@ import com.marceloaleixo.treinoflow.entity.Aluno;
 import com.marceloaleixo.treinoflow.entity.ContaReceber;
 import com.marceloaleixo.treinoflow.entity.PagamentoContaReceber;
 import com.marceloaleixo.treinoflow.entity.UsuarioPersonal;
+import com.marceloaleixo.treinoflow.event.SincronizarMetaReceitaEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.marceloaleixo.treinoflow.enums.FormaPagamento;
 import com.marceloaleixo.treinoflow.enums.StatusContaReceber;
 import com.marceloaleixo.treinoflow.repository.AlunoRepository;
@@ -22,11 +24,13 @@ public class ContaReceberService {
     private final ContaReceberRepository repository;
     private final AlunoRepository alunos;
     private final UsuarioPersonalService personals;
+    private final ApplicationEventPublisher eventos;
 
-    public ContaReceberService(ContaReceberRepository repository, AlunoRepository alunos, UsuarioPersonalService personals) {
+    public ContaReceberService(ContaReceberRepository repository, AlunoRepository alunos, UsuarioPersonalService personals, ApplicationEventPublisher eventos) {
         this.repository = repository;
         this.alunos = alunos;
         this.personals = personals;
+        this.eventos = eventos;
     }
 
     public void atualizarAtrasadas(Long personalId) {
@@ -87,6 +91,12 @@ public class ContaReceberService {
         java.util.Set<FormaPagamento> formasUsadas = new java.util.HashSet<>();
         LocalDate pagamentoEm = dataPagamento == null ? LocalDate.now() : dataPagamento;
 
+        java.util.Set<YearMonth> periodosAfetados = new java.util.HashSet<>();
+        conta.getPagamentos().stream()
+                .map(PagamentoContaReceber::getDataPagamento)
+                .filter(java.util.Objects::nonNull)
+                .map(YearMonth::from)
+                .forEach(periodosAfetados::add);
         conta.getPagamentos().clear();
         for (int i = 0; i < formasPagamento.size(); i++) {
             FormaPagamento forma = formasPagamento.get(i);
@@ -117,7 +127,12 @@ public class ContaReceberService {
         // Mantém o campo legado preenchido quando há uma única forma. Em pagamentos divididos,
         // o detalhe oficial fica na coleção pagamentos.
         conta.setFormaPagamento(formasPagamento.size() == 1 ? formasPagamento.get(0) : null);
-        return repository.save(conta);
+        ContaReceber salva = repository.save(conta);
+        periodosAfetados.add(YearMonth.from(pagamentoEm));
+        for (YearMonth periodoAfetado : periodosAfetados) {
+            eventos.publishEvent(new SincronizarMetaReceitaEvent(personalId, periodoAfetado));
+        }
+        return salva;
     }
 
     /** Compatibilidade com chamadas antigas que registravam uma única forma. */

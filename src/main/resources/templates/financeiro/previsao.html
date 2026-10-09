@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Previsão financeira | TreinoFlow</title>
+  <link rel="stylesheet" th:href="@{/css/tf-design-system.css}">
+  <style>
+    body{margin:0;background:#f3f6fb;color:#142b55;font-family:Arial,sans-serif}.wrap{max-width:1180px;margin:32px auto;padding:0 20px}.head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.muted{color:#64748b}.btn{display:inline-block;background:#2563eb;color:#fff;padding:11px 15px;border-radius:9px;text-decoration:none;border:0;cursor:pointer}.panel{background:#fff;border:1px solid #dbe4f0;border-radius:16px;padding:20px;margin-top:20px;overflow:auto}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:#fff;border:1px solid #dbe4f0;border-radius:14px;padding:18px}.num{font-size:24px;font-weight:800;margin-top:10px}.positive{color:#15803d}.negative{color:#b91c1c}table{border-collapse:collapse;width:100%;min-width:700px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #e2e8f0}th{font-size:12px;text-transform:uppercase;color:#64748b;background:#f8fafc}.note{font-size:13px;color:#64748b;line-height:1.5}select{padding:10px;border:1px solid #cbd5e1;border-radius:8px;background:white}
+  </style>
+  <link rel="stylesheet" th:href="@{/css/tf-header.css}" href="/css/tf-header.css">
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+
+<div class="wrap">
+  <div class="head"><div><div style="font-size:12px;letter-spacing:1.5px;font-weight:bold;color:#2563eb">GESTÃO DO PERSONAL</div><h1>Previsão financeira</h1><p class="muted">Estimativa dos próximos meses com base nos dados cadastrados.</p></div><div><a class="btn" th:href="@{/financeiro}">Voltar ao financeiro</a></div></div>
+  <form method="get" th:action="@{/financeiro/previsao}" style="margin-top:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><label for="meses">Horizonte:</label><select id="meses" name="meses"><option value="3" th:selected="${meses == 3}">3 meses</option><option value="6" th:selected="${meses == 6}">6 meses</option><option value="12" th:selected="${meses == 12}">12 meses</option></select><button class="btn" type="submit">Atualizar previsão</button><a class="btn" th:href="@{/financeiro/previsao/exportar(meses=${meses})}">Exportar CSV</a></form>
+  <div class="panel"><h2>Projeção por mês</h2><p class="note">A receita prevista soma contas não canceladas e não pagas pelo vencimento, mais planos ativos sem conta gerada para a mesma data. As despesas exibidas são despesas pendentes já cadastradas. Valores futuros são estimativas gerenciais, não garantia de recebimento.</p>
+    <table><thead><tr><th>Mês</th><th>Receita prevista</th><th>Despesas pendentes</th><th>Saldo projetado</th><th>Base do cálculo</th></tr></thead><tbody><tr th:each="item : ${previsoes}"><td th:text="${#temporals.format(item.periodo(), 'MMMM yyyy')}">outubro 2026</td><td th:text="${'R$ ' + #numbers.formatDecimal(item.receitaPrevista(),1,'POINT',2,'COMMA')}">R$ 0,00</td><td th:text="${'R$ ' + #numbers.formatDecimal(item.despesasCadastradas(),1,'POINT',2,'COMMA')}">R$ 0,00</td><td th:classappend="${item.saldoProjetado().signum() >= 0 ? 'positive' : 'negative'}" th:text="${'R$ ' + #numbers.formatDecimal(item.saldoProjetado(),1,'POINT',2,'COMMA')}">R$ 0,00</td><td class="note" th:text="${item.observacao()}">Estimativa</td></tr></tbody></table>
+  </div>
+  <div class="panel"><h3>Como interpretar</h3><ul><li>Contas pagas não entram na previsão de recebimento.</li><li>Contas canceladas são ignoradas.</li><li>Mensalidades ativas só entram quando ainda não existe uma conta para aquele vencimento, evitando duplicidade.</li><li>Despesas futuras não cadastradas não são presumidas; cadastre-as para melhorar a projeção.</li></ul></div>
+</div>
+</body></html>

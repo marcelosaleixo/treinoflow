@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conciliação financeira | TreinoFlow</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#142b55;background:#f3f6fb}body{margin:0;padding:24px}.wrap{max-width:1150px;margin:auto}.btn,button{display:inline-block;background:#2563eb;color:#fff;border:0;border-radius:9px;padding:11px 14px;text-decoration:none;cursor:pointer;font:inherit}.card{background:white;border:1px solid #dce4f0;border-radius:16px;padding:20px;margin:16px 0}.grid{display:flex;gap:12px;align-items:end;flex-wrap:wrap}input{font:inherit;padding:10px;border:1px solid #cbd5e1;border-radius:8px}table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;padding:12px;border-bottom:1px solid #e2e8f0}th{background:#f8fafc}.scroll{overflow-x:auto}.msg{background:#dcfce7;padding:12px;border-radius:8px}.err{background:#fee2e2;padding:12px;border-radius:8px}.ok{color:#15803d;font-weight:bold}.pending{color:#b45309;font-weight:bold}.muted{color:#64748b;font-size:.9rem}@media(max-width:600px){body{padding:12px}.card{padding:14px}}
+</style>  <link rel="stylesheet" th:href="@{/css/tf-header.css}" href="/css/tf-header.css">
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="wrap">
+<a href="/financeiro" class="btn">← Financeiro</a> <a href="/financeiro/despesas" class="btn">Despesas</a> <a href="/financeiro/dre" class="btn">DRE simplificada</a>
+<h1>Conciliação financeira</h1><p>Confira os pagamentos registrados no TreinoFlow e marque os que você conferiu com o extrato bancário, comprovante ou caixa físico.</p>
+<p class="muted">A conciliação é manual: marcar um item como conciliado não consulta bancos nem confirma transações diretamente.</p>
+<p th:if="${sucesso}" class="msg" th:text="${sucesso}"></p><p th:if="${erro}" class="err" th:text="${erro}"></p>
+<section class="card"><form method="get" action="/financeiro/conciliacao" class="grid"><label>Mês de referência<br><input type="month" name="mes" th:value="${mes}" required></label><button type="submit">Filtrar</button></form></section>
+<section class="card"><h2>Pagamentos do período</h2><div class="scroll"><table><thead><tr><th>Data</th><th>Aluno</th><th>Conta</th><th>Forma</th><th>Valor</th><th>Conciliação</th><th>Ação</th></tr></thead><tbody>
+<tr th:each="linha : ${linhas}"><td th:text="${#temporals.format(linha.pagamento.dataPagamento,'dd/MM/yyyy')}"></td><td th:text="${linha.pagamento.contaReceber.aluno != null ? linha.pagamento.contaReceber.aluno.nome : '—'}"></td><td th:text="${linha.pagamento.contaReceber.descricao}"></td><td th:text="${linha.pagamento.formaPagamento.descricao}"></td><td th:text="${#numbers.formatCurrency(linha.pagamento.valor)}"></td><td><span th:if="${linha.conciliado}" class="ok">Conciliado</span><span th:unless="${linha.conciliado}" class="pending">Pendente de conferência</span></td><td><form th:if="${!linha.conciliado}" method="post" th:action="@{/financeiro/conciliacao/{id}(id=${linha.pagamento.id})}"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><input type="hidden" name="mes" th:value="${mes}"><input name="observacao" maxlength="300" placeholder="Observação (opcional)"><button type="submit">Marcar conciliado</button></form><span th:if="${linha.conciliado}" class="muted">Conferido</span></td></tr>
+<tr th:if="${#lists.isEmpty(linhas)}"><td colspan="7">Nenhum pagamento registrado neste mês.</td></tr>
+</tbody></table></div></section></main></body></html>

@@ -1,6 +1,7 @@
 package com.marceloaleixo.treinoflow.repository;
 
 import com.marceloaleixo.treinoflow.entity.ContaReceber;
+import com.marceloaleixo.treinoflow.dto.ReceitaAlunoFinanceiraView;
 import com.marceloaleixo.treinoflow.enums.StatusContaReceber;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,6 +36,17 @@ public interface ContaReceberRepository extends JpaRepository<ContaReceber, Long
     @EntityGraph(attributePaths = {"aluno", "pagamentos"})
     @Query("select c from ContaReceber c where c.id = :id and c.personal.id = :personalId")
     Optional<ContaReceber> buscarPorIdComAluno(@Param("id") Long id, @Param("personalId") Long personalId);
+
+
+    @Query("select new com.marceloaleixo.treinoflow.dto.ReceitaAlunoFinanceiraView(a.id, a.nome, " +
+           "sum(case when c.status = com.marceloaleixo.treinoflow.enums.StatusContaReceber.PAGA and c.dataPagamento between :inicio and :fim then c.valor else (c.valor - c.valor) end), " +
+           "sum(case when c.status = com.marceloaleixo.treinoflow.enums.StatusContaReceber.PENDENTE then c.valor else (c.valor - c.valor) end), " +
+           "sum(case when c.status = com.marceloaleixo.treinoflow.enums.StatusContaReceber.ATRASADA then c.valor else (c.valor - c.valor) end)) " +
+           "from ContaReceber c join c.aluno a where c.personal.id = :personalId " +
+           "group by a.id, a.nome order by sum(case when c.status = com.marceloaleixo.treinoflow.enums.StatusContaReceber.PAGA and c.dataPagamento between :inicio and :fim then c.valor else (c.valor - c.valor) end) desc, a.nome asc")
+    List<ReceitaAlunoFinanceiraView> resumoFinanceiroPorAluno(@Param("personalId") Long personalId,
+                                                               @Param("inicio") LocalDate inicio,
+                                                               @Param("fim") LocalDate fim);
 
     @Query("select coalesce(sum(c.valor),0) from ContaReceber c where c.personal.id = :personalId and c.status = :status")
     BigDecimal somarPorStatus(@Param("personalId") Long personalId, @Param("status") StatusContaReceber status);

@@ -7,8 +7,11 @@
     <style>
         body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;color:#172033}.wrap{max-width:1100px;margin:30px auto;padding:0 16px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:22px 0}.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 18px #0000000d}.number{font-size:28px;font-weight:700;margin-top:8px}.muted{color:#6b7280}.btn{border:0;border-radius:9px;padding:11px 15px;background:#172033;color:#fff;cursor:pointer}.ok{color:#087443}.warn{color:#9a6700}@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.cards{grid-template-columns:1fr}.top{align-items:flex-start}}
     </style>
+  <link rel="stylesheet" th:href="@{/css/tf-header.css}" href="/css/tf-header.css">
 </head>
 <body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+
 <div class="wrap">
     <div class="top">
         <div><h1>Jornada automática de retenção</h1><p class="muted">Acompanhe os alunos que entraram em uma sequência automática e veja o resultado.</p></div>

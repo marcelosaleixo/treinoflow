@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Receita em risco | TreinoFlow</title>
+    <style>
+        :root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--red:#b91c1c;--amber:#b45309;--green:#047857}
+        *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1200px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}h1{margin:3px 0 8px;font-size:clamp(25px,4vw,34px)}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);font-weight:750}.intro{margin:0;color:var(--muted);max-width:740px}.links{display:flex;gap:8px;flex-wrap:wrap}.btn{display:inline-block;text-decoration:none;padding:10px 13px;border-radius:10px;background:var(--blue);color:white;font-weight:650}.btn.secondary{background:#e8eef9;color:#1e40af}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:24px 0}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}.label{color:var(--muted);font-size:13px}.value{font-size:clamp(20px,3vw,27px);font-weight:800;margin-top:5px;overflow-wrap:anywhere}.hint{font-size:12px;color:var(--muted);margin-top:5px}.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden}.panelhead{padding:18px 20px;border-bottom:1px solid var(--line)}.panelhead h2{font-size:18px;margin:0 0 4px}.panelhead p{margin:0;color:var(--muted);font-size:13px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:820px}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:.04em}tbody tr:last-child td{border-bottom:0}.student{font-weight:750}.sub{color:var(--muted);font-size:12px;margin-top:3px}.pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:750;background:#e2e8f0;color:#334155}.pill.critico,.pill.alto{background:#fee2e2;color:#991b1b}.pill.medio{background:#fef3c7;color:#92400e}.pill.baixo{background:#d1fae5;color:#065f46}.money{font-weight:750;white-space:nowrap}.empty{padding:28px;text-align:center;color:var(--muted)}.note{margin-top:15px;padding:13px 15px;border-radius:12px;background:#eff6ff;color:#1e40af;font-size:13px}.action{max-width:260px;color:#334155;font-size:13px}@media(max-width:850px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:16px}}@media(max-width:430px){.cards{grid-template-columns:1fr}.links{width:100%}.btn{flex:1;text-align:center}}
+    </style>
+  <link rel="stylesheet" th:href="@{/css/tf-header.css}" href="/css/tf-header.css">
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="wrap">
+    <header class="top"><div><div class="eyebrow">TreinoFlow · Inteligência financeira</div><h1>Receita em risco</h1><p class="intro">Cruze contas a receber com sinais de risco de abandono para priorizar contatos. A exposição indica valores ainda não recebidos — não representa perda confirmada.</p></div>
+        <nav class="links"><a class="btn secondary" th:href="@{/financeiro/por-aluno}">Resumo por aluno</a><a class="btn secondary" th:href="@{/financeiro/retencao-integrada}">Rentabilidade e retenção</a><a class="btn secondary" th:href="@{/retencao/risco}">Radar de retenção</a><a class="btn" th:href="@{/financeiro}">Voltar ao financeiro</a></nav>
+    </header>
+    <section class="cards">
+        <article class="card"><div class="label">Exposição em aberto</div><div class="value" th:text="${#numbers.formatCurrency(exposicaoTotal)}">R$ 0,00</div><div class="hint">Contas pendentes e atrasadas associadas aos alunos do radar</div></article>
+        <article class="card"><div class="label">Em atraso</div><div class="value" th:text="${#numbers.formatCurrency(totalAtrasado)}">R$ 0,00</div><div class="hint">Contas com status “Atrasada”</div></article>
+        <article class="card"><div class="label">A vencer / pendente</div><div class="value" th:text="${#numbers.formatCurrency(totalPendente)}">R$ 0,00</div><div class="hint">Contas ainda não marcadas como atrasadas</div></article>
+        <article class="card"><div class="label">Alunos com exposição</div><div class="value" th:text="${alunosComExposicao}">0</div><div class="hint"><span th:text="${altoRiscoComExposicao}">0</span> com score de retenção igual ou superior a 50</div></article>
+    </section>
+    <section class="panel"><div class="panelhead"><h2>Prioridades de acompanhamento</h2><p>Ordenado pelo score de risco de retenção e, em seguida, pela exposição financeira em aberto.</p></div>
+        <div class="tablewrap"><table><thead><tr><th>Aluno</th><th>Risco de retenção</th><th>Pendente</th><th>Atrasado</th><th>Exposição</th><th>Próxima ação sugerida</th></tr></thead>
+            <tbody><tr th:each="linha : ${linhas}"><td><div class="student" th:text="${linha.nome}">Aluno</div><div class="sub" th:text="|ID ${linha.alunoId}|">ID</div><div class="sub" th:text="${linha.motivoPrincipal}">Motivo</div></td>
+                <td><span class="pill" th:classappend="${linha.nivelCss}" th:text="|${linha.nivelRetencao} · ${linha.scoreRetencao}/100|">Médio</span></td>
+                <td class="money" th:text="${#numbers.formatCurrency(linha.valorPendente)}">R$ 0,00</td><td class="money" th:text="${#numbers.formatCurrency(linha.valorAtrasado)}">R$ 0,00</td><td class="money" th:text="${#numbers.formatCurrency(linha.exposicaoEmAberto)}">R$ 0,00</td><td class="action" th:text="${linha.acaoRecomendada}">Acompanhar</td></tr>
+                <tr th:if="${#lists.isEmpty(linhas)}"><td colspan="6" class="empty">Nenhum aluno ativo foi encontrado no radar de retenção.</td></tr></tbody></table></div></section>
+    <p class="note"><strong>Como interpretar:</strong> score alto é um sinal operacional de possível abandono; saldo em aberto é uma exposição financeira registrada. O painel não prevê que a dívida será perdida e não envia mensagens automaticamente. Revise os casos antes de agir.</p>
+</main></body></html>
