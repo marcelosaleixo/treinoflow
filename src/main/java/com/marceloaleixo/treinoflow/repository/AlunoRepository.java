@@ -18,12 +18,44 @@ public interface AlunoRepository extends JpaRepository<Aluno, Long> {
             "AND (:termo IS NULL OR :termo = '' OR " +
             "LOWER(a.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
             "LOWER(COALESCE(a.email, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
-            "LOWER(COALESCE(a.telefone, '')) LIKE LOWER(CONCAT('%', :termo, '%'))) " +
-            "ORDER BY a.nome ASC")
+            "LOWER(COALESCE(a.telefone, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "COALESCE(a.cpf, '') LIKE CONCAT('%', :termoCpf, '%')) " +
+            "AND (:status IS NULL OR :status = '' OR a.status = :status) " +
+            "AND (:objetivo IS NULL OR :objetivo = '' OR LOWER(COALESCE(a.objetivo, '')) = LOWER(:objetivo)) ")
+    Page<Aluno> buscarPorPersonalETermoEFiltros(@Param("personalId") Long personalId,
+                                         @Param("termo") String termo,
+                                         @Param("termoCpf") String termoCpf,
+                                         @Param("status") String status,
+                                         @Param("objetivo") String objetivo,
+                                         Pageable pageable);
+
+    @Query("SELECT a FROM Aluno a WHERE a.personal.id = :personalId " +
+            "AND (:termo IS NULL OR :termo = '' OR " +
+            "LOWER(a.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "LOWER(COALESCE(a.email, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "LOWER(COALESCE(a.telefone, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "(:termoCpf IS NULL OR :termoCpf = '' OR COALESCE(a.cpf, '') LIKE CONCAT('%', :termoCpf, '%'))) ")
+    Page<Aluno> buscarPorPersonalETermo(@Param("personalId") Long personalId,
+                                         @Param("termo") String termo,
+                                         @Param("termoCpf") String termoCpf,
+                                         Pageable pageable);
+    /**
+     * Busca compatível com o CRM legado: personal, termo e paginação.
+     * Pesquisa nome, e-mail, telefone e CPF pelo termo informado.
+     */
+    @Query("SELECT a FROM Aluno a WHERE a.personal.id = :personalId " +
+            "AND (:termo IS NULL OR :termo = '' OR " +
+            "LOWER(a.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "LOWER(COALESCE(a.email, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "LOWER(COALESCE(a.telefone, '')) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
+            "COALESCE(a.cpf, '') LIKE CONCAT('%', :termo, '%'))")
     Page<Aluno> buscarPorPersonalETermo(@Param("personalId") Long personalId,
                                          @Param("termo") String termo,
                                          Pageable pageable);
+
     Optional<Aluno> findByIdAndPersonalId(Long id, Long personalId);
+    boolean existsByPersonalIdAndCpf(Long personalId, String cpf);
+    boolean existsByPersonalIdAndEmailIgnoreCase(Long personalId, String email);
     @Query("SELECT a FROM Aluno a JOIN FETCH a.personal p WHERE a.tokenPortal = :tokenPortal")
     Optional<Aluno> findByTokenPortal(@Param("tokenPortal") String tokenPortal);
     long countByPersonalIdAndStatus(Long personalId, String status);

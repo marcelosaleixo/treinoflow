@@ -21,6 +21,10 @@ public class Aluno {
     private String email;
     @Column(length = 20)
     private String telefone;
+    @Column(length = 11)
+    private String cpf;
+    @Column(length = 20)
+    private String sexo;
     @Column(length = 100)
     private String objetivo;
     @Column(name = "token_portal", unique = true, length = 100)
@@ -42,6 +46,8 @@ public class Aluno {
     public String getNome(){return nome;} public void setNome(String nome){this.nome=nome;}
     public String getEmail(){return email;} public void setEmail(String email){this.email=email;}
     public String getTelefone(){return telefone;} public void setTelefone(String telefone){this.telefone=telefone;}
+    public String getCpf(){return cpf;} public void setCpf(String cpf){this.cpf=cpf;}
+    public String getSexo(){return sexo;} public void setSexo(String sexo){this.sexo=sexo;}
     public String getObjetivo(){return objetivo;} public void setObjetivo(String objetivo){this.objetivo=objetivo;}
     public String getTokenPortal(){return tokenPortal;} public void setTokenPortal(String tokenPortal){this.tokenPortal=tokenPortal;}
     public String getObservacoes(){return observacoes;} public void setObservacoes(String observacoes){this.observacoes=observacoes;}

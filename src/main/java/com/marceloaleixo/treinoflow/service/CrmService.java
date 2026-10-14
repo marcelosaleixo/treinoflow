@@ -32,6 +32,9 @@ public class CrmService {
     @Transactional(readOnly = true)
     public Page<Aluno> listarAlunos(Long personalId, String termo, Pageable pageable) {
         String filtro = termo == null || termo.isBlank() ? null : termo.trim();
+        // CPF é pesquisado pelos dígitos; os demais campos usam o termo original.
+        String filtroCpf = filtro == null ? null : filtro.replaceAll("\\D", "");
+        if (filtroCpf != null && filtroCpf.isBlank()) filtroCpf = null;
         return alunos.buscarPorPersonalETermo(personalId, filtro, pageable);
     }
 

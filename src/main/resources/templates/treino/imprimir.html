@@ -9,10 +9,10 @@
     @media(max-width:600px){.sheet{margin:0;padding:20px}.top{flex-direction:column}.meta{grid-template-columns:1fr}.actions{padding:12px;justify-content:stretch}.actions .btn{flex:1;text-align:center}}
     @media print{body{background:#fff}.sheet{max-width:none;margin:0;padding:0;box-shadow:none}.actions{display:none}.exercise{break-inside:avoid}a{color:inherit;text-decoration:none}@page{size:A4;margin:16mm}}
   </style>
-</head>
+<link rel="stylesheet" th:href="@{/css/tf-training.css}"></head>
 <body>
   <div class="actions"><button class="btn" type="button" onclick="window.print()">Imprimir / Salvar PDF</button><a class="btn" style="background:#475569" th:href="@{/treinos/{id}/editar(id=${treino.id})}">Voltar ao editor</a></div>
-  <main class="sheet">
+  <main class="sheet tf-training-page">
     <header class="top"><div><div class="brand">TREINOFLOW</div><h1 th:text="${treino.nome}">Nome do treino</h1><p class="muted">Ficha de treinamento</p></div><div class="muted" th:text="'Emitido em ' + ${#temporals.format(emitidoEm, 'dd/MM/yyyy HH:mm')}">Emitido em</div></header>
     <section class="meta"><div><strong>ALUNO(A)</strong><span th:text="${aluno.nome}">Aluno</span></div><div><strong>STATUS</strong><span th:text="${treino.status}">Status</span></div></section>
     <p class="description" th:if="${treino.descricao != null and !treino.descricao.isBlank()}" th:text="${treino.descricao}"></p>

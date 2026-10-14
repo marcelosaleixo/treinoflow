@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TreinoExercicioRepository extends JpaRepository<TreinoExercicio, Long> {
+    boolean existsByTreinoIdAndOrdem(Long treinoId, Integer ordem);
     List<TreinoExercicio> findByTreinoIdOrderByOrdemAsc(Long treinoId);
 
     @Query("""

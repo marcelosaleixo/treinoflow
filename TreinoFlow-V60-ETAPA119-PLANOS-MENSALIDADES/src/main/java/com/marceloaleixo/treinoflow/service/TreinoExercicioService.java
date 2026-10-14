@@ -8,7 +8,18 @@ import org.springframework.stereotype.Service; import org.springframework.transa
  @Autowired private PrescricaoAssistidaService prescricaoAssistidaService;
  @Autowired private com.marceloaleixo.treinoflow.repository.PrescricaoAuditoriaRepository prescricaoAuditoriaRepository;
  @Transactional(readOnly=true) public List<TreinoExercicio> listar(Long treinoId,Long personalId){validarTreino(treinoId,personalId);return itens.listarComExercicioPorTreino(treinoId);}
- public TreinoExercicio adicionar(Long treinoId,Long personalId,Long exercicioId,TreinoExercicio item){Treino t=validarTreino(treinoId,personalId);if("LIBERADO".equals(t.getStatus()))throw new IllegalStateException("Não é possível alterar um treino liberado."); Exercicio e=exercicios.findById(exercicioId).orElseThrow(()->new IllegalArgumentException("Exercício não encontrado."));if(e.getPersonal()!=null&&!e.getPersonal().getId().equals(personalId))throw new IllegalArgumentException("Exercício não pertence a este personal.");if(item.getOrdem()==null||item.getOrdem()<1)throw new IllegalArgumentException("A ordem deve ser maior que zero.");if(item.getSeries()!=null&&item.getSeries()<1)throw new IllegalArgumentException("Séries deve ser maior que zero.");if(item.getDescansoSegundos()!=null&&item.getDescansoSegundos()<0)throw new IllegalArgumentException("Descanso não pode ser negativo.");item.setTreino(t);item.setExercicio(e);return itens.save(item);}
+ public TreinoExercicio adicionar(Long treinoId,Long personalId,Long exercicioId,TreinoExercicio item){
+  Treino t=validarTreino(treinoId,personalId);
+  if("LIBERADO".equals(t.getStatus())) throw new IllegalStateException("Não é possível alterar um treino liberado.");
+  if(exercicioId==null) throw new IllegalArgumentException("Selecione um exercício.");
+  Exercicio e=exercicios.findById(exercicioId).orElseThrow(()->new IllegalArgumentException("Exercício não encontrado."));
+  if(e.getPersonal()!=null&&!e.getPersonal().getId().equals(personalId)) throw new IllegalArgumentException("Exercício não pertence a este personal.");
+  validarPrescricao(item, true);
+  if(itens.existsByTreinoIdAndOrdem(treinoId,item.getOrdem())) throw new IllegalArgumentException("Já existe um exercício nessa ordem. Escolha outra posição.");
+  item.setTreino(t); item.setExercicio(e);
+  item.setRepeticoes(limpar(item.getRepeticoes())); item.setCarga(limpar(item.getCarga())); item.setObservacao(limpar(item.getObservacao()));
+  return itens.save(item);
+ }
  public void mover(Long itemId, Long treinoId, Long personalId, int direcao){
   Treino treino=validarTreino(treinoId,personalId);
   if("LIBERADO".equals(treino.getStatus())) throw new IllegalStateException("Revogue o acesso antes de reorganizar um treino liberado.");
@@ -29,14 +40,29 @@ import org.springframework.stereotype.Service; import org.springframework.transa
   if("LIBERADO".equals(t.getStatus())) throw new IllegalStateException("Revogue o acesso antes de alterar um treino liberado.");
   TreinoExercicio item=itens.findById(itemId).orElseThrow(()->new IllegalArgumentException("Exercício do treino não encontrado."));
   if(item.getTreino()==null || !item.getTreino().getId().equals(treinoId)) throw new IllegalArgumentException("Exercício não pertence ao treino informado.");
-  if(dados.getSeries()!=null && dados.getSeries()<1) throw new IllegalArgumentException("Séries deve ser maior que zero.");
-  if(dados.getDescansoSegundos()!=null && dados.getDescansoSegundos()<0) throw new IllegalArgumentException("Descanso não pode ser negativo.");
+  validarPrescricao(dados, false);
   item.setSeries(dados.getSeries());
   item.setRepeticoes(limpar(dados.getRepeticoes()));
   item.setCarga(limpar(dados.getCarga()));
   item.setDescansoSegundos(dados.getDescansoSegundos());
   item.setObservacao(limpar(dados.getObservacao()));
   return itens.save(item);
+ }
+ private void validarPrescricao(TreinoExercicio dados, boolean validarOrdem) {
+  if (dados == null) throw new IllegalArgumentException("Os dados do exercício não foram informados.");
+  if (validarOrdem && (dados.getOrdem() == null || dados.getOrdem() < 1 || dados.getOrdem() > 9999))
+   throw new IllegalArgumentException("A ordem deve estar entre 1 e 9999.");
+  if (dados.getSeries() != null && (dados.getSeries() < 1 || dados.getSeries() > 100))
+   throw new IllegalArgumentException("Séries deve estar entre 1 e 100.");
+  if (dados.getDescansoSegundos() != null && (dados.getDescansoSegundos() < 0 || dados.getDescansoSegundos() > 7200))
+   throw new IllegalArgumentException("O descanso deve estar entre 0 e 7200 segundos.");
+  validarTexto(dados.getRepeticoes(), 30, "Repetições");
+  validarTexto(dados.getCarga(), 30, "Carga");
+  validarTexto(dados.getObservacao(), 2000, "Observações");
+ }
+ private void validarTexto(String valor, int limite, String campo) {
+  if (valor != null && valor.trim().length() > limite)
+   throw new IllegalArgumentException(campo + " deve ter no máximo " + limite + " caracteres.");
  }
  private String limpar(String valor){ return valor==null || valor.isBlank() ? null : valor.trim(); }
  public TreinoExercicio aplicarPrescricaoAssistida(Long itemId, Long alunoId, Long personalId){

@@ -33,12 +33,60 @@ public class AlunoService {
         String filtro = termo == null || termo.isBlank() ? null : termo.trim();
         return alunos.buscarPorPersonalETermo(personalId, filtro, pageable);
     }
+    @Transactional(readOnly=true)
+    public Page<Aluno> listarPaginado(Long personalId, String termo, String status, String objetivo, Pageable pageable) {
+        validarPersonalId(personalId);
+        String filtro = termo == null || termo.isBlank() ? null : termo.trim();
+        String filtroCpf = filtro == null ? null : filtro.replaceAll("\\D", "");
+        if (filtroCpf != null && filtroCpf.isBlank()) filtroCpf = null;
+        String filtroStatus = status == null ? null : status.trim().toUpperCase(java.util.Locale.ROOT);
+        if (filtroStatus == null || !java.util.List.of("ATIVO", "INATIVO").contains(filtroStatus)) filtroStatus = null;
+        String filtroObjetivo = objetivo == null || objetivo.isBlank() ? null : objetivo.trim();
+        return alunos.buscarPorPersonalETermoEFiltros(personalId, filtro, filtroCpf, filtroStatus, filtroObjetivo, pageable);
+    }
+
+    @Transactional(readOnly=true)
+    public List<Aluno> listarParaExportacao(Long personalId, String termo, String status, String objetivo, Pageable pageable) {
+        java.util.List<Aluno> resultado = new java.util.ArrayList<>();
+        Page<Aluno> pagina = listarPaginado(personalId, termo, status, objetivo, pageable);
+        resultado.addAll(pagina.getContent());
+        for (int numero = 1; numero < pagina.getTotalPages(); numero++) {
+            resultado.addAll(listarPaginado(personalId, termo, status, objetivo,
+                    org.springframework.data.domain.PageRequest.of(numero, pageable.getPageSize(), pageable.getSort())).getContent());
+        }
+        return resultado;
+    }
+
     @Transactional(readOnly=true) public Aluno buscarPorId(Long id, Long personalId) { return alunos.findByIdAndPersonalId(id, personalId).orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado para este personal.")); }
     public Aluno salvar(Long personalId, Aluno aluno) {
         validarPersonalId(personalId);
         validarTexto(aluno.getNome(), "Nome do aluno", 120);
         if (aluno.getDataNascimento() != null && aluno.getDataNascimento().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("A data de nascimento não pode ser futura.");
+        }
+        if (aluno.getDataInicio() != null && aluno.getDataInicio().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("A data de início não pode ser futura.");
+        }
+        // CPF opcional; quando informado, persiste somente os 11 dígitos e valida os dígitos verificadores.
+        String cpf = aluno.getCpf();
+        if (cpf != null && !cpf.isBlank()) {
+            cpf = cpf.replaceAll("\\D", "");
+            if (!cpfValido(cpf)) {
+                throw new IllegalArgumentException("CPF inválido. Confira os 11 dígitos informados.");
+            }
+            aluno.setCpf(cpf);
+        } else {
+            aluno.setCpf(null);
+        }
+        String sexo = aluno.getSexo();
+        if (sexo != null && !sexo.isBlank()) {
+            sexo = sexo.trim().toUpperCase(java.util.Locale.ROOT);
+            if (!List.of("FEMININO", "MASCULINO", "NAO_INFORMADO").contains(sexo)) {
+                throw new IllegalArgumentException("Selecione uma opção válida para o sexo do aluno.");
+            }
+            aluno.setSexo(sexo);
+        } else {
+            aluno.setSexo(null);
         }
 
         // Bloqueia a linha do personal durante a validação e gravação. Isso evita
@@ -100,6 +148,20 @@ public class AlunoService {
         aluno.setStatus("INATIVO");
         alunos.save(aluno);
     }
+    private boolean cpfValido(String cpf) {
+        if (cpf == null || !cpf.matches("\\d{11}") || cpf.chars().distinct().count() == 1) return false;
+        int soma = 0;
+        for (int i = 0; i < 9; i++) soma += (cpf.charAt(i) - '0') * (10 - i);
+        int resto = (soma * 10) % 11;
+        int digito1 = resto == 10 ? 0 : resto;
+        if (digito1 != cpf.charAt(9) - '0') return false;
+        soma = 0;
+        for (int i = 0; i < 10; i++) soma += (cpf.charAt(i) - '0') * (11 - i);
+        resto = (soma * 10) % 11;
+        int digito2 = resto == 10 ? 0 : resto;
+        return digito2 == cpf.charAt(10) - '0';
+    }
+
     private void validarPersonalId(Long id){ if(id==null || id<=0) throw new IllegalArgumentException("Personal inválido."); }
     private void validarTexto(String valor,String campo,int max){if(valor==null||valor.isBlank()||valor.trim().length()>max)throw new IllegalArgumentException(campo+" é obrigatório e deve ter até "+max+" caracteres.");}
 }

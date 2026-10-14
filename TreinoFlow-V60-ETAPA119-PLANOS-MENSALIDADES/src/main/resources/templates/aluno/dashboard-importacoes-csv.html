@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard de importações | TreinoFlow</title>
+  <link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}">
+  <style>
+    .tf-import-page{max-width:1180px;margin:30px auto 56px;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 14px;border-radius:9px;background:#2563eb;color:#fff;text-decoration:none;border:0;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.btn.secondary{background:#172554;color:#fff}.filters{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0;padding:16px;background:#f5f7fb;border-radius:12px}.filters label{display:flex;flex-direction:column;gap:5px;font-size:14px}.filters input{padding:9px;border:1px solid #ccd3df;border-radius:7px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:18px 0}.card{padding:18px;border:1px solid #e0e5ed;border-radius:12px;background:#fff}.label{font-size:13px;color:#5b6472}.value{font-size:27px;font-weight:700;margin-top:8px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e4e8ef;white-space:nowrap}th{background:#f5f7fb}@media(max-width:600px){.wrap{margin:12px auto}.value{font-size:23px}}
+  .tf-import-page h1{font-size:clamp(26px,3vw,34px);line-height:1.2;letter-spacing:-.5px;color:#172554;margin:0 0 10px}.tf-import-page h2{color:#172554;font-size:22px}.tf-import-page p{line-height:1.6}.tf-import-page input,.tf-import-page select{font:inherit;min-height:40px;box-sizing:border-box}.tf-import-page .filters{gap:12px}.tf-import-page .card{box-shadow:0 8px 26px rgba(15,23,42,.05)}@media(max-width:700px){.tf-import-page{width:calc(100% - 28px);margin:22px auto 36px;padding:0}.tf-import-page .top{align-items:flex-start}.tf-import-page .actions .btn{white-space:normal}}
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<div class="wrap tf-import-page">
+  <div class="top"><div><h1>Dashboard de importações CSV</h1><p>Resumo das importações no período selecionado.</p></div>
+    <div class="actions"><a class="btn secondary" th:href="@{/alunos/importacao}">Nova importação</a><a class="btn secondary" th:href="@{/alunos/importacao/historico}">Histórico completo</a><a class="btn secondary" th:href="@{/alunos/importacao/relatorio-mensal}">Relatório mensal</a><a class="btn secondary" th:href="@{/alunos/importacao/configuracoes-alertas}">Configurar alertas</a></div>
+  </div>
+  <form class="filters" method="get" th:action="@{/alunos/importacao/dashboard}">
+    <label>Data inicial<input type="date" name="dataInicio" th:value="${dataInicio}" required></label>
+    <label>Data final<input type="date" name="dataFim" th:value="${dataFim}" required></label>
+    <button class="btn" type="submit">Filtrar período</button>
+    <a class="btn secondary" th:href="@{/alunos/importacao/dashboard.csv(dataInicio=${dataInicio},dataFim=${dataFim})}">Exportar CSV</a>
+  </form>
+  <div th:if="${alertaProblemas}" role="alert" style="margin:16px 0;padding:14px 16px;border:1px solid #f0b7b7;border-left:5px solid #c62828;border-radius:10px;background:#fff1f1;color:#7f1d1d">
+    <strong>Alerta de qualidade da importação</strong>
+    <p style="margin:6px 0 0">O percentual de linhas ignoradas ou rejeitadas atingiu <strong th:text="${percentualProblemas + '%'}">0%</strong>, igual ou acima do limite configurado de <strong th:text="${limiteProblemasPercentual + '%'}">10%</strong>. Revise os relatórios das importações deste período.</p>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="label">Importações</div><div class="value" th:text="${totalImportacoes}">0</div></div>
+    <div class="card"><div class="label">Linhas analisadas</div><div class="value" th:text="${linhasAnalisadas}">0</div></div>
+    <div class="card"><div class="label">Alunos importados</div><div class="value" th:text="${importados}">0</div></div>
+    <div class="card"><div class="label">Ignorados</div><div class="value" th:text="${ignorados}">0</div></div>
+    <div class="card"><div class="label">Rejeitados</div><div class="value" th:text="${rejeitados}">0</div></div>
+    <div class="card"><div class="label">Percentual com problemas</div><div class="value"><span th:text="${percentualProblemas}">0.0</span>%</div></div>
+  </div>
+  <h2>Importações recentes do período</h2>
+  <div class="table-wrap"><table><thead><tr><th>Data</th><th>Arquivo</th><th>Analisadas</th><th>Importados</th><th>Ignorados</th><th>Rejeitados</th><th>Relatório</th></tr></thead>
+    <tbody><tr th:each="h : ${historicos}"><td th:text="${#temporals.format(h.dataImportacao, 'dd/MM/yyyy HH:mm')}">01/01/2026</td><td th:text="${h.nomeArquivo}">alunos.csv</td><td th:text="${h.linhasAnalisadas}">0</td><td th:text="${h.importados}">0</td><td th:text="${h.ignorados}">0</td><td th:text="${h.rejeitados}">0</td><td><a th:href="@{/alunos/importacao/historico/{id}/relatorio.csv(id=${h.id})}">Baixar CSV</a></td></tr>
+    <tr th:if="${#lists.isEmpty(historicos)}"><td colspan="7">Nenhuma importação encontrada no período.</td></tr></tbody>
+  </table></div>
+</div></body></html>

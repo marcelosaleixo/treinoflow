@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatório mensal de importações | TreinoFlow</title>
+  <link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}">
+  <style>
+    .tf-import-page{max-width:1200px;margin:30px auto 56px;padding:0 16px}.top,.actions{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.actions{justify-content:flex-start}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 14px;border-radius:9px;background:#2563eb;color:#fff;text-decoration:none;border:0;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.btn.secondary{background:#172554;color:#fff}.filters{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0;padding:16px;background:#f5f7fb;border-radius:12px}.filters label{display:flex;flex-direction:column;gap:5px;font-size:14px}.filters input{padding:9px;border:1px solid #ccd3df;border-radius:7px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}.card{padding:16px;border:1px solid #e0e5ed;border-radius:12px;background:#fff}.label{font-size:13px;color:#5b6472}.value{font-size:25px;font-weight:700;margin-top:8px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e4e8ef;white-space:nowrap}th{background:#f5f7fb}.hint{color:#596273;font-size:14px}@media(max-width:600px){.wrap{margin:12px auto}.value{font-size:22px}}
+  .tf-import-page h1{font-size:clamp(26px,3vw,34px);line-height:1.2;letter-spacing:-.5px;color:#172554;margin:0 0 10px}.tf-import-page h2{color:#172554;font-size:22px}.tf-import-page p{line-height:1.6}.tf-import-page input,.tf-import-page select{font:inherit;min-height:40px;box-sizing:border-box}.tf-import-page .filters{gap:12px}.tf-import-page .card{box-shadow:0 8px 26px rgba(15,23,42,.05)}@media(max-width:700px){.tf-import-page{width:calc(100% - 28px);margin:22px auto 36px;padding:0}.tf-import-page .top{align-items:flex-start}.tf-import-page .actions .btn{white-space:normal}}
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<div class="wrap tf-import-page">
+  <div class="top"><div><h1>Relatório mensal de importações</h1><p class="hint">Compare volume, resultados e percentual de registros ignorados ou rejeitados mês a mês.</p></div>
+    <div class="actions"><a class="btn secondary" th:href="@{/alunos/importacao/dashboard}">Voltar ao dashboard</a><a class="btn secondary" th:href="@{/alunos/importacao/historico}">Histórico completo</a><a class="btn secondary" th:href="@{/alunos/importacao/configuracoes-alertas}">Configurar alertas</a></div>
+  </div>
+  <form class="filters" method="get" th:action="@{/alunos/importacao/relatorio-mensal}">
+    <label>Data inicial<input type="date" name="dataInicio" th:value="${dataInicio}" required></label>
+    <label>Data final<input type="date" name="dataFim" th:value="${dataFim}" required></label>
+    <button class="btn" type="submit">Atualizar relatório</button>
+    <a class="btn secondary" th:href="@{/alunos/importacao/relatorio-mensal.csv(dataInicio=${dataInicio},dataFim=${dataFim})}">Exportar CSV</a>
+  </form>
+  <div th:if="${existeAlertaMensal}" role="alert" style="margin:16px 0;padding:14px 16px;border:1px solid #f0b7b7;border-left:5px solid #c62828;border-radius:10px;background:#fff1f1;color:#7f1d1d">
+    <strong>Alerta de qualidade em um ou mais meses</strong>
+    <p style="margin:6px 0 0">Pelo menos um mês atingiu ou ultrapassou o limite configurado de <strong th:text="${limiteProblemasPercentual + '%'}">10%</strong> de linhas ignoradas ou rejeitadas. Consulte a coluna de situação na tabela.</p>
+  </div>
+  <div class="cards">
+    <div class="card"><div class="label">Meses no período</div><div class="value" th:text="${quantidadeMeses}">6</div></div>
+    <div class="card"><div class="label">Importações</div><div class="value" th:text="${totalImportacoes}">0</div></div>
+    <div class="card"><div class="label">Linhas analisadas</div><div class="value" th:text="${totalAnalisadas}">0</div></div>
+    <div class="card"><div class="label">Importados</div><div class="value" th:text="${totalImportados}">0</div></div>
+    <div class="card"><div class="label">Ignorados</div><div class="value" th:text="${totalIgnorados}">0</div></div>
+    <div class="card"><div class="label">Rejeitados</div><div class="value" th:text="${totalRejeitados}">0</div></div>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Mês</th><th>Importações</th><th>Analisadas</th><th>Importados</th><th>Ignorados</th><th>Rejeitados</th><th>Problemas</th><th>Situação</th><th>Variação vs. mês anterior (p.p.)</th></tr></thead>
+    <tbody><tr th:each="m : ${meses}"><td th:text="${m.mes}">2026-10</td><td th:text="${m.importacoes}">0</td><td th:text="${m.analisadas}">0</td><td th:text="${m.importados}">0</td><td th:text="${m.ignorados}">0</td><td th:text="${m.rejeitados}">0</td><td th:text="${m.percentualProblemas}">0.0%</td><td><span th:if="${m.alerta}" style="display:inline-block;padding:4px 8px;border-radius:6px;background:#fee2e2;color:#991b1b;font-weight:700">Acima do limite</span><span th:unless="${m.alerta}">Normal</span></td><td th:text="${m.variacaoProblemas == null ? '—' : m.variacaoProblemas}">—</td></tr>
+    <tr th:if="${#lists.isEmpty(meses)}"><td colspan="9">Não há dados para o período informado.</td></tr></tbody>
+  </table></div>
+  <p class="hint">A variação é calculada em pontos percentuais em relação ao mês anterior dentro do período selecionado. Um valor positivo indica aumento na proporção de registros com problemas.</p>
+</div>
+</body></html>

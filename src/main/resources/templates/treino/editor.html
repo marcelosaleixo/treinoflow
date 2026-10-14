@@ -27,4 +27,58 @@
   });
 })();
 </script>
+<script>
+(() => {
+  // Evita submissões repetidas e confirma ações destrutivas no editor.
+  document.querySelectorAll('form[method="post"]').forEach(form => {
+    form.addEventListener('submit', event => {
+      if (form.dataset.submitting === 'true') {
+        event.preventDefault();
+        return;
+      }
+
+      const action = form.getAttribute('action') || '';
+      if (action.includes('/excluir') && !window.confirm('Remover este exercício do treino? Esta ação não pode ser desfeita.')) {
+        event.preventDefault();
+        return;
+      }
+
+      // Validação amigável dos campos numéricos presentes no formulário.
+      const ordem = form.querySelector('input[name="ordem"]');
+      const series = form.querySelector('input[name="series"]');
+      const descanso = form.querySelector('input[name="descansoSegundos"]');
+      const validarMinimo = (campo, minimo, rotulo) => {
+        if (!campo || campo.value.trim() === '') return true; // campos opcionais continuam opcionais
+        const valor = Number(campo.value);
+        if (!Number.isFinite(valor) || valor < minimo) {
+          campo.setCustomValidity(rotulo + ' deve ser ' + (minimo === 0 ? 'zero ou maior.' : 'maior ou igual a ' + minimo + '.'));
+          campo.reportValidity();
+          campo.addEventListener('input', () => campo.setCustomValidity(''), { once: true });
+          return false;
+        }
+        campo.setCustomValidity('');
+        return true;
+      };
+      if (!validarMinimo(ordem, 1, 'A ordem') || !validarMinimo(series, 1, 'As séries') || !validarMinimo(descanso, 0, 'O descanso')) {
+        event.preventDefault();
+        return;
+      }
+
+      form.dataset.submitting = 'true';
+      form.setAttribute('aria-busy', 'true');
+      const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+      if (submit && !submit.disabled) {
+        submit.disabled = true;
+        if (submit.tagName === 'BUTTON') {
+          submit.dataset.originalText = submit.textContent;
+          submit.textContent = 'Processando...';
+        } else {
+          submit.dataset.originalValue = submit.value;
+          submit.value = 'Processando...';
+        }
+      }
+    });
+  });
+})();
+</script>
 </body></html>

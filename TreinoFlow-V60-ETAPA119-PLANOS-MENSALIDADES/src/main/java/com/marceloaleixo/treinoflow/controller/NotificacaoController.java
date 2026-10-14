@@ -78,4 +78,17 @@ public class NotificacaoController {
         notificacoes.marcarTodasLidas(personal.getId());
         return "redirect:/notificacoes";
     }
+    /** Endpoint leve para atualizar o contador do menu sem recarregar a página. */
+    @GetMapping(value = "/contagem-nao-lidas", produces = "application/json")
+    @ResponseBody
+    public java.util.Map<String, Long> contagemNaoLidas(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication.getName() == null
+                || "anonymousUser".equals(authentication.getName())) {
+            return java.util.Map.of("total", 0L);
+        }
+        UsuarioPersonal personal = usuarios.buscarPorEmail(authentication.getName());
+        return java.util.Map.of("total", notificacoes.contarNaoLidas(personal.getId()));
+    }
+
 }

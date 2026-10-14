@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Histórico de importações | TreinoFlow</title>
+<link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}">
+<style>
+.wrap{max-width:1180px;margin:auto;padding:24px}.card{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:22px;margin:18px 0}.muted{color:#64748b}.btn{display:inline-block;border:0;border-radius:9px;padding:10px 14px;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;cursor:pointer}.soft{background:#e8efff;color:#1d4ed8}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e2e8f0}th{background:#f8fafc}.numbers{font-variant-numeric:tabular-nums}.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end}.field label{display:block;font-weight:600;margin-bottom:6px}.field input,.field select{box-sizing:border-box;width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-height:42px}.pager{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:18px}@media(max-width:850px){.filters{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{padding:14px}.card{padding:15px}.filters{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div th:replace="~{fragments/tf-header :: header}"></div>
+<main class="wrap"><p class="muted">Gestão de alunos · Etapa 173</p><h1>Histórico de importações CSV</h1>
+<p class="muted">Pesquise importações anteriores por arquivo, resultado ou período. Os registros exibidos pertencem somente ao personal autenticado.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn soft" th:href="@{/alunos/importacao/dashboard}">Dashboard de importações</a><a class="btn soft" th:href="@{/alunos/importacao}">Voltar para importação</a><a class="btn soft" th:href="@{/alunos}">Alunos</a></div>
+<section class="card">
+<form method="get" th:action="@{/alunos/importacao/historico}" class="filters">
+<div class="field"><label for="arquivo">Nome do arquivo</label><input id="arquivo" name="arquivo" type="search" maxlength="255" placeholder="Ex.: alunos-outubro.csv" th:value="${arquivo}"></div>
+<div class="field"><label for="status">Resultado</label><select id="status" name="status"><option value="">Todos</option><option value="IMPORTADO" th:selected="${status == 'IMPORTADO'}">Importados</option><option value="IGNORADO" th:selected="${status == 'IGNORADO'}">Com ignorados</option><option value="REJEITADO" th:selected="${status == 'REJEITADO'}">Com rejeitados</option><option value="SEM_RESULTADOS" th:selected="${status == 'SEM_RESULTADOS'}">Sem resultados</option></select></div>
+<div class="field"><label for="dataInicio">Data inicial</label><input id="dataInicio" name="dataInicio" type="date" th:value="${dataInicio}"></div>
+<div class="field"><label for="dataFim">Data final</label><input id="dataFim" name="dataFim" type="date" th:value="${dataFim}"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><input type="hidden" name="tamanho" th:value="${tamanho}"><button class="btn" type="submit">Filtrar</button><a class="btn soft" th:href="@{/alunos/importacao/historico}">Limpar</a></div>
+</form></section>
+<section class="card" th:if="${historicos == null or #lists.isEmpty(historicos)}"><h2>Nenhuma importação encontrada</h2><p class="muted">Tente alterar os filtros ou conclua uma nova importação CSV.</p></section>
+<section class="card" th:if="${historicos != null and !#lists.isEmpty(historicos)}"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Arquivo</th><th>Analisadas</th><th>Importados</th><th>Ignorados</th><th>Rejeitados</th><th>Relatório</th></tr></thead><tbody>
+<tr th:each="item : ${historicos}"><td th:text="${#temporals.format(item.dataImportacao, 'dd/MM/yyyy HH:mm')}">14/10/2026 13:00</td><td th:text="${item.nomeArquivo}">alunos.csv</td><td class="numbers" th:text="${item.linhasAnalisadas}">0</td><td class="numbers" th:text="${item.importados}">0</td><td class="numbers" th:text="${item.ignorados}">0</td><td class="numbers" th:text="${item.rejeitados}">0</td><td><a class="btn" th:href="@{/alunos/importacao/historico/{id}/relatorio.csv(id=${item.id})}">Baixar CSV</a></td></tr>
+</tbody></table></div>
+<div class="pager"><span class="muted" th:text="|${totalRegistros} registro(s) · Página ${pagina + 1} de ${totalPaginas}|">0 registros</span><div style="display:flex;gap:8px"><a class="btn soft" th:if="${temAnterior}" th:href="@{/alunos/importacao/historico(pagina=${pagina - 1},tamanho=${tamanho},arquivo=${arquivo},status=${status},dataInicio=${dataInicio},dataFim=${dataFim})}">Anterior</a><a class="btn soft" th:if="${temProxima}" th:href="@{/alunos/importacao/historico(pagina=${pagina + 1},tamanho=${tamanho},arquivo=${arquivo},status=${status},dataInicio=${dataInicio},dataFim=${dataFim})}">Próxima</a></div></div>
+</section></main></body></html>

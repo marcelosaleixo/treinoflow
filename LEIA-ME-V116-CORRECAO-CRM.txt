@@ -1,0 +1,7 @@
+TreinoFlow V116 — Compatibilidade do método de busca CRM
+
+Causa: o log continua mostrando uma chamada antiga de buscarPorPersonalETermo(Long, String, Pageable), enquanto a versão atual também possui o parâmetro termoCpf.
+
+Correção: foi adicionada uma sobrecarga default de compatibilidade em AlunoRepository nas duas cópias do projeto. Ela delega à consulta de quatro parâmetros, normalizando o CPF para dígitos, sem remover a assinatura atual.
+
+IMPORTANTE: o log é idêntico ao anterior, o que pode indicar que o EasyPanel está executando um build antigo ou um diretório diferente. Faça deploy deste ZIP, confirme o repositório/branch/commit usados no build e force um rebuild sem cache. Não foi possível validar a compilação Maven nem testar no ambiente remoto.

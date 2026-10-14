@@ -10,3 +10,8 @@
 .tf-nav form{margin:0}
 @media(max-width:900px){.tf-header-inner{align-items:flex-start;flex-direction:column}.tf-nav{width:100%;justify-content:flex-start}}
 @media(max-width:560px){.tf-header{padding:10px 14px}.tf-brand{font-size:17px}.tf-nav{gap:6px}.tf-nav a,.tf-nav button{min-height:34px;padding:7px 9px;font-size:11px}}
+
+/* Contador dinâmico de notificações não lidas */
+.tf-nav .tf-nav-notificacoes{gap:7px}
+.tf-notificacoes-badge{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;line-height:1;box-shadow:0 0 0 2px var(--tf-navy)}
+.tf-notificacoes-badge.is-hidden{display:none}

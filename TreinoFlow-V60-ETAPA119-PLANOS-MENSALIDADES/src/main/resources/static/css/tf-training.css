@@ -44,3 +44,20 @@
  .tf-training-page .tf-page-actions .btn,.tf-performance-page .tf-page-actions .btn{width:100%}
  .tf-training-page .prescription-grid{grid-template-columns:1fr}
 }
+
+/* Etapa 150 — padronização complementar das telas de treino */
+.tf-training-page .head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.tf-training-page .head h1{margin:0 0 8px;color:#172554;line-height:1.2}
+.tf-training-page .muted{color:#64748b;line-height:1.55}
+.tf-training-page .panel h2{margin-top:0;color:#172554}
+.tf-training-page .search-form{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:16px 0}
+.tf-training-page .search-form input,.tf-training-page .search-form select{flex:1 1 180px;min-width:0}
+.tf-training-page .row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #e2e8f0}
+.tf-training-page .row:last-of-type{border-bottom:0}
+.tf-training-page .row-info{min-width:0;overflow-wrap:anywhere}
+.tf-training-page .row-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tf-training-page .row-actions form{margin:0}
+.tf-training-page .empty{padding:26px 12px;text-align:center;color:#64748b}
+.tf-training-page table{max-width:100%}
+.tf-training-page .btn:focus-visible,.tf-performance-page .btn:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+@media(max-width:680px){.tf-training-page .head{flex-direction:column}.tf-training-page .head>.btn{width:100%;text-align:center}.tf-training-page .row{align-items:stretch;flex-direction:column}.tf-training-page .row-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.tf-training-page .row-actions .btn,.tf-training-page .row-actions form,.tf-training-page .row-actions form button{width:100%;min-width:0}.tf-training-page .search-form{display:grid;grid-template-columns:1fr}.tf-training-page .search-form>*{width:100%}}

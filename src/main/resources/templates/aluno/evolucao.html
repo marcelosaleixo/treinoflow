@@ -6,10 +6,10 @@
 <link rel="stylesheet" th:href="@{/css/treinoflow.css}"><link rel="stylesheet" th:href="@{/css/tf-header.css}">
 <style>
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.metric{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 24px #17255412}.metric small{display:block;color:#64748b}.metric strong{font-size:28px;color:#172554}.panel{background:#fff;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 8px 24px #17255412}.exercise{border-bottom:1px solid #e2e8f0;padding:16px 0}.exercise:last-child{border-bottom:0}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:700;margin-right:6px}.history{color:#64748b;font-size:14px;margin:6px 0}.empty{color:#64748b;text-align:center;padding:30px}@media(max-width:850px){.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.metrics{grid-template-columns:1fr}.metric strong{font-size:24px}}
-</style></head>
+</style><link rel="stylesheet" th:href="@{/css/tf-training.css}"></head>
 <body>
 <div th:replace="~{fragments/tf-header :: header}"></div>
-<main class="wrap">
+<main class="wrap tf-training-page">
 <div class="head"><div><div class="eyebrow">Acompanhamento</div><h1 th:text="'Evolução de ' + ${aluno.nome}">Evolução</h1><p class="sub">Histórico de frequência, avaliações e execução real dos exercícios.</p></div><a class="btn soft" th:href="@{/alunos}">← Voltar</a></div>
 <section class="metrics">
 <div class="metric"><small>Sessões concluídas</small><strong th:text="${evolucao.sessoesConcluidas}">0</strong></div>

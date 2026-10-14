@@ -47,6 +47,13 @@ public class UsuarioPersonal {
     @JoinColumn(name = "plano_id")
     private Plano plano;
 
+    /** Limite individual de alertas CSV; null usa o padrão global configurado. */
+    @Column(name = "limite_problemas_importacao_percentual")
+    private Double limiteProblemasImportacaoPercentual;
+
+    public Double getLimiteProblemasImportacaoPercentual() { return limiteProblemasImportacaoPercentual; }
+    public void setLimiteProblemasImportacaoPercentual(Double valor) { this.limiteProblemasImportacaoPercentual = valor; }
+
     @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
