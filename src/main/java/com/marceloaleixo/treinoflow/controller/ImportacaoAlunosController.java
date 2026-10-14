@@ -27,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.Comparator;
@@ -181,10 +180,6 @@ public class ImportacaoAlunosController {
                 .body(csv.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    private static String csvCampo(String valor) {
-        String seguro = valor == null ? "" : valor;
-        return "\"" + seguro.replace("\"", "\"\"") + "\"";
-    }
 
     /** Relatório mensal de importações, limitado aos dados do personal autenticado. */
     @GetMapping("/relatorio-mensal")
