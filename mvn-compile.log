@@ -1,1 +1,3 @@
-wget: Failed to fetch https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
+Etapa 189 — tentativa de compilação
+Comando: ./mvnw -o -DskipTests compile
+Resultado: não executado; wrapper falhou ao buscar Maven 3.9.16 em repo.maven.apache.org. Maven não está instalado globalmente neste ambiente.

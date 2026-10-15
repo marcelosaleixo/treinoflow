@@ -31,12 +31,15 @@ public class AlertaMetaReceitaPersistenteService {
     private final NotificacaoRepository notificacoes;
     private final MetaReceitaAcoesRepository metas;
     private final InteracaoRecebimentoVinculoRepository vinculos;
+    private final NotificacaoSseService notificacoesSse;
 
     public AlertaMetaReceitaPersistenteService(NotificacaoRepository notificacoes,
-            MetaReceitaAcoesRepository metas, InteracaoRecebimentoVinculoRepository vinculos) {
+            MetaReceitaAcoesRepository metas, InteracaoRecebimentoVinculoRepository vinculos,
+            NotificacaoSseService notificacoesSse) {
         this.notificacoes = notificacoes;
         this.metas = metas;
         this.vinculos = vinculos;
+        this.notificacoesSse = notificacoesSse;
     }
 
     @Transactional
@@ -96,12 +99,14 @@ public class AlertaMetaReceitaPersistenteService {
                 existente.setTitulo(textoAtual.titulo());
                 existente.setMensagem(limitar(textoAtual.mensagem()));
                 notificacoes.save(existente);
+                notificacoesSse.publicarAposCommit(personal.getId(), tipo);
             } else if (existente != null && !existente.getTitulo().startsWith("Condição atualizada")) {
                 existente.setTitulo("Condição atualizada: " + tipo.getDescricao());
                 existente.setMensagem("Este alerta foi atualizado em " + LocalDate.now()
                         + " porque os dados atuais de meta e receita já não correspondem à condição original. "
                         + "Consulte o painel de metas para ver a situação vigente.");
                 notificacoes.save(existente);
+                notificacoesSse.publicarAposCommit(personal.getId(), tipo);
             }
         }
     }

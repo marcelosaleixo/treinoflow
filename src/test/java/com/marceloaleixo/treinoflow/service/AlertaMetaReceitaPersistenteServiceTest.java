@@ -32,7 +32,7 @@ class AlertaMetaReceitaPersistenteServiceTest {
         notificacoes = mock(NotificacaoRepository.class);
         metas = mock(MetaReceitaAcoesRepository.class);
         vinculos = mock(InteracaoRecebimentoVinculoRepository.class);
-        service = new AlertaMetaReceitaPersistenteService(notificacoes, metas, vinculos);
+        service = new AlertaMetaReceitaPersistenteService(notificacoes, metas, vinculos, mock(NotificacaoSseService.class));
         when(vinculos.findByInteracaoPersonalIdOrderByDataVinculoDesc(any())).thenReturn(List.of());
         when(notificacoes.findByChaveUnica(anyString())).thenReturn(Optional.empty());
     }

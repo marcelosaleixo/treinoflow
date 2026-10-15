@@ -4,20 +4,127 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Central de notificações | TreinoFlow</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172554;font:14px Arial,sans-serif}.wrap{max-width:1040px;margin:28px auto;padding:0 18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;overflow:hidden;margin-bottom:16px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}.stat{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;min-width:140px}.stat strong{display:block;font-size:22px;margin-top:5px}.filters{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) auto;gap:12px;align-items:end}.field{display:grid;gap:6px;color:#475569;font-weight:600}.field input,.field select{width:100%;min-height:40px;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:white;color:#172554}.item{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:18px;border-bottom:1px solid #e2e8f0}.item:last-child{border-bottom:0}.item.unread{background:#eff6ff}.content{display:grid;gap:7px;min-width:0}.title{font-weight:700}.msg{color:#475569;line-height:1.45}.date{color:#64748b;font-size:12px}.tag{display:inline-block;width:max-content;border-radius:999px;background:#e2e8f0;color:#334155;padding:4px 8px;font-size:11px;font-weight:700}.tag.new{background:#dbeafe;color:#1d4ed8}.btn{display:inline-block;border:0;background:#2563eb;color:#fff;text-decoration:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap}.btn.secondary{background:#e2e8f0;color:#172554}.empty{padding:35px;text-align:center;color:#64748b}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}@media(max-width:760px){.filters{grid-template-columns:1fr}.top,.item{align-items:stretch;flex-direction:column}.item form,.item .btn{width:100%}.top>.actions{width:100%}.top>.actions .btn{flex:1;text-align:center}.panel{padding:12px}}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172554;font:14px Arial,sans-serif}.wrap{max-width:1040px;margin:28px auto;padding:0 18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;overflow:hidden;margin-bottom:16px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}.stat{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;min-width:140px}.stat strong{display:block;font-size:22px;margin-top:5px}.filters{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) auto;gap:12px;align-items:end}.field{display:grid;gap:6px;color:#475569;font-weight:600}.field input,.field select{width:100%;min-height:40px;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:white;color:#172554}.item{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:18px;border-bottom:1px solid #e2e8f0}.item:last-child{border-bottom:0}.item.unread{background:#eff6ff}.content{display:grid;gap:7px;min-width:0}.title{font-weight:700}.msg{color:#475569;line-height:1.45}.date{color:#64748b;font-size:12px}.tag{display:inline-block;width:max-content;border-radius:999px;background:#e2e8f0;color:#334155;padding:4px 8px;font-size:11px;font-weight:700}.tag.new{background:#dbeafe;color:#1d4ed8}.btn{display:inline-block;border:0;background:#2563eb;color:#fff;text-decoration:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap}.btn.secondary{background:#e2e8f0;color:#172554}.empty{padding:35px;text-align:center;color:#64748b}.live-toast{position:fixed;right:18px;bottom:18px;z-index:9999;max-width:min(420px,calc(100vw - 36px));background:#172554;color:#fff;padding:14px 18px;border-radius:12px;box-shadow:0 12px 35px #0f172a33;display:none}.live-toast.show{display:block}.item[ data-notificacao-id ]{scroll-margin-top:18px}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}@media(max-width:760px){.filters{grid-template-columns:1fr}.top,.item{align-items:stretch;flex-direction:column}.item form,.item .btn{width:100%}.top>.actions{width:100%}.top>.actions .btn{flex:1;text-align:center}.panel{padding:12px}}
 </style><link rel="stylesheet" th:href="@{/css/tf-header.css}" href="/css/tf-header.css">
 </head>
 <body><div th:replace="~{fragments/tf-header :: header}"></div>
 <main class="wrap">
-<div class="top"><div><a class="btn secondary" th:href="@{/dashboard}">← Dashboard</a><h1>Central de notificações</h1><p>Consulte alertas financeiros, metas e eventos importantes da sua conta.</p></div><div class="actions"><form th:action="@{/notificacoes/ler-todas}" method="post"><button class="btn secondary" type="submit">Marcar todas como lidas</button></form></div></div>
-<div class="stats"><div class="stat"><span>Total no histórico</span><strong th:text="${totalNotificacoes}">0</strong></div><div class="stat"><span>Não lidas</span><strong th:text="${totalNaoLidas}">0</strong></div><div class="stat"><span>Exibidas com filtros</span><strong th:text="${#lists.size(notificacoes)}">0</strong></div></div>
+<div class="top"><div><a class="btn secondary" th:href="@{/dashboard}">← Dashboard</a><h1>Central de notificações</h1><p>Consulte alertas financeiros, metas e eventos importantes da sua conta.</p></div><div class="actions"><a class="btn secondary" th:href="@{/notificacoes/preferencias}">Preferências</a><form id="formLerTodas" th:action="@{/notificacoes/ler-todas}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button class="btn secondary" type="submit">Marcar todas como lidas</button></form></div></div>
+<div class="stats"><div class="stat"><span>Total no histórico</span><strong th:text="${totalNotificacoes}">0</strong></div><div class="stat"><span>Não lidas</span><strong id="totalNaoLidasCentral" th:text="${totalNaoLidas}">0</strong></div><div class="stat"><span>Exibidas com filtros</span><strong th:text="${#lists.size(notificacoes)}">0</strong></div></div>
 <section class="panel"><h2>Filtrar histórico</h2><form class="filters" th:action="@{/notificacoes}" method="get">
 <label class="field">Estado<select name="estado"><option value="todas" th:selected="${estadoSelecionado == 'todas'}">Todas</option><option value="nao-lidas" th:selected="${estadoSelecionado == 'nao-lidas'}">Não lidas</option><option value="lidas" th:selected="${estadoSelecionado == 'lidas'}">Lidas</option></select></label>
 <label class="field">Mês de criação<input type="month" name="mes" th:value="${mesSelecionado}"></label>
 <label class="field">Tipo<select name="tipo"><option value="">Todos os tipos</option><option th:each="t : ${tiposNotificacao}" th:value="${t.name()}" th:text="${t.descricao}" th:selected="${tipoSelecionado == t.name()}">Tipo</option></select></label>
 <div class="actions"><button class="btn" type="submit">Aplicar filtros</button><a class="btn secondary" th:href="@{/notificacoes}">Limpar</a></div></form></section>
-<section class="panel"><article class="item" th:each="n : ${notificacoes}" th:classappend="${!n.lida} ? ' unread' : ''">
+<section class="panel"><div id="listaNotificacoes"><article class="item" th:each="n : ${notificacoes}" th:attr="data-notificacao-id=${n.id}" th:classappend="${!n.lida} ? ' unread' : ''">
 <div class="content"><span class="tag" th:classappend="${!n.lida} ? ' new' : ''" th:text="${n.lida ? 'LIDA' : 'NOVA'}">NOVA</span><span class="title" th:text="${n.titulo}">Notificação</span><span class="msg" th:text="${n.mensagem}">Mensagem</span><span class="date" th:text="${#temporals.format(n.dataCriacao,'dd/MM/yyyy HH:mm')}">09/10/2026 08:00</span></div>
-<form th:if="${!n.lida}" th:action="@{/notificacoes/{id}/ler(id=${n.id})}" method="post"><button class="btn" type="submit">Marcar como lida</button></form></article>
-<div class="empty" th:if="${#lists.isEmpty(notificacoes)}">Nenhuma notificação corresponde aos filtros selecionados.</div></section>
-</main></body></html>
+<form th:if="${!n.lida}" class="formLerNotificacao" th:action="@{/notificacoes/{id}/ler(id=${n.id})}" method="post"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button class="btn" type="submit">Marcar como lida</button></form></article>
+<div class="empty" th:if="${#lists.isEmpty(notificacoes)}">Nenhuma notificação corresponde aos filtros selecionados.</div></div></section>
+<div id="notificacaoToast" class="live-toast" role="status" aria-live="polite"></div>
+</main>
+<script th:inline="javascript">
+(function () {
+  'use strict';
+  var endpointEventos = /*[[@{/notificacoes/eventos}]]*/ '/notificacoes/eventos';
+  var endpointRecentes = /*[[@{/notificacoes/recentes}]]*/ '/notificacoes/recentes';
+  var endpointLerTodas = /*[[@{/notificacoes/ler-todas-ajax}]]*/ '/notificacoes/ler-todas-ajax';
+  var csrfToken = /*[[${_csrf.token}]]*/ '';
+  var csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+  var lista = document.getElementById('listaNotificacoes');
+  var toast = document.getElementById('notificacaoToast');
+  var timerToast;
+  var filtrosAtivos = new URLSearchParams(window.location.search).toString().length > 0;
+
+  function mostrarToast(texto) {
+    if (!toast) return;
+    toast.textContent = texto;
+    toast.classList.add('show');
+    window.clearTimeout(timerToast);
+    timerToast = window.setTimeout(function () { toast.classList.remove('show'); }, 5000);
+  }
+  function atualizarContagem(total) {
+    var alvo = document.getElementById('totalNaoLidasCentral');
+    if (alvo) alvo.textContent = String(total);
+    var badge = document.querySelector('[data-notificacoes-badge]');
+    if (badge) {
+      badge.textContent = total > 99 ? '99+' : String(total);
+      badge.classList.toggle('is-hidden', total === 0);
+      badge.setAttribute('aria-label', total + ' notificações não lidas');
+    }
+  }
+  function criarItem(n) {
+    var article = document.createElement('article');
+    article.className = 'item' + (n.lida ? '' : ' unread');
+    article.setAttribute('data-notificacao-id', n.id);
+    var content = document.createElement('div'); content.className = 'content';
+    var tag = document.createElement('span'); tag.className = 'tag' + (n.lida ? '' : ' new'); tag.textContent = n.lida ? 'LIDA' : 'NOVA';
+    var title = document.createElement('span'); title.className = 'title'; title.textContent = n.titulo || 'Notificação';
+    var msg = document.createElement('span'); msg.className = 'msg'; msg.textContent = n.mensagem || '';
+    var date = document.createElement('span'); date.className = 'date';
+    var parsed = n.dataCriacao ? new Date(n.dataCriacao) : null;
+    date.textContent = parsed && !isNaN(parsed.getTime()) ? parsed.toLocaleString('pt-BR') : '';
+    content.append(tag, title, msg, date); article.appendChild(content);
+    if (!n.lida) {
+      var form = document.createElement('form'); form.className = 'formLerNotificacao';
+      form.action = '/notificacoes/' + encodeURIComponent(n.id) + '/ler'; form.method = 'post';
+      var hidden = document.createElement('input'); hidden.type = 'hidden'; hidden.name = '_csrf'; hidden.value = csrfToken;
+      var button = document.createElement('button'); button.className = 'btn'; button.type = 'submit'; button.textContent = 'Marcar como lida';
+      form.append(hidden, button); article.appendChild(form);
+    }
+    return article;
+  }
+  function atualizarLista() {
+    fetch(endpointRecentes, { credentials: 'same-origin', cache: 'no-store', headers: { 'Accept': 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error('Falha ao atualizar'); return r.json(); })
+      .then(function (dados) {
+        atualizarContagem(Number(dados.totalNaoLidas || 0));
+        if (filtrosAtivos || !lista) {
+          mostrarToast('Nova notificação recebida. Limpe os filtros para visualizar na lista.');
+          return;
+        }
+        lista.replaceChildren();
+        (dados.itens || []).forEach(function (n) { lista.appendChild(criarItem(n)); });
+        if (!(dados.itens || []).length) {
+          var vazio = document.createElement('div'); vazio.className = 'empty'; vazio.textContent = 'Nenhuma notificação encontrada.'; lista.appendChild(vazio);
+        }
+        mostrarToast('Central de notificações atualizada.');
+      }).catch(function () { mostrarToast('Você recebeu uma notificação. Atualize a página se ela não aparecer.'); });
+  }
+  document.addEventListener('submit', function (event) {
+    var form = event.target;
+    if (form && form.classList.contains('formLerNotificacao')) {
+      event.preventDefault();
+      var article = form.closest('[data-notificacao-id]');
+      var id = article && article.getAttribute('data-notificacao-id');
+      if (!id) return;
+      fetch('/notificacoes/' + encodeURIComponent(id) + '/ler-ajax', {
+        method: 'POST', credentials: 'same-origin', headers: { [csrfHeader]: csrfToken, 'Accept': 'application/json' }
+      }).then(function (r) { if (!r.ok) throw new Error('Falha ao marcar como lida'); return r.json(); })
+        .then(function (dados) { if (article) article.remove(); atualizarContagem(Number(dados.totalNaoLidas || 0)); mostrarToast('Notificação marcada como lida.'); })
+        .catch(function () { form.submit(); });
+    } else if (form && form.id === 'formLerTodas') {
+      event.preventDefault();
+      fetch(endpointLerTodas, { method: 'POST', credentials: 'same-origin', headers: { [csrfHeader]: csrfToken, 'Accept': 'application/json' } })
+        .then(function (r) { if (!r.ok) throw new Error('Falha ao marcar todas'); return r.json(); })
+        .then(function (dados) { atualizarContagem(Number(dados.totalNaoLidas || 0)); atualizarListaSemToast(); mostrarToast('Todas as notificações foram marcadas como lidas.'); })
+        .catch(function () { form.submit(); });
+    }
+  });
+  function atualizarListaSemToast() {
+    if (!lista) return;
+    lista.querySelectorAll('[data-notificacao-id]').forEach(function (article) {
+      article.classList.remove('unread');
+      var tag = article.querySelector('.tag'); if (tag) { tag.textContent = 'LIDA'; tag.classList.remove('new'); }
+      var form = article.querySelector('.formLerNotificacao'); if (form) form.remove();
+    });
+  }
+  if (window.EventSource) {
+    var fonte = new EventSource(endpointEventos, { withCredentials: true });
+    fonte.addEventListener('notificacao', atualizarLista);
+    fonte.addEventListener('conectado', function () { /* conexão pronta */ });
+    fonte.onerror = function () { /* EventSource reconecta automaticamente */ };
+    window.addEventListener('beforeunload', function () { fonte.close(); });
+  }
+})();
+</script>
+</body></html>

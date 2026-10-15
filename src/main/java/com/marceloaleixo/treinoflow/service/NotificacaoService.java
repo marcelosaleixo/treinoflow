@@ -19,13 +19,16 @@ public class NotificacaoService {
     private final CobrancaRepository cobrancas;
     private final NotificacaoEntregaService entregas;
     private final TemplateNotificacaoService templates;
+    private final NotificacaoSseService notificacoesSse;
 
     public NotificacaoService(NotificacaoRepository notificacoes, CobrancaRepository cobrancas,
-                               NotificacaoEntregaService entregas, TemplateNotificacaoService templates) {
+                               NotificacaoEntregaService entregas, TemplateNotificacaoService templates,
+                               NotificacaoSseService notificacoesSse) {
         this.notificacoes = notificacoes;
         this.cobrancas = cobrancas;
         this.entregas = entregas;
         this.templates = templates;
+        this.notificacoesSse = notificacoesSse;
     }
 
     @Transactional
@@ -101,6 +104,7 @@ public class NotificacaoService {
         templates.aplicarInterna(n, variaveis(cobranca));
         notificacoes.save(n);
         entregas.criarEntregas(n);
+        notificacoesSse.publicarAposCommit(n.getPersonal().getId(), tipo);
         return true;
     }
 

@@ -30,42 +30,65 @@
 <script data-notificacoes-live-counter th:inline="javascript">
 (function () {
   'use strict';
-  var endpoint = /*[[@{/notificacoes/contagem-nao-lidas}]]*/ '/notificacoes/contagem-nao-lidas';
-  var intervalo = 30000;
+  var endpointContagem = /*[[@{/notificacoes/contagem-nao-lidas}]]*/ '/notificacoes/contagem-nao-lidas';
+  var endpointEventos = /*[[@{/notificacoes/eventos}]]*/ '/notificacoes/eventos';
   var emConsulta = false;
+  var fonte = null;
+
   function atualizarContador() {
-    if (emConsulta || document.hidden) return;
     var link = document.querySelector('.tf-nav-notificacoes');
-    if (!link) return;
+    if (emConsulta || !link) return;
     emConsulta = true;
-    fetch(endpoint, { method: 'GET', credentials: 'same-origin', cache: 'no-store', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-      .then(function (resposta) {
-        if (!resposta.ok) throw new Error('Não foi possível consultar as notificações');
-        return resposta.json();
-      })
-      .then(function (dados) {
-        var total = Number(dados && dados.total);
-        if (!Number.isFinite(total) || total < 0) return;
-        total = Math.floor(total);
-        var badge = link.querySelector('[data-notificacoes-badge]');
-        if (!badge) {
-          badge = document.createElement('span');
-          badge.className = 'tf-notificacoes-badge is-hidden';
-          badge.setAttribute('data-notificacoes-badge', '');
-          link.appendChild(badge);
-        }
-        badge.textContent = total > 99 ? '99+' : String(total);
-        badge.classList.toggle('is-hidden', total === 0);
-        badge.setAttribute('aria-label', total + ' notificações não lidas');
-        link.setAttribute('aria-label', total > 0 ? 'Central de notificações, ' + total + ' não lidas' : 'Central de notificações');
-      })
-      .catch(function () { /* Falhas transitórias não devem interromper a navegação. */ })
-      .finally(function () { emConsulta = false; });
+    fetch(endpointContagem, {
+      method: 'GET', credentials: 'same-origin', cache: 'no-store',
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(function (resposta) {
+      if (!resposta.ok) throw new Error('Não foi possível consultar as notificações');
+      return resposta.json();
+    }).then(function (dados) {
+      var total = Number(dados && dados.total);
+      if (!Number.isFinite(total) || total < 0) return;
+      total = Math.floor(total);
+      var badge = link.querySelector('[data-notificacoes-badge]');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'tf-notificacoes-badge is-hidden';
+        badge.setAttribute('data-notificacoes-badge', '');
+        link.appendChild(badge);
+      }
+      badge.textContent = total > 99 ? '99+' : String(total);
+      badge.classList.toggle('is-hidden', total === 0);
+      badge.setAttribute('aria-label', total + ' notificações não lidas');
+      link.setAttribute('aria-label', total > 0
+        ? 'Central de notificações, ' + total + ' não lidas' : 'Central de notificações');
+    }).catch(function () {
+      // O contador será atualizado no próximo evento ou reconexão do EventSource.
+    }).finally(function () { emConsulta = false; });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', atualizarContador);
-  else atualizarContador();
-  window.setInterval(atualizarContador, intervalo);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) atualizarContador(); });
+
+  function conectarEventos() {
+    if (!window.EventSource || fonte) return;
+    fonte = new EventSource(endpointEventos, { withCredentials: true });
+    fonte.addEventListener('conectado', atualizarContador);
+    fonte.addEventListener('notificacao', atualizarContador);
+    fonte.onerror = function () {
+      // EventSource reconecta automaticamente; uma consulta única mantém o contador coerente.
+      atualizarContador();
+    };
+  }
+
+  function iniciar() {
+    atualizarContador();
+    conectarEventos();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+  else iniciar();
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) atualizarContador();
+  });
+  window.addEventListener('beforeunload', function () {
+    if (fonte) fonte.close();
+  });
 })();
 </script>
 </body>
